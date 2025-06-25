@@ -1,0 +1,9 @@
+<map id="Controller::processCommand" name="Controller::processCommand">
+<area shape="rect" id="Node000001" title="Process a vehicle&#39;s command." alt="" coords="5,56,197,83"/>
+<area shape="rect" id="Node000002" href="$class_controller.html#a7db93fa14ecab45aff1cd799ac922411" title="Fly to a goal position." alt="" coords="245,5,385,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,53,240,34,241,39,161,58"/>
+<area shape="rect" id="Node000003" href="$class_controller.html#ad88269eeca9c75ba490895d693a08260" title="Command the drone to land." alt="" coords="260,56,370,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="197,67,244,67,244,72,197,72"/>
+<area shape="rect" id="Node000004" href="$class_controller.html#a68cafe80a04b33fb2a6abd3ada2c6e47" title="Command the drone to take off." alt="" coords="253,107,377,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="161,81,241,100,240,105,160,86"/>
+</map>

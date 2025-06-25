@@ -1,0 +1,446 @@
+\doxysection{waypoint\+\_\+manager.\+cpp}
+\hypertarget{waypoint__manager_8cpp_source}{}\label{waypoint__manager_8cpp_source}\index{src/waypoint\_manager.cpp@{src/waypoint\_manager.cpp}}
+\mbox{\hyperlink{waypoint__manager_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{waypoint__manager_8h}{waypoint\_manager.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00004}\mbox{\hyperlink{class_waypoint_manager_af4221b2d4aff01d356fd4b4f6be797f0}{00004}}\ \mbox{\hyperlink{class_waypoint_manager_af4221b2d4aff01d356fd4b4f6be797f0}{WaypointManager::WaypointManager}}(}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00005}00005\ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Logger\&\ logger,}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00006}00006\ \ \ \ \ \textcolor{keywordtype}{double}\ max\_gradient,}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00007}00007\ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Publisher<geometry\_msgs::msg::PoseArray>::SharedPtr\&\ waypoints\_pub,}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00008}00008\ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Publisher<visualization\_msgs::msg::MarkerArray>::SharedPtr\&\ markers\_pub)}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00009}00009\ \ \ \ \ :\ logger\_(logger),\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00010}00010\ \ \ \ \ \ \ max\_gradient\_(max\_gradient),}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00011}00011\ \ \ \ \ \ \ waypoints\_pub\_(waypoints\_pub),}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00012}00012\ \ \ \ \ \ \ markers\_pub\_(markers\_pub),}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00013}00013\ \ \ \ \ \ \ getElevationAtPoint\_([](const\ geometry\_msgs::msg::Point\&)\{\ \textcolor{keywordflow}{return}\ 0.0;\ \})\ \textcolor{comment}{//\ Default\ empty\ function}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00014}00014\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00015}00015\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00017}\mbox{\hyperlink{class_waypoint_manager_a32ecb61ff8a4bd033eb8cf684e38ffc8}{00017}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_waypoint_manager_a32ecb61ff8a4bd033eb8cf684e38ffc8}{WaypointManager::setElevationFunction}}(std::function<\textcolor{keywordtype}{double}(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&)>\ elevationFn)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00018}00018\ \ \ \ \ getElevationAtPoint\_\ =\ elevationFn;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00019}00019\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00021}\mbox{\hyperlink{class_waypoint_manager_a33909da9afe77938cda1c0b046d209ba}{00021}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_waypoint_manager_a33909da9afe77938cda1c0b046d209ba}{WaypointManager::setGradientFunction}}(std::function<\textcolor{keywordtype}{double}(\textcolor{keywordtype}{double},\ \textcolor{keywordtype}{double})>\ gradientFn)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00022}00022\ \ \ \ \ getGradientMagnitudeAtPoint\_\ =\ gradientFn;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00023}00023\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00025}\mbox{\hyperlink{class_waypoint_manager_af09fc4831e807b5c5905339a6f531b35}{00025}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_waypoint_manager_af09fc4831e807b5c5905339a6f531b35}{WaypointManager::isTraversable}}(\textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ start,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ end)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00026}00026\ \ \ \ \ \textcolor{comment}{//\ Get\ the\ elevations\ at\ the\ start\ and\ end\ points}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00027}00027\ \ \ \ \ \textcolor{keywordtype}{double}\ start\_elevation\ =\ getElevationAtPoint\_(start.position);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00028}00028\ \ \ \ \ \textcolor{keywordtype}{double}\ end\_elevation\ =\ getElevationAtPoint\_(end.position);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00029}00029\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00030}00030\ \ \ \ \ \textcolor{comment}{//\ Calculate\ horizontal\ distance}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00031}00031\ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ end.position.x\ -\/\ start.position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00032}00032\ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ end.position.y\ -\/\ start.position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00033}00033\ \ \ \ \ \textcolor{keywordtype}{double}\ horizontal\_distance\ =\ std::sqrt(dx*dx\ +\ dy*dy);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00034}00034\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00035}00035\ \ \ \ \ \textcolor{keywordflow}{if}\ (horizontal\_distance\ <\ 0.001)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00036}00036\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Points\ are\ too\ close\ horizontally,\ consider\ it\ traversable}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00038}00038\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00039}00039\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00040}00040\ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ elevation\ change}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00041}00041\ \ \ \ \ \textcolor{keywordtype}{double}\ elevation\_change\ =\ std::abs(end\_elevation\ -\/\ start\_elevation);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00042}00042\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{comment}{//\ Calculate\ gradient\ as\ percentage}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00044}00044\ \ \ \ \ \textcolor{keywordtype}{double}\ gradient\ =\ (elevation\_change\ /\ horizontal\_distance)\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00045}00045\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00046}00046\ \ \ \ \ RCLCPP\_DEBUG(logger\_,\ \textcolor{stringliteral}{"{}Path\ from\ (\%.2f,\%.2f)\ to\ (\%.2f,\%.2f):\ gradient=\%.2f\%\%\ (max=\%.2f\%\%)"{}},\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00047}00047\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ start.position.x,\ start.position.y,\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ end.position.x,\ end.position.y,\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gradient,\ max\_gradient\_);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00050}00050\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00051}00051\ \ \ \ \ \textcolor{comment}{//\ Check\ intermediate\ points\ along\ the\ path\ for\ more\ accuracy}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00052}00052\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_checks\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(horizontal\_distance\ /\ 0.5)\ +\ 1;\ \textcolor{comment}{//\ Check\ every\ 0.5m}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00053}00053\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 1;\ i\ <\ num\_checks;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t1\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i-\/1)\ /\ num\_checks;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t2\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i)\ /\ num\_checks;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00056}00056\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00057}00057\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Interpolate\ positions}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00058}00058\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Point\ p1,\ p2;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00059}00059\ \ \ \ \ \ \ \ \ p1.x\ =\ start.position.x\ +\ t1\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00060}00060\ \ \ \ \ \ \ \ \ p1.y\ =\ start.position.y\ +\ t1\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00061}00061\ \ \ \ \ \ \ \ \ p2.x\ =\ start.position.x\ +\ t2\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ p2.y\ =\ start.position.y\ +\ t2\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00063}00063\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00064}00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ elevations}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00065}00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ elev1\ =\ getElevationAtPoint\_(p1);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00066}00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ elev2\ =\ getElevationAtPoint\_(p2);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00067}00067\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00068}00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ segment\ distance\ and\ gradient}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00069}00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ segment\_dist\ =\ std::sqrt(std::pow(p2.x\ -\/\ p1.x,\ 2)\ +\ std::pow(p2.y\ -\/\ p1.y,\ 2));}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00070}00070\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ segment\_gradient\ =\ (std::abs(elev2\ -\/\ elev1)\ /\ segment\_dist)\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00071}00071\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (segment\_gradient\ >\ max\_gradient\_)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_WARN(logger\_,\ \textcolor{stringliteral}{"{}Segment\ gradient\ \%.2f\%\%\ exceeds\ max\ \%.2f\%\%"{}},\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ segment\_gradient,\ max\_gradient\_);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00076}00076\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00077}00077\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00078}00078\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00079}00079\ \ \ \ \ \textcolor{keywordflow}{return}\ gradient\ <=\ max\_gradient\_;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00080}00080\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00082}\mbox{\hyperlink{class_waypoint_manager_a9ab739de5da26b88ef458c81d8c70a16}{00082}}\ std::vector<geometry\_msgs::msg::Pose>\ \mbox{\hyperlink{class_waypoint_manager_a9ab739de5da26b88ef458c81d8c70a16}{WaypointManager::generateGroundWaypoints}}(}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00083}00083\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ start,\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00084}00084\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ end,}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00085}00085\ \ \ \ \ \textcolor{keywordtype}{double}\ spacing)}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00086}00086\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00087}00087\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00088}00088\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00089}00089\ \ \ \ \ \textcolor{comment}{//\ Calculate\ horizontal\ distance\ between\ start\ and\ end}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ end.position.x\ -\/\ start.position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00091}00091\ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ end.position.y\ -\/\ start.position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00092}00092\ \ \ \ \ \textcolor{keywordtype}{double}\ horizontal\_distance\ =\ std::sqrt(dx*dx\ +\ dy*dy);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00093}00093\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00094}00094\ \ \ \ \ \textcolor{comment}{//\ Calculate\ number\ of\ segments}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00095}00095\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_segments\ =\ std::max(1,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(horizontal\_distance\ /\ spacing));}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00096}00096\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00097}00097\ \ \ \ \ \textcolor{comment}{//\ Create\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00098}00098\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ num\_segments;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00099}00099\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ waypoint;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00100}00100\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00101}00101\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Interpolate\ x\ and\ y\ position}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00102}00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i)\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(num\_segments);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00103}00103\ \ \ \ \ \ \ \ \ waypoint.position.x\ =\ start.position.x\ +\ t\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00104}00104\ \ \ \ \ \ \ \ \ waypoint.position.y\ =\ start.position.y\ +\ t\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00105}00105\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00106}00106\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ ground\ elevation\ at\ this\ point}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00107}00107\ \ \ \ \ \ \ \ \ waypoint.position.z\ =\ getElevationAtPoint\_(waypoint.position);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00109}00109\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Safety\ margin\ for\ drone\ clearance}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00110}00110\ \ \ \ \ \ \ \ \ waypoint.position.z\ +=\ 2.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00111}00111\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ orientation\ to\ next\ waypoint}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ num\_segments)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ yaw\ angle\ to\ next\ point}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ next\_t\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i\ +\ 1)\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(num\_segments);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00116}00116\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ next\_x\ =\ start.position.x\ +\ next\_t\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ next\_y\ =\ start.position.y\ +\ next\_t\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00118}00118\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ yaw\ angle}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ yaw\ =\ std::atan2(next\_y\ -\/\ waypoint.position.y,\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ next\_x\ -\/\ waypoint.position.x);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ to\ quaternion}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ tf2::Quaternion\ q;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ q.setRPY(0,\ 0,\ yaw);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.orientation\ =\ tf2::toMsg(q);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ the\ last\ point,\ use\ the\ end\ pose\ orientation}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.orientation\ =\ end.orientation;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00131}00131\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ waypoints.push\_back(waypoint);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00133}00133\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00134}00134\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00135}00135\ \ \ \ \ \textcolor{keywordflow}{return}\ waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00136}00136\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00137}00137\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00138}00138\ std::vector<geometry\_msgs::msg::Pose>\ WaypointManager::generateDroneWaypoints(}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00139}00139\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ start,\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00140}00140\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ end,}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00141}00141\ \ \ \ \ \textcolor{keywordtype}{double}\ spacing)}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00142}00142\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00143}00143\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00144}00144\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00145}00145\ \ \ \ \ \textcolor{comment}{//\ Calculate\ 3D\ distance\ between\ start\ and\ end\ (including\ Z\ difference)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00146}00146\ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ end.position.x\ -\/\ start.position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00147}00147\ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ end.position.y\ -\/\ start.position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00148}00148\ \ \ \ \ \textcolor{keywordtype}{double}\ dz\ =\ end.position.z\ -\/\ start.position.z;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00149}00149\ \ \ \ \ \textcolor{keywordtype}{double}\ total\_distance\ =\ std::sqrt(dx*dx\ +\ dy*dy\ +\ dz*dz);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00150}00150\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00151}00151\ \ \ \ \ \textcolor{comment}{//\ Calculate\ number\ of\ segments\ for\ 1m\ spacing}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00152}00152\ \ \ \ \ \textcolor{keywordtype}{int}\ num\_segments\ =\ std::max(1,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(std::ceil(total\_distance\ /\ spacing)));}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00153}00153\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00154}00154\ \ \ \ \ RCLCPP\_DEBUG(logger\_,\ \textcolor{stringliteral}{"{}Generating\ drone\ waypoints:\ distance=\%.2fm,\ segments=\%d"{}},\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total\_distance,\ num\_segments);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00156}00156\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00157}00157\ \ \ \ \ \textcolor{comment}{//\ Create\ intermediate\ waypoints\ every\ 1m\ along\ the\ 3D\ path}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00158}00158\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ num\_segments;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00159}00159\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ waypoint;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00160}00160\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00161}00161\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Interpolate\ position\ along\ the\ 3D\ line\ (including\ Z)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i)\ /\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(num\_segments);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00163}00163\ \ \ \ \ \ \ \ \ waypoint.position.x\ =\ start.position.x\ +\ t\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00164}00164\ \ \ \ \ \ \ \ \ waypoint.position.y\ =\ start.position.y\ +\ t\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00165}00165\ \ \ \ \ \ \ \ \ waypoint.position.z\ =\ start.position.z\ +\ t\ *\ dz;\ \ \textcolor{comment}{//\ Linear\ interpolation\ of\ altitude}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00166}00166\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00167}00167\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ orientation\ toward\ the\ end\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00168}00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ num\_segments)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00169}00169\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ direction\ to\ end\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00170}00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ remaining\_dx\ =\ end.position.x\ -\/\ waypoint.position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00171}00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ remaining\_dy\ =\ end.position.y\ -\/\ waypoint.position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ yaw\ angle}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00174}00174\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ yaw\ =\ std::atan2(remaining\_dy,\ remaining\_dx);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00175}00175\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ to\ quaternion}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00177}00177\ \ \ \ \ \ \ \ \ \ \ \ \ tf2::Quaternion\ q;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00178}00178\ \ \ \ \ \ \ \ \ \ \ \ \ q.setRPY(0,\ 0,\ yaw);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00179}00179\ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.orientation\ =\ tf2::toMsg(q);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00180}00180\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ the\ last\ point,\ use\ the\ end\ pose\ orientation}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00182}00182\ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.orientation\ =\ end.orientation;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00183}00183\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00184}00184\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00185}00185\ \ \ \ \ \ \ \ \ waypoints.push\_back(waypoint);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00186}00186\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00187}00187\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00188}00188\ \ \ \ \ \textcolor{keywordflow}{return}\ waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00189}00189\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00190}00190\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00191}00191\ \textcolor{keywordtype}{bool}\ WaypointManager::isWaypointTraversable(\textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ waypoint)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00192}00192\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00193}00193\ \ \ \ \ \textcolor{keywordtype}{double}\ x\ =\ waypoint.position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00194}00194\ \ \ \ \ \textcolor{keywordtype}{double}\ y\ =\ waypoint.position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00195}00195\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00196}00196\ \ \ \ \ \textcolor{comment}{//\ Use\ sensor\ node's\ gradient\ magnitude\ to\ determine\ traversability}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00197}00197\ \ \ \ \ \textcolor{keywordtype}{double}\ gradient\_magnitude\ =\ getGradientMagnitudeAtPoint\_(x,\ y);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00198}00198\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00199}00199\ \ \ \ \ \textcolor{comment}{//\ Convert\ from\ slope\ to\ percentage\ gradient}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00200}00200\ \ \ \ \ \textcolor{keywordtype}{double}\ gradient\_percent\ =\ gradient\_magnitude\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00201}00201\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00202}00202\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ gradient\ exceeds\ the\ maximum\ allowed\ (3\%\ by\ default)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00203}00203\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_traversable\ =\ gradient\_percent\ <=\ max\_gradient\_;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00204}00204\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00205}00205\ \ \ \ \ RCLCPP\_DEBUG(logger\_,\ \textcolor{stringliteral}{"{}Waypoint\ at\ (\%.2f,\ \%.2f):\ gradient=\%.2f\%\%,\ traversable=\%s"{}},}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00206}00206\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ x,\ y,\ gradient\_percent,\ is\_traversable\ ?\ \textcolor{stringliteral}{"{}YES"{}}\ :\ \textcolor{stringliteral}{"{}NO"{}});}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00207}00207\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00208}00208\ \ \ \ \ \textcolor{keywordflow}{return}\ is\_traversable;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00209}00209\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00210}00210\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00211}\mbox{\hyperlink{class_waypoint_manager_a987beea81db66ee07300781cc2ef2406}{00211}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_waypoint_manager_a987beea81db66ee07300781cc2ef2406}{WaypointManager::publishWaypoints}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle,\ \textcolor{keyword}{const}\ rclcpp::Time\&\ now)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00212}00212\ \ \ \ \ \textcolor{comment}{//\ Create\ a\ pose\ array\ message\ for\ the\ DRONE\ flight\ path}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00213}00213\ \ \ \ \ geometry\_msgs::msg::PoseArray\ waypoints\_msg;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00214}00214\ \ \ \ \ waypoints\_msg.header.frame\_id\ =\ \textcolor{stringliteral}{"{}world"{}};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00215}00215\ \ \ \ \ waypoints\_msg.header.stamp\ =\ now;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00216}00216\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00217}00217\ \ \ \ \ \textcolor{comment}{//\ Create\ a\ local\ copy\ of\ the\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00218}00218\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ goals;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00219}00219\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00220}00220\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ non\_const\_vehicle\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\textcolor{keyword}{>}(vehicle);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00221}00221\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(non\_const\_vehicle.goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00222}00222\ \ \ \ \ \ \ \ \ goals\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00223}00223\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00224}00224\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00225}00225\ \ \ \ \ \textcolor{comment}{//\ Always\ publish,\ even\ if\ empty}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00226}00226\ \ \ \ \ \textcolor{keywordflow}{if}\ (goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00227}00227\ \ \ \ \ \ \ \ \ waypoints\_pub\_-\/>publish(waypoints\_msg);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00228}00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00229}00229\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00230}00230\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00231}00231\ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}Generating\ waypoints\ for\ \%zu\ goals\ with\ adaptive\ altitude\ control"{}},\ goals.size());}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00232}00232\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00233}00233\ \ \ \ \ \textcolor{comment}{//\ Generate\ waypoints\ based\ on\ expected\ path\ from\ goal\ to\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00234}00234\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ drone\_waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00235}00235\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00236}00236\ \ \ \ \ \textcolor{keywordflow}{if}\ (goals.size()\ ==\ 1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00237}00237\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Single\ goal\ case\ -\/\ create\ waypoints\ from\ current\ position\ to\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00238}00238\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ current\_pos;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00239}00239\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00240}00240\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ non\_const\_vehicle\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\textcolor{keyword}{>}(vehicle);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00241}00241\ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(non\_const\_vehicle.odom\_mutex);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00242}00242\ \ \ \ \ \ \ \ \ \ \ \ \ current\_pos.position\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.position;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ current\_pos.orientation\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.orientation;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00244}00244\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00245}00245\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00246}00246\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Adjust\ altitudes\ based\ on\ goal\ type}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00247}00247\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ adjusted\_start\ =\ current\_pos;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00248}00248\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ adjusted\_goal\ =\ goals[0];}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00249}00249\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00250}00250\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ terrain\ following\ goals,\ ensure\ waypoints\ are\ at\ least\ 2m\ high}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00251}00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (adjusted\_start.position.z\ <\ 2.0\ \&\&\ goals[0].position.z\ <=\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00252}00252\ \ \ \ \ \ \ \ \ \ \ \ \ adjusted\_start.position.z\ =\ 2.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00253}00253\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00254}00254\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (adjusted\_goal.position.z\ <=\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00255}00255\ \ \ \ \ \ \ \ \ \ \ \ \ adjusted\_goal.position.z\ =\ 2.0;\ \ \textcolor{comment}{//\ Visualization\ at\ 2m\ for\ terrain\ following}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00256}00256\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00257}00257\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00258}00258\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Generate\ waypoints\ from\ current\ position\ to\ single\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00259}00259\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ segment\_waypoints\ =\ generateDroneWaypoints(adjusted\_start,\ adjusted\_goal,\ 1.0);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00260}00260\ \ \ \ \ \ \ \ \ drone\_waypoints\ =\ segment\_waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00261}00261\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00262}00262\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00263}00263\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Multiple\ goals\ case\ -\/\ generate\ waypoints\ between\ consecutive\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00264}00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ goals.size()\ -\/\ 1;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00265}00265\ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ start\_goal\ =\ goals[i];}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00266}00266\ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ end\_goal\ =\ goals[i\ +\ 1];}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00267}00267\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00268}00268\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Adjust\ altitudes\ based\ on\ goal\ types}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00269}00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (start\_goal.position.z\ <=\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00270}00270\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ start\_goal.position.z\ =\ 2.0;\ \ \textcolor{comment}{//\ Terrain\ following\ -\/>\ 2m\ visualization}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00271}00271\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00272}00272\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (end\_goal.position.z\ <=\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00273}00273\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ end\_goal.position.z\ =\ 2.0;\ \ \ \ \textcolor{comment}{//\ Terrain\ following\ -\/>\ 2m\ visualization}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00274}00274\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00275}00275\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00276}00276\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Generate\ 1m\ waypoints\ along\ the\ 3D\ path}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00277}00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ segment\_waypoints\ =\ generateDroneWaypoints(start\_goal,\ end\_goal,\ 1.0);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00278}00278\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00279}00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ all\ waypoints\ from\ this\ segment\ (excluding\ the\ last\ one\ to\ avoid\ duplicates)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00280}00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ 0;\ j\ <\ segment\_waypoints.size()\ -\/\ 1;\ j++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00281}00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drone\_waypoints.push\_back(segment\_waypoints[j]);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00283}00283\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00284}00284\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00285}00285\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ the\ final\ goal\ with\ proper\ altitude}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00286}00286\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ final\_goal\ =\ goals.back();}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00287}00287\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (final\_goal.position.z\ <=\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00288}00288\ \ \ \ \ \ \ \ \ \ \ \ \ final\_goal.position.z\ =\ 2.0;\ \ \textcolor{comment}{//\ Visualization\ at\ 2m\ for\ terrain\ following}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00289}00289\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00290}00290\ \ \ \ \ \ \ \ \ drone\_waypoints.push\_back(final\_goal);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00291}00291\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00292}00292\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00293}00293\ \ \ \ \ \textcolor{comment}{//\ Add\ all\ waypoints\ to\ the\ message}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00294}00294\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ waypoint\ :\ drone\_waypoints)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00295}00295\ \ \ \ \ \ \ \ \ waypoints\_msg.poses.push\_back(waypoint);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00296}00296\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00297}00297\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00298}00298\ \ \ \ \ \textcolor{comment}{//\ Publish\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00299}00299\ \ \ \ \ waypoints\_pub\_-\/>publish(waypoints\_msg);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00300}00300\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00301}00301\ \ \ \ \ \textcolor{comment}{//\ Store\ the\ waypoints\ in\ the\ vehicle\ (for\ markers)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00302}00302\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00303}00303\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ non\_const\_vehicle\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\textcolor{keyword}{>}(vehicle);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00304}00304\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(non\_const\_vehicle.goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00305}00305\ \ \ \ \ \ \ \ \ non\_const\_vehicle.traversable\_waypoints\ =\ drone\_waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00306}00306\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00307}00307\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00308}00308\ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}Published\ \%zu\ adaptive\ waypoints\ (terrain\ following\ at\ 2m,\ manual\ altitudes\ preserved)"{}},\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00309}00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ drone\_waypoints.size());}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00310}00310\ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00311}00311\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00312}\mbox{\hyperlink{class_waypoint_manager_a8b2a341dc2144d01f6bde8793e8004c9}{00312}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_waypoint_manager_a8b2a341dc2144d01f6bde8793e8004c9}{WaypointManager::publishMarkers}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle,\ \textcolor{keyword}{const}\ rclcpp::Time\&\ now)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00313}00313\ \ \ \ \ \textcolor{comment}{//\ Create\ marker\ array\ for\ visualisation}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00314}00314\ \ \ \ \ visualization\_msgs::msg::MarkerArray\ marker\_array;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00315}00315\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00316}00316\ \ \ \ \ \textcolor{comment}{//\ Get\ drone\ waypoints\ and\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00317}00317\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ waypoints;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00318}00318\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ goals;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00319}00319\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00320}00320\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\&\ non\_const\_vehicle\ =\ \textcolor{keyword}{const\_cast<}\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\textcolor{keyword}{>}(vehicle);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00321}00321\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(non\_const\_vehicle.goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00322}00322\ \ \ \ \ \ \ \ \ waypoints\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634}{traversable\_waypoints}};\ \ \textcolor{comment}{//\ 1m\ intermediate\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00323}00323\ \ \ \ \ \ \ \ \ goals\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};\ \ \textcolor{comment}{//\ original\ goal\ poses}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00324}00324\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00325}00325\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00326}00326\ \ \ \ \ \textcolor{comment}{//\ Markers\ for\ intermediate\ 1m\ waypoints\ -\/\ CYLINDER\ with\ radius\ 0.2m,\ height\ 0.5m}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00327}00327\ \ \ \ \ \textcolor{keywordtype}{int}\ traversable\_count\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00328}00328\ \ \ \ \ \textcolor{keywordtype}{int}\ non\_traversable\_count\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00329}00329\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00330}00330\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ waypoints.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00331}00331\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ waypoint\ is\ over\ traversable\ terrain}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00332}00332\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_traversable\ =\ isWaypointTraversable(waypoints[i]);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00333}00333\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00334}00334\ \ \ \ \ \ \ \ \ visualization\_msgs::msg::Marker\ marker;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00335}00335\ \ \ \ \ \ \ \ \ marker.header.frame\_id\ =\ \textcolor{stringliteral}{"{}world"{}};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00336}00336\ \ \ \ \ \ \ \ \ marker.header.stamp\ =\ now;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00337}00337\ \ \ \ \ \ \ \ \ marker.ns\ =\ \textcolor{stringliteral}{"{}waypoint"{}};\ \ \textcolor{comment}{//\ Namespace\ "{}waypoint"{}\ as\ required}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00338}00338\ \ \ \ \ \ \ \ \ marker.id\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(i);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00339}00339\ \ \ \ \ \ \ \ \ marker.action\ =\ visualization\_msgs::msg::Marker::ADD;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00340}00340\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00341}00341\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Position\ at\ waypoint\ location}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00342}00342\ \ \ \ \ \ \ \ \ marker.pose\ =\ waypoints[i];}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00343}00343\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00344}00344\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_traversable)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00345}00345\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ CYLINDER\ for\ traversable\ terrain\ (gradient\ ≤3\%)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00346}00346\ \ \ \ \ \ \ \ \ \ \ \ \ marker.type\ =\ visualization\_msgs::msg::Marker::CYLINDER;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00347}00347\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00348}00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Size\ as\ per\ requirements\ -\/\ radius\ 0.2m,\ height\ 0.5m}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00349}00349\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.x\ =\ 0.4;\ \ \textcolor{comment}{//\ 0.4m\ diameter\ =\ 0.2m\ radius}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00350}00350\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.y\ =\ 0.4;\ \ \textcolor{comment}{//\ 0.4m\ diameter\ =\ 0.2m\ radius\ \ }}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00351}00351\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.z\ =\ 0.5;\ \ \textcolor{comment}{//\ 0.5m\ height}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00352}00352\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00353}00353\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Green\ color\ for\ traversable\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00354}00354\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.r\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00355}00355\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.g\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00356}00356\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.b\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00357}00357\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.a\ =\ 0.7;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00358}00358\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00359}00359\ \ \ \ \ \ \ \ \ \ \ \ \ traversable\_count++;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00360}00360\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00361}00361\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00362}00362\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ SPHERE\ for\ non-\/traversable\ terrain\ (gradient\ >3\%)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00363}00363\ \ \ \ \ \ \ \ \ \ \ \ \ marker.type\ =\ visualization\_msgs::msg::Marker::SPHERE;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00364}00364\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00365}00365\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Smaller\ size\ to\ distinguish\ from\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00366}00366\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.x\ =\ 0.25;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00367}00367\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.y\ =\ 0.25;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00368}00368\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.z\ =\ 0.25;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00369}00369\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00370}00370\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Red\ color\ for\ non-\/traversable\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00371}00371\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.r\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00372}00372\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.g\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00373}00373\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.b\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00374}00374\ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.a\ =\ 0.7;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00375}00375\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00376}00376\ \ \ \ \ \ \ \ \ \ \ \ \ non\_traversable\_count++;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00377}00377\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00378}00378\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00379}00379\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lifetime\ -\/\ NEVER\ DELETE\ waypoints}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00380}00380\ \ \ \ \ \ \ \ \ marker.lifetime\ =\ rclcpp::Duration(0,\ 0);\ \ \textcolor{comment}{//\ Persistent\ forever}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00381}00381\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00382}00382\ \ \ \ \ \ \ \ \ marker\_array.markers.push\_back(marker);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00383}00383\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00384}00384\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00385}00385\ \ \ \ \ \textcolor{comment}{//\ Arrow\ markers\ for\ original\ goals\ (pointing\ to\ next\ goal)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00386}00386\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ goals.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00387}00387\ \ \ \ \ \ \ \ \ visualization\_msgs::msg::Marker\ marker;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00388}00388\ \ \ \ \ \ \ \ \ marker.header.frame\_id\ =\ \textcolor{stringliteral}{"{}world"{}};}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00389}00389\ \ \ \ \ \ \ \ \ marker.header.stamp\ =\ now;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00390}00390\ \ \ \ \ \ \ \ \ marker.ns\ =\ \textcolor{stringliteral}{"{}goal"{}};\ \ \textcolor{comment}{//\ Different\ namespace\ for\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00391}00391\ \ \ \ \ \ \ \ \ marker.id\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(i);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00392}00392\ \ \ \ \ \ \ \ \ marker.type\ =\ visualization\_msgs::msg::Marker::ARROW;\ \ \textcolor{comment}{//\ ARROW\ for\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00393}00393\ \ \ \ \ \ \ \ \ marker.action\ =\ visualization\_msgs::msg::Marker::ADD;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00394}00394\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00395}00395\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Position\ at\ goal\ location}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00396}00396\ \ \ \ \ \ \ \ \ marker.pose.position\ =\ goals[i].position;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00397}00397\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00398}00398\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ orientation\ pointing\ to\ next\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00399}00399\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (i\ <\ goals.size()\ -\/\ 1)\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00400}00400\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ direction\ to\ next\ goal}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00401}00401\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ goals[i\ +\ 1].position.x\ -\/\ goals[i].position.x;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00402}00402\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ goals[i\ +\ 1].position.y\ -\/\ goals[i].position.y;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00403}00403\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00404}00404\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ yaw\ angle}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00405}00405\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ yaw\ =\ std::atan2(dy,\ dx);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00406}00406\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ to\ quaternion}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00408}00408\ \ \ \ \ \ \ \ \ \ \ \ \ tf2::Quaternion\ q;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00409}00409\ \ \ \ \ \ \ \ \ \ \ \ \ q.setRPY(0,\ 0,\ yaw);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00410}00410\ \ \ \ \ \ \ \ \ \ \ \ \ marker.pose.orientation\ =\ tf2::toMsg(q);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00411}00411\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00412}00412\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ the\ last\ goal,\ point\ forward\ (0\ degrees)}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00413}00413\ \ \ \ \ \ \ \ \ \ \ \ \ tf2::Quaternion\ q;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00414}00414\ \ \ \ \ \ \ \ \ \ \ \ \ q.setRPY(0,\ 0,\ 0);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00415}00415\ \ \ \ \ \ \ \ \ \ \ \ \ marker.pose.orientation\ =\ tf2::toMsg(q);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00416}00416\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00417}00417\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00418}00418\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Arrow\ size}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00419}00419\ \ \ \ \ \ \ \ \ marker.scale.x\ =\ 0.8;\ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00420}00420\ \ \ \ \ \ \ \ \ marker.scale.y\ =\ 0.2;\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00421}00421\ \ \ \ \ \ \ \ \ marker.scale.z\ =\ 0.2;\ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00422}00422\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00423}00423\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Blue\ color\ for\ goals}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00424}00424\ \ \ \ \ \ \ \ \ marker.color.r\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00425}00425\ \ \ \ \ \ \ \ \ marker.color.g\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00426}00426\ \ \ \ \ \ \ \ \ marker.color.b\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00427}00427\ \ \ \ \ \ \ \ \ marker.color.a\ =\ 0.8;}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00428}00428\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00429}00429\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lifetime\ -\/\ NEVER\ DELETE}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00430}00430\ \ \ \ \ \ \ \ \ marker.lifetime\ =\ rclcpp::Duration(0,\ 0);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00431}00431\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00432}00432\ \ \ \ \ \ \ \ \ marker\_array.markers.push\_back(marker);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00433}00433\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00434}00434\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00435}00435\ \ \ \ \ \textcolor{comment}{//\ Publish\ the\ complete\ marker\ array\ to\ /visualization\_marker}}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00436}00436\ \ \ \ \ markers\_pub\_-\/>publish(marker\_array);}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00437}00437\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00438}00438\ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}Published\ markers:\ \%d\ traversable\ (green\ cylinders),\ \%d\ non-\/traversable\ (red\ spheres),\ \%zu\ goals\ (blue\ arrows)"{}},\ }
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00439}00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ traversable\_count,\ non\_traversable\_count,\ goals.size());}
+\DoxyCodeLine{\Hypertarget{waypoint__manager_8cpp_source_l00440}00440\ \}}
+
+\end{DoxyCode}

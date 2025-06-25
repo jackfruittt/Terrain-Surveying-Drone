@@ -1,0 +1,7 @@
+<map id="Graph::hasEdge" name="Graph::hasEdge">
+<area shape="rect" id="Node000001" title="Check if there&#39;s a direct edge between two nodes." alt="" coords="413,5,528,32"/>
+<area shape="rect" id="Node000002" href="$class_graph.html#a2800611842a98a847b34f4be262a35b3" title="Get the cost of the edge between two nodes." alt="" coords="225,5,365,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="397,21,365,21,365,16,397,16"/>
+<area shape="rect" id="Node000003" href="$class_graph.html#a591d7188ab17c21c05b7ef4cac9de791" title="Calculate total cost of a given path." alt="" coords="5,5,177,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="209,21,177,21,177,16,209,16"/>
+</map>

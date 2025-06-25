@@ -1,0 +1,191 @@
+\doxysection{tsp\+\_\+solver.\+cpp}
+\hypertarget{tsp__solver_8cpp_source}{}\label{tsp__solver_8cpp_source}\index{src/tsp\_solver.cpp@{src/tsp\_solver.cpp}}
+\mbox{\hyperlink{tsp__solver_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00001}00001\ \textcolor{comment}{//\ Updated\ tsp\_solver.cpp\ -\/\ based\ on\ your\ proven\ tsp.cpp\ implementation}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{tsp__solver_8h}{tsp\_solver.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00008}\mbox{\hyperlink{class_t_s_p_solver_a9ba1a36d75385aff3c9a70f4c33b941c}{00008}}\ \mbox{\hyperlink{class_t_s_p_solver_a9ba1a36d75385aff3c9a70f4c33b941c}{TSPSolver::TSPSolver}}(\textcolor{keyword}{const}\ rclcpp::Logger\&\ logger)\ :\ logger\_(logger)\ \{\}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00010}\mbox{\hyperlink{class_t_s_p_solver_a8c181a0bf96f51c9cbf0604f2f4f5877}{00010}}\ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution}{TSPSolver::TSPSolution}}\ \mbox{\hyperlink{class_t_s_p_solver_a8c181a0bf96f51c9cbf0604f2f4f5877}{TSPSolver::solveTSP}}(}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00011}00011\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<geometry\_msgs::msg::Pose>\&\ goals,}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ start\_position,}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00013}00013\ \ \ \ \ std::function<\textcolor{keywordtype}{double}(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&)>\ cost\_function,}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00014}00014\ \ \ \ \ std::function<\textcolor{keywordtype}{bool}(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&)>\ traversability\_function)}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00015}00015\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00016}00016\ \ \ \ \ \textcolor{keyword}{auto}\ start\_time\ =\ std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00017}00017\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00018}00018\ \ \ \ \ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution}{TSPSolution}}\ solution;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00019}00019\ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434}{solution\_found}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00020}00020\ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}}\ =\ std::numeric\_limits<double>::infinity();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00021}00021\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00022}00022\ \ \ \ \ \textcolor{keywordflow}{if}\ (goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00023}00023\ \ \ \ \ \ \ \ \ RCLCPP\_WARN(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ No\ goals\ provided"{}});}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00024}00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ end\_time\ =\ std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\_time}}\ =\ std::chrono::duration\_cast<std::chrono::milliseconds>(end\_time\ -\/\ start\_time);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ solution;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00027}00027\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00028}00028\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00029}00029\ \ \ \ \ \textcolor{keywordflow}{if}\ (goals.size()\ ==\ 1)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00030}00030\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Single\ goal\ case}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00031}00031\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}{path}}\ =\ \{0\};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00032}00032\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}}\ =\ cost\_function(start\_position,\ goals[0].position);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00033}00033\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434}{solution\_found}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00034}00034\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\_valid\_paths}}.push\_back(\{0\});}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00035}00035\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e}{path\_costs}}.push\_back(solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}});}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00036}00036\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ end\_time\ =\ std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00038}00038\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\_time}}\ =\ std::chrono::duration\_cast<std::chrono::milliseconds>(end\_time\ -\/\ start\_time);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00039}00039\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00040}00040\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Single\ goal\ solution,\ cost:\ \%.2fm"{}},\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}});}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00041}00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ solution;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00042}00042\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00043}00043\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00044}00044\ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Solving\ for\ \%zu\ goals\ using\ std::next\_permutation\ algorithm..."{}},\ goals.size());}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00045}00045\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ Use\ std::next\_permutation\ to\ solve\ properly}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00047}00047\ \ \ \ \ std::vector<size\_t>\ indices;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00048}00048\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ goals.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ indices.push\_back(i);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00050}00050\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00051}00051\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00052}00052\ \ \ \ \ \textcolor{comment}{//\ Sort}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00053}00053\ \ \ \ \ std::sort(indices.begin(),\ indices.end());}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00054}00054\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00055}00055\ \ \ \ \ \textcolor{keywordtype}{double}\ best\_cost\ =\ std::numeric\_limits<double>::infinity();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00056}00056\ \ \ \ \ std::vector<size\_t>\ best\_path;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00057}00057\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00058}00058\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ permutations\_checked\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00059}00059\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ valid\_paths\_count\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00060}00060\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00061}00061\ \ \ \ \ \textcolor{keywordflow}{do}\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ permutations\_checked++;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00063}00063\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00064}00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ delay}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00065}00065\ \ \ \ \ \ \ \ \ std::this\_thread::sleep\_for(std::chrono::microseconds(50));\ \textcolor{comment}{//\ 50μs\ per\ permutation}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00066}00066\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00067}00067\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ this\ path\ is\ traversable\ first}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00068}00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_traversable\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00069}00069\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Point\ current\_pos\ =\ start\_position;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00070}00070\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00071}00071\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ traversability\ from\ start\ to\ first\ goal}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!traversability\_function(current\_pos,\ goals[indices[0]].position))\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ is\_traversable\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00075}00075\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00076}00076\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ traversability\ between\ consecutive\ goals}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_traversable)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ indices.size()\ -\/\ 1;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!traversability\_function(goals[indices[i]].position,\ goals[indices[i+1]].position))\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ is\_traversable\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00082}00082\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00083}00083\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00084}00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00085}00085\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!is\_traversable)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};\ \textcolor{comment}{//\ Skip\ this\ permutation}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00088}00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00089}00089\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00090}00090\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ path\ cost\ using\ path-\/dependent\ approach}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00091}00091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ total\_cost\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00092}00092\ \ \ \ \ \ \ \ \ current\_pos\ =\ start\_position;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00093}00093\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cost\ from\ start\ to\ first\ goal}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ leg\_cost\ =\ cost\_function(current\_pos,\ goals[indices[0]].position);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00096}00096\ \ \ \ \ \ \ \ \ total\_cost\ +=\ leg\_cost;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00097}00097\ \ \ \ \ \ \ \ \ current\_pos\ =\ goals[indices[0]].position;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00098}00098\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00099}00099\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Cost\ between\ consecutive\ goals}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ cost\_calculation\_valid\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00101}00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ indices.size()\ -\/\ 1;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ leg\_cost\ =\ cost\_function(goals[indices[i]].position,\ goals[indices[i+1]].position);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Handle\ infinite\ costs\ (unreachable)}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::isinf(leg\_cost)\ ||\ std::isnan(leg\_cost))\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cost\_calculation\_valid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00108}00108\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ total\_cost\ +=\ leg\_cost;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Early\ termination\ if\ already\ worse\ than\ best}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (total\_cost\ >\ best\_cost)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cost\_calculation\_valid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00116}00116\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00118}00118\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00119}00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!cost\_calculation\_valid)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Valid\ path}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ valid\_paths\_count++;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00125}00125\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\_valid\_paths}}.push\_back(indices);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e}{path\_costs}}.push\_back(total\_cost);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00127}00127\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ it's\ the\ best}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (total\_cost\ <\ best\_cost)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \ \ \ \ best\_cost\ =\ total\_cost;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ best\_path\ =\ indices;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ New\ best\ path\ found\ with\ cost\ \%.2fm\ (permutation\ \%zu)"{}},\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ total\_cost,\ permutations\_checked);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00135}00135\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00136}00136\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00137}00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ progress\ every\ 24\ permutations\ (20\%)}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00138}00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (permutations\_checked\ \%\ 24\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ progress\ =\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(permutations\_checked)\ /\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(factorial(goals.size())))\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Progress\ \%.1f\%\%\ (\%zu/\%zu\ permutations,\ \%zu\ valid)"{}},\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ progress,\ permutations\_checked,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(factorial(goals.size())),\ valid\_paths\_count);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00143}00143\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00144}00144\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00145}00145\ \ \ \ \ \}\ \textcolor{keywordflow}{while}\ (std::next\_permutation(indices.begin(),\ indices.end()));}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00146}00146\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00147}00147\ \ \ \ \ \textcolor{keyword}{auto}\ end\_time\ =\ std::chrono::high\_resolution\_clock::now();}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00148}00148\ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\_time}}\ =\ std::chrono::duration\_cast<std::chrono::milliseconds>(end\_time\ -\/\ start\_time);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00149}00149\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00150}00150\ \ \ \ \ \textcolor{keywordflow}{if}\ (valid\_paths\_count\ >\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00151}00151\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}{path}}\ =\ best\_path;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}}\ =\ best\_cost;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00153}00153\ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434}{solution\_found}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00154}00154\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00155}00155\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Solution\ found!\ Best\ path\ cost:\ \%.2fm"{}},\ best\_cost);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00156}00156\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Checked\ \%zu\ permutations,\ found\ \%zu\ valid\ paths"{}},\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00157}00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ permutations\_checked,\ valid\_paths\_count);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00158}00158\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Solve\ time:\ \%ld\ ms\ (\%.1f\ μs/permutation)"{}},\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00159}00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\_time}}.count(),\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\_time}}.count()\ *\ 1000.0)\ /\ permutations\_checked);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00161}00161\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ the\ optimal\ path}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00163}00163\ \ \ \ \ \ \ \ \ std::string\ path\_str\ =\ \textcolor{stringliteral}{"{}TSP:\ Optimal\ path:\ START"{}};}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00164}00164\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ idx\ :\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}{path}})\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ path\_str\ +=\ \textcolor{stringliteral}{"{}\ -\/>\ GOAL"{}}\ +\ std::to\_string(idx);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00166}00166\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00167}00167\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(logger\_,\ \textcolor{stringliteral}{"{}\%s"{}},\ path\_str.c\_str());}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00168}00168\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00169}00169\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00170}00170\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ No\ valid\ traversable\ paths\ found!"{}});}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00171}00171\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(logger\_,\ \textcolor{stringliteral}{"{}TSP:\ Checked\ \%zu\ permutations,\ all\ were\ untraversable"{}},\ permutations\_checked);}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00172}00172\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00173}00173\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00174}00174\ \ \ \ \ \textcolor{keywordflow}{return}\ solution;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00175}00175\ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00176}00176\ }
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00177}00177\ \textcolor{comment}{//\ Helper\ function\ to\ calculate\ factorial\ for\ progress\ reporting}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00178}00178\ \textcolor{keywordtype}{size\_t}\ TSPSolver::factorial(\textcolor{keywordtype}{size\_t}\ n)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00179}00179\ \ \ \ \ \textcolor{keywordflow}{if}\ (n\ <=\ 1)\ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00180}00180\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ result\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00181}00181\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 2;\ i\ <=\ n;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00182}00182\ \ \ \ \ \ \ \ \ result\ *=\ i;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00183}00183\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00184}00184\ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{\Hypertarget{tsp__solver_8cpp_source_l00185}00185\ \}}
+
+\end{DoxyCode}

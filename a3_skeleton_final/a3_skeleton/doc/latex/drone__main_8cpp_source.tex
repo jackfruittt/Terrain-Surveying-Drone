@@ -1,0 +1,36 @@
+\doxysection{drone\+\_\+main.\+cpp}
+\hypertarget{drone__main_8cpp_source}{}\label{drone__main_8cpp_source}\index{src/drone\_main.cpp@{src/drone\_main.cpp}}
+\mbox{\hyperlink{drone__main_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{drone__node_8h}{drone\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{sensor__node_8h}{sensor\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00005}\mbox{\hyperlink{drone__main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{00005}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{drone__main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}}(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}**\ argv)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00006}00006\ \ \ \ \ rclcpp::init(argc,\ argv);}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00007}00007\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00008}00008\ \ \ \ \ \textcolor{comment}{//\ Create\ both\ nodes}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00009}00009\ \ \ \ \ \textcolor{keyword}{auto}\ sensor\_node\ =\ std::make\_shared<SensorNode>();}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00010}00010\ \ \ \ \ \textcolor{keyword}{auto}\ drone\_node\ =\ std::make\_shared<DroneNode>();}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00011}00011\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{comment}{//\ Connect\ sensor\ node\ to\ drone\ node}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00013}00013\ \ \ \ \ drone\_node-\/>setSensorNode(sensor\_node);}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00014}00014\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00015}00015\ \ \ \ \ \textcolor{comment}{//\ Create\ executor\ to\ run\ both\ nodes}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00016}00016\ \ \ \ \ rclcpp::executors::MultiThreadedExecutor\ executor;}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00017}00017\ \ \ \ \ executor.add\_node(sensor\_node);}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00018}00018\ \ \ \ \ executor.add\_node(drone\_node);}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00019}00019\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00020}00020\ \ \ \ \ RCLCPP\_INFO(rclcpp::get\_logger(\textcolor{stringliteral}{"{}main"{}}),\ \textcolor{stringliteral}{"{}Starting\ integrated\ drone\ and\ sensor\ nodes..."{}});}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00021}00021\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00022}00022\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00023}00023\ \ \ \ \ \ \ \ \ executor.spin();}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00024}00024\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\&\ e)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(rclcpp::get\_logger(\textcolor{stringliteral}{"{}main"{}}),\ \textcolor{stringliteral}{"{}Exception\ in\ executor:\ \%s"{}},\ e.what());}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00026}00026\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00027}00027\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00028}00028\ \ \ \ \ rclcpp::shutdown();}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00029}00029\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__main_8cpp_source_l00030}00030\ \}}
+
+\end{DoxyCode}

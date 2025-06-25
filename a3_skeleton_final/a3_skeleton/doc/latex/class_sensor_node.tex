@@ -1,0 +1,131 @@
+\doxysection{Sensor\+Node Class Reference}
+\hypertarget{class_sensor_node}{}\label{class_sensor_node}\index{SensorNode@{SensorNode}}
+
+
+\doxylink{class_sensor_node}{Sensor\+Node} class for ROS sensor data handling.  
+
+
+
+
+{\ttfamily \#include $<$sensor\+\_\+node.\+h$>$}
+
+
+
+Inheritance diagram for Sensor\+Node\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{class_sensor_node__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Sensor\+Node\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{class_sensor_node__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}{Sensor\+Node}} ()
+\item 
+\mbox{\hyperlink{class_sensor_node_abb48184568647a2bea118ba367068917}{\texorpdfstring{$\sim$}{\string~}\+Sensor\+Node}} ()
+\item 
+bool \mbox{\hyperlink{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193}{is\+Obstacle\+Detected}} () const
+\item 
+double \mbox{\hyperlink{class_sensor_node_aa26d418a88a854d9099445e699984085}{get\+Elevation\+At\+Point}} (double x, double y) const
+\item 
+double \mbox{\hyperlink{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0}{get\+Gradient\+Magnitude\+At\+Point}} (double x, double y) const
+\item 
+void \mbox{\hyperlink{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54}{get\+Grid\+Map}} (grid\+\_\+map\+::\+Grid\+Map \&map) const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_sensor_node}{Sensor\+Node} class for ROS sensor data handling. 
+
+This class focuses on ROS communication and delegates all mapping operations to the \doxylink{class_terrain_map}{Terrain\+Map} class for logic handling 
+
+Definition at line \mbox{\hyperlink{sensor__node_8h_source_l00014}{14}} of file \mbox{\hyperlink{sensor__node_8h_source}{sensor\+\_\+node.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_sensor_node_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}\index{SensorNode@{SensorNode}!SensorNode@{SensorNode}}
+\index{SensorNode@{SensorNode}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{SensorNode()}{SensorNode()}}
+{\footnotesize\ttfamily \label{class_sensor_node_a95a6344f724de6bf5decb1409afc232f} 
+Sensor\+Node\+::\+Sensor\+Node (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00005}{5}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+\Hypertarget{class_sensor_node_abb48184568647a2bea118ba367068917}\index{SensorNode@{SensorNode}!````~SensorNode@{\texorpdfstring{$\sim$}{\string~}SensorNode}}
+\index{````~SensorNode@{\texorpdfstring{$\sim$}{\string~}SensorNode}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}SensorNode()}{\string~SensorNode()}}
+{\footnotesize\ttfamily \label{class_sensor_node_abb48184568647a2bea118ba367068917} 
+Sensor\+Node\+::\texorpdfstring{$\sim$}{\string~}\+Sensor\+Node (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00026}{26}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_sensor_node_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_sensor_node_aa26d418a88a854d9099445e699984085}\index{SensorNode@{SensorNode}!getElevationAtPoint@{getElevationAtPoint}}
+\index{getElevationAtPoint@{getElevationAtPoint}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{getElevationAtPoint()}{getElevationAtPoint()}}
+{\footnotesize\ttfamily \label{class_sensor_node_aa26d418a88a854d9099445e699984085} 
+double Sensor\+Node\+::get\+Elevation\+At\+Point (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00186}{186}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+\Hypertarget{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0}\index{SensorNode@{SensorNode}!getGradientMagnitudeAtPoint@{getGradientMagnitudeAtPoint}}
+\index{getGradientMagnitudeAtPoint@{getGradientMagnitudeAtPoint}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{getGradientMagnitudeAtPoint()}{getGradientMagnitudeAtPoint()}}
+{\footnotesize\ttfamily \label{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0} 
+double Sensor\+Node\+::get\+Gradient\+Magnitude\+At\+Point (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00190}{190}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+\Hypertarget{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54}\index{SensorNode@{SensorNode}!getGridMap@{getGridMap}}
+\index{getGridMap@{getGridMap}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{getGridMap()}{getGridMap()}}
+{\footnotesize\ttfamily \label{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54} 
+void Sensor\+Node\+::get\+Grid\+Map (\begin{DoxyParamCaption}\item[{grid\+\_\+map\+::\+Grid\+Map \&}]{map}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00194}{194}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+\Hypertarget{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193}\index{SensorNode@{SensorNode}!isObstacleDetected@{isObstacleDetected}}
+\index{isObstacleDetected@{isObstacleDetected}!SensorNode@{SensorNode}}
+\doxysubsubsection{\texorpdfstring{isObstacleDetected()}{isObstacleDetected()}}
+{\footnotesize\ttfamily \label{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193} 
+bool Sensor\+Node\+::is\+Obstacle\+Detected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{sensor__node_8cpp_source_l00182}{182}} of file \mbox{\hyperlink{sensor__node_8cpp_source}{sensor\+\_\+node.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{sensor__node_8h}{sensor\+\_\+node.\+h}}\item 
+src/\mbox{\hyperlink{sensor__node_8cpp}{sensor\+\_\+node.\+cpp}}\end{DoxyCompactItemize}

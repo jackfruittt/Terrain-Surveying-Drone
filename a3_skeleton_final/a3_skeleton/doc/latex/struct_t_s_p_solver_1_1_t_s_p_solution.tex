@@ -1,0 +1,156 @@
+\doxysection{TSPSolver\+::TSPSolution Struct Reference}
+\hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution}{}\label{struct_t_s_p_solver_1_1_t_s_p_solution}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+
+
+{\ttfamily \#include $<$tsp\+\_\+solver.\+h$>$}
+
+
+
+Collaboration diagram for TSPSolver\+::TSPSolution\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{struct_t_s_p_solver_1_1_t_s_p_solution__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a0742f97eabf36560fc0a9bbdc7f7ff98}{TSPSolution}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434}{solution\+\_\+found}}
+\item 
+std\+::vector$<$ size\+\_\+t $>$ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}{path}}
+\item 
+double \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\+\_\+cost}}
+\item 
+std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\+\_\+valid\+\_\+paths}}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e}{path\+\_\+costs}}
+\item 
+std\+::chrono\+::milliseconds \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}{solve\+\_\+time}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00014}{14}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a0742f97eabf36560fc0a9bbdc7f7ff98}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!TSPSolution@{TSPSolution}}
+\index{TSPSolution@{TSPSolution}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{TSPSolution()}{TSPSolution()}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a0742f97eabf36560fc0a9bbdc7f7ff98} 
+TSPSolver\+::\+TSPSolution\+::\+TSPSolution (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00022}{22}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+References \mbox{\hyperlink{tsp__solver_8h_source_l00015}{solution\+\_\+found}}, and \mbox{\hyperlink{tsp__solver_8h_source_l00017}{total\+\_\+cost}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!all\_valid\_paths@{all\_valid\_paths}}
+\index{all\_valid\_paths@{all\_valid\_paths}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{all\_valid\_paths}{all\_valid\_paths}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296} 
+std\+::vector$<$std\+::vector$<$size\+\_\+t$>$ $>$ TSPSolver\+::\+TSPSolution\+::all\+\_\+valid\+\_\+paths}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00018}{18}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}.
+
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!path@{path}}
+\index{path@{path}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{path}{path}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9} 
+std\+::vector$<$size\+\_\+t$>$ TSPSolver\+::\+TSPSolution\+::path}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00016}{16}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}.
+
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!path\_costs@{path\_costs}}
+\index{path\_costs@{path\_costs}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{path\_costs}{path\_costs}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e} 
+std\+::vector$<$double$>$ TSPSolver\+::\+TSPSolution\+::path\+\_\+costs}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00019}{19}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}.
+
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!solution\_found@{solution\_found}}
+\index{solution\_found@{solution\_found}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{solution\_found}{solution\_found}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a6e534a862d836a86da6ac4eb05f47434} 
+bool TSPSolver\+::\+TSPSolution\+::solution\+\_\+found}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00015}{15}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}, and \mbox{\hyperlink{tsp__solver_8h_source_l00022}{TSPSolution()}}.
+
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!solve\_time@{solve\_time}}
+\index{solve\_time@{solve\_time}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{solve\_time}{solve\_time}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a3c5136b0459ebbe812ece431a8778968} 
+std\+::chrono\+::milliseconds TSPSolver\+::\+TSPSolution\+::solve\+\_\+time}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00020}{20}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}.
+
+\Hypertarget{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}\index{TSPSolver::TSPSolution@{TSPSolver::TSPSolution}!total\_cost@{total\_cost}}
+\index{total\_cost@{total\_cost}!TSPSolver::TSPSolution@{TSPSolver::TSPSolution}}
+\doxysubsubsection{\texorpdfstring{total\_cost}{total\_cost}}
+{\footnotesize\ttfamily \label{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47} 
+double TSPSolver\+::\+TSPSolution\+::total\+\_\+cost}
+
+
+
+Definition at line \mbox{\hyperlink{tsp__solver_8h_source_l00017}{17}} of file \mbox{\hyperlink{tsp__solver_8h_source}{tsp\+\_\+solver.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{tsp__solver_8cpp_source_l00010}{TSPSolver\+::solve\+TSP()}}, and \mbox{\hyperlink{tsp__solver_8h_source_l00022}{TSPSolution()}}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{tsp__solver_8h}{tsp\+\_\+solver.\+h}}\end{DoxyCompactItemize}

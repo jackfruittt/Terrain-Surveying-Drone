@@ -1,0 +1,5 @@
+<map id="Controller::abortMission" name="Controller::abortMission">
+<area shape="rect" id="Node000001" title="Abort mission if waypoints are not traversable." alt="" coords="5,5,165,32"/>
+<area shape="rect" id="Node000002" href="$class_controller.html#a98a5028b8184631ddd6aab9b2dea12ca" title="Calculate the distance between two points." alt="" coords="213,5,402,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="165,16,197,16,197,21,165,21"/>
+</map>

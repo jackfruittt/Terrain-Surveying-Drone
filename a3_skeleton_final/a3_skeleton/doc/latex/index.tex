@@ -1,0 +1,324 @@
+\chapter{Project 1\+: Terrain Drone Surveying -\/ ROS2 Autonomous Quadcopter System }
+\hypertarget{index}{}\label{index}\index{Project 1: Terrain Drone Surveying -\/ ROS2 Autonomous Quadcopter System@{Project 1: Terrain Drone Surveying -\/ ROS2 Autonomous Quadcopter System}}
+\hypertarget{index_overview}{}\doxysection{\texorpdfstring{Overview}{Overview}}\label{index_overview}
+This project implements an autonomous quadcopter system for terrain surveying and path planning. The system utilises a quadcopter equipped with sonar and laser sensors to map rough terrain, determine traversable paths, and validate goal reachability for ground vehicle operations.
+
+The quadcopter autonomously flies through provided goals, builds an elevation map using sonar data, detects obstacles with laser scanning, and determines if paths between goals are traversable based on terrain gradients.\hypertarget{index_features}{}\doxysection{\texorpdfstring{Key Features}{Key Features}}\label{index_features}
+
+\begin{DoxyItemize}
+\item {\bfseries{Autonomous Flight Control}}\+: Complete takeoff, flight, and landing control
+\item {\bfseries{Terrain Mapping}}\+: Real-\/time elevation mapping using sonar sensor data
+\item {\bfseries{Obstacle Detection}}\+: 360-\/degree laser scanning for obstacle avoidance
+\item {\bfseries{Path Planning}}\+: Traversability analysis based on terrain gradients
+\item {\bfseries{TSP Optimisation}}\+: Advanced mode with Travelling Salesman Problem solving
+\item {\bfseries{Multi-\/threaded Architecture}}\+: Separate threads for control and sensor processing
+\item {\bfseries{ROS2 Integration}}\+: Full ROS2 component-\/based software engineering framework
+\end{DoxyItemize}\hypertarget{index_architecture}{}\doxysection{\texorpdfstring{System Architecture}{System Architecture}}\label{index_architecture}
+The system consists of two main ROS2 nodes\+:\hypertarget{index_autotoc_md0}{}\doxysubsubsection{\texorpdfstring{Drone\+Node}{Drone\+Node}}\label{index_autotoc_md0}
+
+\begin{DoxyItemize}
+\item Main control node managing ROS related drone operations
+\item Handles mission planning and execution
+\item Processes goals and generates flight paths
+\item Implements obstacle avoidance algorithms
+\end{DoxyItemize}\hypertarget{index_autotoc_md1}{}\doxysubsubsection{\texorpdfstring{Sensor\+Node}{Sensor\+Node}}\label{index_autotoc_md1}
+
+\begin{DoxyItemize}
+\item Dedicated sensor data processing for ROS end
+\item Real-\/time terrain mapping using \doxylink{class_terrain_map}{Terrain\+Map} class
+\item Laser scan processing for obstacle detection
+\item Grid map generation and publishing
+\end{DoxyItemize}\hypertarget{index_components}{}\doxysection{\texorpdfstring{Core Components}{Core Components}}\label{index_components}
+\hypertarget{index_autotoc_md2}{}\doxysubsubsection{\texorpdfstring{Controller Class}{Controller Class}}\label{index_autotoc_md2}
+
+\begin{DoxyItemize}
+\item Handles all drone movement commands (takeoff, landing, flight)
+\item Implements PID-\/style control for goal reaching
+\item Emergency obstacle avoidance with altitude adjustment
+\item Mission state management and progress tracking
+\end{DoxyItemize}\hypertarget{index_autotoc_md3}{}\doxysubsubsection{\texorpdfstring{Terrain\+Map Class}{Terrain\+Map Class}}\label{index_autotoc_md3}
+
+\begin{DoxyItemize}
+\item Incremental 1×1m cell-\/by-\/cell terrain mapping
+\item Drone-\/centric grid expansion during flight
+\item Gradient calculation for traversability analysis
+\item High-\/resolution elevation data storage
+\end{DoxyItemize}\hypertarget{index_autotoc_md4}{}\doxysubsubsection{\texorpdfstring{Waypoint\+Manager Class}{Waypoint\+Manager Class}}\label{index_autotoc_md4}
+
+\begin{DoxyItemize}
+\item Traversability analysis between goals
+\item Waypoint generation with configurable spacing
+\item Gradient-\/based path validation
+\item Visualisation marker management
+\end{DoxyItemize}\hypertarget{index_autotoc_md5}{}\doxysubsubsection{\texorpdfstring{Graph \& TSPSolver Classes (Advanced Mode)}{Graph \& TSPSolver Classes (Advanced Mode)}}\label{index_autotoc_md5}
+
+\begin{DoxyItemize}
+\item Constructs traversability graphs between waypoints
+\item Implements Travelling Salesman Problem solving
+\item Optimises mission paths for efficiency
+\item Supports complex multi-\/goal scenarios
+\end{DoxyItemize}\hypertarget{index_modes}{}\doxysection{\texorpdfstring{Operating Modes}{Operating Modes}}\label{index_modes}
+\hypertarget{index_autotoc_md6}{}\doxysubsubsection{\texorpdfstring{Standard Mode (Pass/\+Credit Level)}{Standard Mode (Pass/\+Credit Level)}}\label{index_autotoc_md6}
+
+\begin{DoxyItemize}
+\item Sequential goal processing
+\item Direct path traversability checking
+\item Basic terrain mapping and analysis
+\item Gradient-\/based goal validation
+\end{DoxyItemize}\hypertarget{index_autotoc_md7}{}\doxysubsubsection{\texorpdfstring{Advanced Mode (Distinction/\+High Distinction Level)}{Advanced Mode (Distinction/\+High Distinction Level)}}\label{index_autotoc_md7}
+
+\begin{DoxyItemize}
+\item TSP-\/optimised path planning
+\item Complex traversability graph construction
+\item Multiple valid path analysis
+\item Advanced visualisation of all possible routes
+\end{DoxyItemize}\hypertarget{index_topics}{}\doxysection{\texorpdfstring{ROS2 Topics Interface}{ROS2 Topics Interface}}\label{index_topics}
+\hypertarget{index_autotoc_md8}{}\doxysubsubsection{\texorpdfstring{Subscribed Topics}{Subscribed Topics}}\label{index_autotoc_md8}
+
+\begin{DoxyItemize}
+\item {\ttfamily /drone/gt\+\_\+odom} -\/ Robot odometry data
+\item {\ttfamily /drone/laserscan} -\/ 360-\/degree laser scan data
+\item {\ttfamily /drone/sonar} -\/ Ground distance measurements
+\item {\ttfamily /mission/goals} -\/ Goal positions for surveying
+\end{DoxyItemize}\hypertarget{index_autotoc_md9}{}\doxysubsubsection{\texorpdfstring{Published Topics}{Published Topics}}\label{index_autotoc_md9}
+
+\begin{DoxyItemize}
+\item {\ttfamily /drone/cmd\+\_\+vel} -\/ Velocity commands for drone control
+\item {\ttfamily /drone/takeoff} -\/ Takeoff command
+\item {\ttfamily /drone/landing} -\/ Landing command
+\item {\ttfamily /grid\+\_\+map} -\/ Real-\/time elevation map
+\item {\ttfamily /mission/path} -\/ Traversable waypoints between goals
+\item {\ttfamily /visualisation\+\_\+marker} -\/ RViz visualisation markers
+\end{DoxyItemize}\hypertarget{index_autotoc_md10}{}\doxysubsubsection{\texorpdfstring{Services}{Services}}\label{index_autotoc_md10}
+
+\begin{DoxyItemize}
+\item {\ttfamily /mission/control} -\/ Start/stop mission control service
+\end{DoxyItemize}\hypertarget{index_algorithms}{}\doxysection{\texorpdfstring{Key Algorithms}{Key Algorithms}}\label{index_algorithms}
+\hypertarget{index_autotoc_md11}{}\doxysubsubsection{\texorpdfstring{Terrain Mapping Algorithm}{Terrain Mapping Algorithm}}\label{index_autotoc_md11}
+
+\begin{DoxyEnumerate}
+\item Process sonar readings at current drone position
+\item Update elevation map with new height data
+\item Calculate gradients around updated regions
+\item Expand map boundaries as drone moves
+\item Maintain high-\/resolution terrain representation
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md12}{}\doxysubsubsection{\texorpdfstring{Obstacle Avoidance Algorithm}{Obstacle Avoidance Algorithm}}\label{index_autotoc_md12}
+
+\begin{DoxyEnumerate}
+\item Continuously monitor 360-\/degree laser scans
+\item Detect obstacles within minimum safe distance (3m)
+\item Execute emergency altitude increase when needed
+\item Resume normal flight when obstacles cleared
+\item Maintain altitude control using sonar feedback
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md13}{}\doxysubsubsection{\texorpdfstring{Traversability Analysis Algorithm}{Traversability Analysis Algorithm}}\label{index_autotoc_md13}
+
+\begin{DoxyEnumerate}
+\item Calculate terrain gradients between waypoints
+\item Compare gradients against maximum threshold (3\% default)
+\item Generate intermediate waypoints at 1m intervals
+\item Validate entire path for ground vehicle access
+\item Abort mission if any segment non-\/traversable
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md14}{}\doxysubsubsection{\texorpdfstring{TSP Optimisation Algorithm (Advanced Mode)}{TSP Optimisation Algorithm (Advanced Mode)}}\label{index_autotoc_md14}
+
+\begin{DoxyEnumerate}
+\item Build complete traversability graph between all goals
+\item Calculate costs for all valid path segments
+\item Apply TSP solver to find optimal visiting order
+\item Generate optimised mission sequence
+\item Visualise all valid paths and highlight optimal route
+\end{DoxyEnumerate}\hypertarget{index_parameters}{}\doxysection{\texorpdfstring{Configuration Parameters}{Configuration Parameters}}\label{index_parameters}
+
+\begin{DoxyItemize}
+\item {\ttfamily road\+\_\+gradient} -\/ Maximum traversable gradient (default\+: 3\%)
+\item {\ttfamily advanced} -\/ Enable advanced TSP mode (default\+: false)
+\item Various control parameters for PID tuning and safety margins
+\end{DoxyItemize}\hypertarget{index_threading}{}\doxysection{\texorpdfstring{Thread Safety}{Thread Safety}}\label{index_threading}
+The system implements comprehensive thread safety using\+:
+\begin{DoxyItemize}
+\item Mutex protection for shared sensor data
+\item Atomic variables for mission state tracking
+\item Condition variables for thread coordination
+\item Lock-\/free communication where possible
+\end{DoxyItemize}\hypertarget{index_testing}{}\doxysection{\texorpdfstring{Unit Testing}{Unit Testing}}\label{index_testing}
+Comprehensive unit tests cover\+:
+\begin{DoxyItemize}
+\item Grid map creation and elevation mapping
+\item Goal traversability detection algorithms
+\item TSP solving with known optimal solutions
+\item Sensor data processing accuracy
+\item \doxylink{class_controller}{Controller} response validation
+\end{DoxyItemize}\hypertarget{index_usage}{}\doxysection{\texorpdfstring{Usage Instructions}{Usage Instructions}}\label{index_usage}
+README\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} On my local setup I have aliases setup as shown below which some images may show. However, the instructions provided onwards are non-\/alias based commands which can be run in substitution to my aliases. I also have shell scripts for publishing.
+
+  
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Launch the RVIZ gui\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ launch\ pfms\ a3\_terrain.launch.py}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+  
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Launch drone node\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ \string~/ros2\_ws/}
+\DoxyCodeLine{ros2\ run\ a3\_skeleton\ drone\_node}
+
+\end{DoxyCode}
+ This will start both the controller and drone node
+\end{DoxyEnumerate}
+
+  
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{For advanced mode\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ run\ a3\_skeleton\ drone\_node\ advanced:=\textcolor{keyword}{true}}
+
+\end{DoxyCode}
+
+\item {\bfseries{Send goals in a separate terminal\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ topic\ pub\ /mission/goals\ geometry\_msgs/msg/PoseArray\ \textcolor{stringliteral}{'\{poses:\ [...]\}'}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+  
+
+These goals can be in JSON or YAML format. Goals also do not need a Z-\/coordinate because of altitude control. If you publish a goal with Z \texorpdfstring{$>$}{>} 2 altitude control will be overridden.
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Start mission in separate terminal\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ service\ call\ /mission/control\ std\_srvs/srv/SetBool\ \textcolor{stringliteral}{'\{data:\ true\}'}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+  
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{To pause/stop mission}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ service\ call\ /mission/control\ std\_srvs/srv/SetBool\ \textcolor{stringliteral}{'data:\ false\}'}}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+For stop mission the drone will traverse to its current goal then stop. It will not stop straight away. \hypertarget{index_testing_process}{}\doxysection{\texorpdfstring{Testing Process}{Testing Process}}\label{index_testing_process}
+Various scripts have been developed to assist in testing drone code and functionality. These scripts can be found in the scripts directory of the package. In the test directory is \doxylink{drone__survey__tests_8cpp}{drone\+\_\+survey\+\_\+tests.\+cpp} which covers all tests. A custom rosbag recorder to record topics specific to task 1. Test bags I used have been deleted to reduce package size however, these can be recreated by running the data collector and the test can be executed as follows\+:
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Launch drone terrain and start drone node\+:}} ~\newline
+ 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ros2\ launch\ pfms\ a3\_terrain.launch.py}
+
+\end{DoxyCode}
+ In another terminal\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ \string~/ros2\_ws/}
+\DoxyCodeLine{ros2\ run\ a3\_skeleton\ drone\_node}
+
+\end{DoxyCode}
+
+\item {\bfseries{Run Data collector script (from ros2\+\_\+ws)\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./src/a3\_skeleton/scripts/collect\_test\_data.sh\ collect}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+  
+
+  
+
+Internally this script will publish goals and start the service for drone navigation. It is a 3 part process in which the ros record will record and stop three times to record three different bags. One for the gridmap test, traversability and TSP. The script will keep running and stop once all bags have been recorded. Note\+: that goals for each bag is different or similar. The bags will be stored in a directory called test\+\_\+data (removed from my submission) but the collector script will make it. If you ever wish to make new bags it will delete the old bags and replace with the new if the script is run again.
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries{Run test script\+:}} For whatever reason 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{colcon\ test\ -\/-\/packages-\/select\ a3\_skeleton\ }
+
+\end{DoxyCode}
+ doesn\textquotesingle{}t work. To run the test file 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cd\ \string~/ros2\_ws/build/a3\_skeleton\ }
+
+\end{DoxyCode}
+ (if package isn\textquotesingle{}t built, build it first) And then\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./drone\_survey\_tests}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}
+
+If the test successfully runs you will see the following output\+:   
+
+Note\+:\texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*} The test script has hard coded paths due to universal pathing options causing issues, resulting in tests being skipped. To overcome this make sure to adjust the paths on lines 124, 214 and 308 of the \doxylink{drone__survey__tests_8cpp}{drone\+\_\+survey\+\_\+tests.\+cpp}\hypertarget{index_visualisation}{}\doxysection{\texorpdfstring{Visualisation}{Visualisation}}\label{index_visualisation}
+The system provides rich visualisation through RViz\+:
+\begin{DoxyItemize}
+\item Real-\/time elevation map display
+\item Traversable waypoint markers (green cylinders)
+\item Non-\/traversable path indicators (red markers)
+\item Drone position and orientation tracking
+\end{DoxyItemize}\hypertarget{index_safety}{}\doxysection{\texorpdfstring{Safety Features}{Safety Features}}\label{index_safety}
+
+\begin{DoxyItemize}
+\item Emergency obstacle avoidance with immediate altitude increase (not functional)
+\item Mission abort capability for non-\/traversable terrain
+\item Safe return-\/to-\/origin functionality
+\item Altitude control with sonar-\/based ground clearance
+\item Comprehensive error handling and recovery
+\end{DoxyItemize}\hypertarget{index_implementation}{}\doxysection{\texorpdfstring{Implementation Details}{Implementation Details}}\label{index_implementation}
+\hypertarget{index_autotoc_md15}{}\doxysubsubsection{\texorpdfstring{Controller Threaded Design}{Controller Threaded Design}}\label{index_autotoc_md15}
+The system employs a threaded architecture for the controller\+:
+\begin{DoxyItemize}
+\item {\bfseries{Main \doxylink{class_controller}{Controller} Thread}}\+: Handles drone control functionality. In theory multiple drones can be controlled and have independent missions.
+\end{DoxyItemize}\hypertarget{index_autotoc_md16}{}\doxysubsubsection{\texorpdfstring{Data Structures}{Data Structures}}\label{index_autotoc_md16}
+
+\begin{DoxyItemize}
+\item STL containers for efficient waypoint storage and manipulation
+\item Thread-\/safe queues for inter-\/thread communication
+\item Grid-\/based elevation maps with dynamic expansion
+\item \doxylink{class_graph}{Graph} structures for TSP path optimisation
+\end{DoxyItemize}\hypertarget{index_autotoc_md17}{}\doxysubsubsection{\texorpdfstring{Error Handling}{Error Handling}}\label{index_autotoc_md17}
+
+\begin{DoxyItemize}
+\item Graceful degradation when goals are unreachable
+\item Automatic return-\/to-\/home on mission failure
+\item Comprehensive logging for debugging and analysis
+\end{DoxyItemize}\hypertarget{index_performance}{}\doxysection{\texorpdfstring{Performance Considerations}{Performance Considerations}}\label{index_performance}
+
+\begin{DoxyItemize}
+\item Real-\/time constraint compliance for safety-\/critical operations
+\item Efficient memory management for large terrain maps
+\item Optimised algorithms for rapid obstacle detection
+\item Scalable TSP solving for varying numbers of goals
+\end{DoxyItemize}\hypertarget{index_authors}{}\doxysection{\texorpdfstring{Authors}{Authors}}\label{index_authors}
+Jackson Russell
+
+\begin{DoxyDate}{Date}
+June 2025 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}

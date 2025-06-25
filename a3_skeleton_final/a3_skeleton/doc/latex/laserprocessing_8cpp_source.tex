@@ -1,0 +1,63 @@
+\doxysection{laserprocessing.\+cpp}
+\hypertarget{laserprocessing_8cpp_source}{}\label{laserprocessing_8cpp_source}\index{src/laserprocessing.cpp@{src/laserprocessing.cpp}}
+\mbox{\hyperlink{laserprocessing_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{laserprocessing_8h}{laserprocessing.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <numeric>}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00006}00006\ \textcolor{keyword}{using\ namespace\ }std;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00008}\mbox{\hyperlink{class_laser_processing_ae0089ac929583ff75e86c4dd4f3c82b3}{00008}}\ \mbox{\hyperlink{class_laser_processing_ae0089ac929583ff75e86c4dd4f3c82b3}{LaserProcessing::LaserProcessing}}(sensor\_msgs::msg::LaserScan\ laserScan):}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00009}00009\ \ \ \ \ laserScan\_(laserScan),\ objectReadings\_(0)}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00010}00010\ \{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00011}00011\ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00015}\mbox{\hyperlink{class_laser_processing_a475ef7bcb5eeaec26e4a409138797531}{00015}}\ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_laser_processing_a475ef7bcb5eeaec26e4a409138797531}{LaserProcessing::countObjectReadings}}()}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00016}00016\ \{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00017}00017\ \ \ \ \ std::unique\_lock<std::mutex>\ lck(mtx);}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00018}00018\ \ \ \ \ sensor\_msgs::msg::LaserScan\ laserScan\ =\ laserScan\_;\ \ \ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00019}00019\ \ \ \ \ lck.unlock();}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00021}00021\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ count=0;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00022}00022\ \ \ \ \ std::vector<double>\ x;std::vector<double>\ y;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00023}00023\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ laserScan\_.ranges.size();\ ++i)}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00024}00024\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((laserScan\_.ranges.at(i)\ >\ laserScan\_.range\_min)\ \&\&}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ (laserScan\_.ranges.at(i)\ <\ laserScan\_.range\_max)\ \&\&}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ !isnan(laserScan\_.ranges.at(i))\ \&\&}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ isfinite(laserScan\_.ranges.at(i))\ \ )\{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00031}00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00032}00032\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00034}00034\ \ \ \ \ objectReadings\_=count;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00035}00035\ \ \ \ \ \textcolor{keywordflow}{return}\ objectReadings\_;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00036}00036\ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00038}\mbox{\hyperlink{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a}{00038}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a}{LaserProcessing::newScan}}(sensor\_msgs::msg::LaserScan\ laserScan)\{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00039}00039\ \ \ \ \ std::unique\_lock<std::mutex>\ lck(mtx);}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00040}00040\ \ \ \ \ laserScan\_\ =\ laserScan;\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00041}00041\ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00044}00044\ geometry\_msgs::msg::Point\ LaserProcessing::polarToCart(\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ index)}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00045}00045\ \{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{float}\ angle\ =\ laserScan\_.angle\_min\ +\ laserScan\_.angle\_increment*index;\textcolor{comment}{//\ +\ angle\_range/2;}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{float}\ range\ =\ laserScan\_.ranges.at(index);}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00048}00048\ \ \ \ \ geometry\_msgs::msg::Point\ cart;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00049}00049\ \ \ \ \ cart.x\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(range*cos(angle));}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00050}00050\ \ \ \ \ cart.y\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(range*sin(angle));}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00051}00051\ \ \ \ \ \textcolor{keywordflow}{return}\ cart;}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00052}00052\ \}}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00054}00054\ \textcolor{keywordtype}{double}\ LaserProcessing::angleConnectingPoints(geometry\_msgs::msg::Point\ p1,\ geometry\_msgs::msg::Point\ p2)}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00055}00055\ \{}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00056}00056\ \ \ \ \ \textcolor{keywordflow}{return}\ atan2(p2.y\ -\/\ p1.y,\ p2.x\ -\/\ p1.x);}
+\DoxyCodeLine{\Hypertarget{laserprocessing_8cpp_source_l00057}00057\ \}}
+
+\end{DoxyCode}

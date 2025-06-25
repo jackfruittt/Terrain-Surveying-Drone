@@ -1,0 +1,90 @@
+\doxysection{terrain\+\_\+map.\+h}
+\hypertarget{terrain__map_8h_source}{}\label{terrain__map_8h_source}\index{include/terrain\_map.h@{include/terrain\_map.h}}
+\mbox{\hyperlink{terrain__map_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ TERRAIN\_MAP\_H}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ TERRAIN\_MAP\_H}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8h}{common.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00007}00007\ \textcolor{comment}{//\ Index\ comparator\ for\ std::set}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00008}\mbox{\hyperlink{struct_index_comparator}{00008}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_index_comparator}{IndexComparator}}\ \{}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00009}\mbox{\hyperlink{struct_index_comparator_a65f436a2250dbbbeb233a4d6b80b07bf}{00009}}\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_index_comparator_a65f436a2250dbbbeb233a4d6b80b07bf}{operator()}}(\textcolor{keyword}{const}\ grid\_map::Index\&\ a,\ \textcolor{keyword}{const}\ grid\_map::Index\&\ b)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00010}00010\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (a(0)\ !=\ b(0))\ \textcolor{keywordflow}{return}\ a(0)\ <\ b(0);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00011}00011\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a(1)\ <\ b(1);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00012}00012\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00013}00013\ \};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00023}\mbox{\hyperlink{class_terrain_map}{00023}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_terrain_map_a2dd1d760f543118ec2bd98105348dd75}{TerrainMap}}\ \{}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00024}00024\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00032}00032\ \ \ \ \ \mbox{\hyperlink{class_terrain_map_a2dd1d760f543118ec2bd98105348dd75}{TerrainMap}}(\textcolor{keyword}{const}\ rclcpp::Logger\&\ logger,\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00033}00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ resolution\ =\ 0.1,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0.1m\ per\ cell\ for\ high\ resolution\ mapping}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ initial\_size\ =\ 1.0);\ \ \ \ \ \textcolor{comment}{//\ Start\ with\ 1x1m}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00035}00035\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00036}\mbox{\hyperlink{class_terrain_map_acc2ef7e04a9c84d7c7193e090803987d}{00036}}\ \ \ \ \ \mbox{\hyperlink{class_terrain_map_acc2ef7e04a9c84d7c7193e090803987d}{\string~TerrainMap}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00038}00038\ \ \ \ \ \textcolor{comment}{//\ Core\ elevation\ mapping}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00039}00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_terrain_map_a56e0970514cfebea150832afff613ad5}{updateElevation}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y,\ \textcolor{keywordtype}{double}\ elevation);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00040}00040\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_terrain_map_a604bb74394013caab47e00f9d1871c40}{getElevationAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00041}00041\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00042}00042\ \ \ \ \ \textcolor{comment}{//\ Gradient\ analysis}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00043}00043\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_terrain_map_ad1c2ba18cd0551db76ddf04f34813a89}{getGradientMagnitudeAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00044}00044\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_a7bf84e5baef3b9177e82a5e94d36ec0c}{calculateGradientsAroundPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y,\ \textcolor{keywordtype}{double}\ radius\ =\ 1.0);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00045}00045\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ Incremental\ map\ expansion}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_abcccf16b8f9eebdb6b10b203f93a48e0}{checkAndExpandForPosition}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00048}00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_terrain_map_ae7a49ba78b5059379de6d2fc4f16174b}{isPositionInMap}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00049}00049\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00050}00050\ \ \ \ \ \textcolor{comment}{//\ Data\ access}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00051}00051\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_a6e2dbce1b6b1634d0354df177b221952}{getGridMap}}(grid\_map::GridMap\&\ map)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00052}00052\ \ \ \ \ grid\_map\_msgs::msg::GridMap\ \mbox{\hyperlink{class_terrain_map_a048f02a382406a979a0ddc6d6b308775}{getGridMapMessage}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00053}00053\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00054}00054\ \ \ \ \ \textcolor{comment}{//\ Visualisation}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00055}00055\ \ \ \ \ visualization\_msgs::msg::MarkerArray\ \mbox{\hyperlink{class_terrain_map_a441e9a1b8e309fdbe606343bf1733fd3}{getGradientArrows}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00056}00056\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00057}00057\ \ \ \ \ \textcolor{comment}{//\ Statistics\ and\ debugging}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00058}00058\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_a56a17e13e2e51f8a0eb0302cad76f6a8}{logStatistics}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00059}00059\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_a2c37fa1a218a4619580380d6458111e1}{logMapBounds}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00060}00060\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_terrain_map_a404a3c4a4e82d249c8f5bde2de8da230}{getActiveAreasCount}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00061}00061\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00062}00062\ \ \ \ \ \textcolor{comment}{//\ Map\ info}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00063}00063\ \ \ \ \ grid\_map::Position\ \mbox{\hyperlink{class_terrain_map_a9f1cf04648915a7c3b41d1f89c551201}{getMapCentre}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00064}00064\ \ \ \ \ grid\_map::Length\ \mbox{\hyperlink{class_terrain_map_a4813792463370d6a86e4841e78a45c07}{getMapSize}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00066}00066\ \ \ \ \ \textcolor{comment}{//\ Configuration\ (kept\ for\ compatibility)}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00067}00067\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_abaf3fc40dd043de310302741c94c08d6}{setExpansionParameters}}(\textcolor{keywordtype}{double}\ margin,\ \textcolor{keywordtype}{double}\ threshold,\ \textcolor{keywordtype}{double}\ max\_size);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00068}00068\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_terrain_map_aa5d96030aaf7ab1194a151660f3c21d9}{setDirectionalExpansion}}(\textcolor{keywordtype}{bool}\ enabled);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00069}00069\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00070}00070\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00071}00071\ \ \ \ \ \textcolor{comment}{//\ Core\ map\ operations}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00072}00072\ \ \ \ \ \textcolor{keywordtype}{void}\ initialiseMap(\textcolor{keywordtype}{double}\ start\_x\ =\ 0.0,\ \textcolor{keywordtype}{double}\ start\_y\ =\ 0.0);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00073}00073\ \ \ \ \ \textcolor{keywordtype}{void}\ expandMapByOneCell(\textcolor{keywordtype}{double}\ target\_x,\ \textcolor{keywordtype}{double}\ target\_y);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00074}00074\ \ \ \ \ \textcolor{keywordtype}{bool}\ needsExpansion(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00075}00075\ \ \ \ \ \textcolor{keywordtype}{void}\ markActiveArea(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y);}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00076}00076\ \ \ \ \ \textcolor{keywordtype}{void}\ calculateGradients();}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00077}00077\ \ \ \ \ \textcolor{keywordtype}{void}\ cleanupActiveAreas();}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00078}00078\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00079}00079\ \ \ \ \ \textcolor{comment}{//\ Thread\ safety}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00080}00080\ \ \ \ \ \textcolor{keyword}{mutable}\ std::mutex\ map\_mutex\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00081}00081\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00082}00082\ \ \ \ \ \textcolor{comment}{//\ Map\ data}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00083}00083\ \ \ \ \ grid\_map::GridMap\ grid\_map\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00084}00084\ \ \ \ \ std::set<grid\_map::Index,\ IndexComparator>\ active\_cells\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00085}00085\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00086}00086\ \ \ \ \ \textcolor{comment}{//\ Logger}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00087}00087\ \ \ \ \ rclcpp::Logger\ logger\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00088}00088\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00089}00089\ \ \ \ \ \textcolor{comment}{//\ Configuration\ parameters}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00090}00090\ \ \ \ \ \textcolor{keywordtype}{double}\ map\_resolution\_;\ \ \ \ \ \textcolor{comment}{//\ Should\ be\ 1.0\ (1m\ per\ cell)}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00091}00091\ \ \ \ \ \textcolor{keywordtype}{double}\ cell\_size\_;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Size\ of\ each\ cell\ in\ metres}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00092}00092\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ Track\ initial\ position\ for\ relative\ expansion}}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00094}00094\ \ \ \ \ \textcolor{keywordtype}{double}\ initial\_x\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00095}00095\ \ \ \ \ \textcolor{keywordtype}{double}\ initial\_y\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00096}00096\ \ \ \ \ \textcolor{keywordtype}{bool}\ map\_initialised\_;}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00097}00097\ \};}
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{terrain__map_8h_source_l00099}00099\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ TERRAIN\_MAP\_H}}
+
+\end{DoxyCode}

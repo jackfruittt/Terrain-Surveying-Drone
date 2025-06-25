@@ -1,0 +1,5 @@
+<map id="Controller::takeoff" name="Controller::takeoff">
+<area shape="rect" id="Node000001" title="Command the drone to take off." alt="" coords="245,5,369,32"/>
+<area shape="rect" id="Node000002" href="$class_controller.html#a6ba57da8b9aef7e4e894e903414e6383" title="Process a vehicle&#39;s command." alt="" coords="5,5,197,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="229,21,197,21,197,16,229,16"/>
+</map>

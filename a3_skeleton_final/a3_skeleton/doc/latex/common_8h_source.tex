@@ -1,0 +1,115 @@
+\doxysection{common.\+h}
+\hypertarget{common_8h_source}{}\label{common_8h_source}\index{include/common.h@{include/common.h}}
+\mbox{\hyperlink{common_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ COMMON\_H}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ COMMON\_H}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <atomic>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <condition\_variable>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <queue>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00008}00008\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <chrono>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <limits>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <cmath>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00017}00017\ \textcolor{preprocessor}{\#include\ <random>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00020}00020\ \textcolor{comment}{//\ ROS2\ core}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00021}00021\ \textcolor{preprocessor}{\#include\ "{}rclcpp/rclcpp.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00023}00023\ \textcolor{comment}{//\ Message\ types}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00024}00024\ \textcolor{preprocessor}{\#include\ "{}nav\_msgs/msg/odometry.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00025}00025\ \textcolor{preprocessor}{\#include\ "{}sensor\_msgs/msg/laser\_scan.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00026}00026\ \textcolor{preprocessor}{\#include\ "{}sensor\_msgs/msg/range.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00027}00027\ \textcolor{preprocessor}{\#include\ "{}geometry\_msgs/msg/pose.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00028}00028\ \textcolor{preprocessor}{\#include\ "{}geometry\_msgs/msg/pose\_array.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00029}00029\ \textcolor{preprocessor}{\#include\ "{}geometry\_msgs/msg/twist.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00030}00030\ \textcolor{preprocessor}{\#include\ "{}geometry\_msgs/msg/point.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00031}00031\ \textcolor{preprocessor}{\#include\ "{}std\_msgs/msg/empty.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00032}00032\ \textcolor{preprocessor}{\#include\ "{}std\_msgs/msg/header.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00033}00033\ \textcolor{preprocessor}{\#include\ "{}std\_msgs/msg/bool.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00034}00034\ \textcolor{preprocessor}{\#include\ "{}visualization\_msgs/msg/marker.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00035}00035\ \textcolor{preprocessor}{\#include\ "{}visualization\_msgs/msg/marker\_array.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00036}00036\ \textcolor{preprocessor}{\#include\ "{}std\_msgs/msg/string.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00038}00038\ \textcolor{comment}{//\ Service\ types}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00039}00039\ \textcolor{preprocessor}{\#include\ "{}std\_srvs/srv/set\_bool.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00040}00040\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00041}00041\ \textcolor{comment}{//\ TF2\ libraries}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00042}00042\ \textcolor{preprocessor}{\#include\ "{}tf2/LinearMath/Quaternion.h"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00043}00043\ \textcolor{preprocessor}{\#include\ "{}tf2/LinearMath/Transform.h"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00044}00044\ \textcolor{preprocessor}{\#include\ "{}tf2\_geometry\_msgs/tf2\_geometry\_msgs.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00045}00045\ \textcolor{preprocessor}{\#include\ "{}tf2\_ros/buffer.h"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00046}00046\ \textcolor{preprocessor}{\#include\ "{}tf2\_ros/transform\_listener.h"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00048}00048\ \textcolor{comment}{//\ Grid\ Map}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00049}00049\ \textcolor{preprocessor}{\#include\ "{}grid\_map\_msgs/msg/grid\_map.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00050}00050\ \textcolor{preprocessor}{\#include\ "{}grid\_map\_ros/grid\_map\_ros.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00052}00052\ \textcolor{comment}{//\ Local}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00053}00053\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{laserprocessing_8h}{laserprocessing.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00058}\mbox{\hyperlink{struct_vehicle_data}{00058}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d}{VehicleData}}\ \{}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00059}\mbox{\hyperlink{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2}{00059}}\ \ \ \ \ std::string\ \mbox{\hyperlink{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2}{id}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00060}\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{00060}}\ \ \ \ \ nav\_msgs::msg::Odometry\ \mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00061}\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{00061}}\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ \mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00062}\mbox{\hyperlink{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634}{00062}}\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ \mbox{\hyperlink{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634}{traversable\_waypoints}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00063}\mbox{\hyperlink{struct_vehicle_data_ae28b0d91773c74cea4eda56c32a67470}{00063}}\ \ \ \ \ geometry\_msgs::msg::Pose\ \mbox{\hyperlink{struct_vehicle_data_ae28b0d91773c74cea4eda56c32a67470}{start\_position}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00064}\mbox{\hyperlink{struct_vehicle_data_a10ff89e2deca1da02c42d8d176a126f5}{00064}}\ \ \ \ \ std::unique\_ptr<LaserProcessing>\ \mbox{\hyperlink{struct_vehicle_data_a10ff89e2deca1da02c42d8d176a126f5}{laser\_processor}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00065}\mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{00065}}\ \ \ \ \ std::atomic<bool>\ \mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\_active}}\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00066}\mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{00066}}\ \ \ \ \ std::atomic<bool>\ \mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{takeoff\_complete}}\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00067}\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{00067}}\ \ \ \ \ std::atomic<int>\ \mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}\{0\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00068}\mbox{\hyperlink{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}{00068}}\ \ \ \ \ std::atomic<double>\ \mbox{\hyperlink{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}{mission\_progress}}\{0.0\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00069}\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{00069}}\ \ \ \ \ std::atomic<bool>\ \mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}}\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00070}\mbox{\hyperlink{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}{00070}}\ \ \ \ \ std::atomic<double>\ \mbox{\hyperlink{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}{obstacle\_avoidance\_start\_altitude}}\{0.0\};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00071}00071\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00072}\mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{00072}}\ \ \ \ \ std::mutex\ \mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\_mutex}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00073}\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{00073}}\ \ \ \ \ std::mutex\ \mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00074}00074\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00075}00075\ \ \ \ \ \textcolor{comment}{//\ Command\ queue\ for\ drone}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00076}\mbox{\hyperlink{struct_vehicle_data_1_1_command}{00076}}\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc}{Command}}\ \{}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00077}\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{00077}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum\ class}\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}\ \{}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00078}\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a8fabc74a4ed0781d663336cbf8c9c53d}{00078}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a8fabc74a4ed0781d663336cbf8c9c53d}{TAKEOFF}},}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00079}\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524}{00079}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524}{LANDING}},}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00080}\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{00080}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{FLYING}},}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00081}\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}{00081}}\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}{STOP}}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00082}00082\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00083}00083\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00084}\mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{00084}}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00085}\mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{00085}}\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{goal}};\ \ \textcolor{comment}{//\ Used\ for\ FLYING}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00086}00086\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Default\ constructor}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00088}\mbox{\hyperlink{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc}{00088}}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc}{Command}}()\ :\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}::\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}{STOP}}),\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{goal}}()\ \{\}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00089}00089\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00090}00090\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Constructor\ with\ only\ type}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00091}\mbox{\hyperlink{struct_vehicle_data_1_1_command_a3e643e287a8d81b8c9a74d2e258956c2}{00091}}\ \ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a3e643e287a8d81b8c9a74d2e258956c2}{Command}}(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}\ t)\ :\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}(t),\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{goal}}()\ \{\}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00092}00092\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00093}00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Constructor\ with\ type\ and\ goal}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00094}\mbox{\hyperlink{struct_vehicle_data_1_1_command_a99b2cfe8552a6dd27f8226f66687e7e6}{00094}}\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a99b2cfe8552a6dd27f8226f66687e7e6}{Command}}(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}\ t,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ g)\ :\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}(t),\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{goal}}(g)\ \{\}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00095}00095\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00096}00096\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00097}\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{00097}}\ \ \ \ \ std::queue<Command>\ \mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00098}\mbox{\hyperlink{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}{00098}}\ \ \ \ \ std::mutex\ \mbox{\hyperlink{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}{queue\_mutex}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00099}\mbox{\hyperlink{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1}{00099}}\ \ \ \ \ std::condition\_variable\ \mbox{\hyperlink{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1}{queue\_cv}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00100}00100\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00101}\mbox{\hyperlink{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d}{00101}}\ \ \ \ \ \mbox{\hyperlink{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d}{VehicleData}}(\textcolor{keyword}{const}\ std::string\&\ id\_)\ :\ \mbox{\hyperlink{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2}{id}}(id\_)\ \{\}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00102}00102\ \};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00103}00103\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00107}\mbox{\hyperlink{struct_map_cell}{00107}}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_map_cell_ac9d1f44c610c384cd07ddf98da719970}{MapCell}}\ \{}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00108}\mbox{\hyperlink{struct_map_cell_a2b1330329b8d371c93607f7d64e11db9}{00108}}\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{struct_map_cell_a2b1330329b8d371c93607f7d64e11db9}{elevation}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00109}\mbox{\hyperlink{struct_map_cell_a54a88bcb2c252d462d6d6ce91d1b1ed7}{00109}}\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_map_cell_a54a88bcb2c252d462d6d6ce91d1b1ed7}{has\_data}};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00110}00110\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00111}\mbox{\hyperlink{struct_map_cell_ac9d1f44c610c384cd07ddf98da719970}{00111}}\ \ \ \ \ \mbox{\hyperlink{struct_map_cell_ac9d1f44c610c384cd07ddf98da719970}{MapCell}}(\textcolor{keywordtype}{double}\ elev\ =\ 0.0,\ \textcolor{keywordtype}{bool}\ has\_d\ =\ \textcolor{keyword}{false})}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00112}00112\ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_map_cell_a2b1330329b8d371c93607f7d64e11db9}{elevation}}(elev),\ \mbox{\hyperlink{struct_map_cell_a54a88bcb2c252d462d6d6ce91d1b1ed7}{has\_data}}(has\_d)\ \{\}}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00113}00113\ \};}
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{common_8h_source_l00115}00115\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ COMMON\_H}}
+
+\end{DoxyCode}

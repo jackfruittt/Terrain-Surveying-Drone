@@ -1,0 +1,22 @@
+\doxysection{sensor\+\_\+main.\+cpp}
+\hypertarget{sensor__main_8cpp_source}{}\label{sensor__main_8cpp_source}\index{src/sensor\_main.cpp@{src/sensor\_main.cpp}}
+\mbox{\hyperlink{sensor__main_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{sensor__node_8h}{sensor\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ <rclcpp/rclcpp.hpp>}}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00004}\mbox{\hyperlink{sensor__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{00004}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{sensor__main_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main}}(\textcolor{keywordtype}{int}\ argc,\ \textcolor{keywordtype}{char}\ *\ argv[])}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00005}00005\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00006}00006\ \ \ \ \ rclcpp::init(argc,\ argv);}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00007}00007\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00008}00008\ \ \ \ \ \textcolor{comment}{//\ Create\ and\ run\ the\ sensor\ processing\ node}}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00009}00009\ \ \ \ \ \textcolor{keyword}{auto}\ node\ =\ std::make\_shared<SensorNode>();}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00010}00010\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00011}00011\ \ \ \ \ rclcpp::spin(node);}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00012}00012\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00013}00013\ \ \ \ \ rclcpp::shutdown();}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00014}00014\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00015}00015\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{sensor__main_8cpp_source_l00016}00016\ \}}
+
+\end{DoxyCode}

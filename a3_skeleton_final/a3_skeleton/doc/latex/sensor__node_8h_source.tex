@@ -1,0 +1,78 @@
+\doxysection{sensor\+\_\+node.\+h}
+\hypertarget{sensor__node_8h_source}{}\label{sensor__node_8h_source}\index{include/sensor\_node.h@{include/sensor\_node.h}}
+\mbox{\hyperlink{sensor__node_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ SENSOR\_NODE\_H}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ SENSOR\_NODE\_H}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8h}{common.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{laserprocessing_8h}{laserprocessing.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{terrain__map_8h}{terrain\_map.h}}"{}}\ \ \textcolor{comment}{//\ Use\ the\ new\ TerrainMap\ class}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00014}\mbox{\hyperlink{class_sensor_node}{00014}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}{SensorNode}}\ :\ \textcolor{keyword}{public}\ rclcpp::Node}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00015}00015\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00016}00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00017}00017\ \ \ \ \ \mbox{\hyperlink{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}{SensorNode}}();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00018}00018\ \ \ \ \ \mbox{\hyperlink{class_sensor_node_abb48184568647a2bea118ba367068917}{\string~SensorNode}}();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00020}00020\ \ \ \ \ \textcolor{comment}{//\ Public\ interface\ methods\ -\/\ delegate\ to\ TerrainMap}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00021}00021\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193}{isObstacleDetected}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00022}00022\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_sensor_node_aa26d418a88a854d9099445e699984085}{getElevationAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00023}00023\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0}{getGradientMagnitudeAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00024}00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54}{getGridMap}}(grid\_map::GridMap\&\ map)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00025}00025\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00026}00026\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00027}00027\ \ \ \ \ \textcolor{comment}{//\ ROS\ callbacks}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00028}00028\ \ \ \ \ \textcolor{keywordtype}{void}\ laserCallback(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::LaserScan>\ msg);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00029}00029\ \ \ \ \ \textcolor{keywordtype}{void}\ sonarCallback(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::Range>\ msg);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00030}00030\ \ \ \ \ \textcolor{keywordtype}{void}\ odomCallback(\textcolor{keyword}{const}\ std::shared\_ptr<nav\_msgs::msg::Odometry>\ msg);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00031}00031\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00032}00032\ \ \ \ \ \textcolor{comment}{//\ Timer\ callbacks}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00033}00033\ \ \ \ \ \textcolor{keywordtype}{void}\ publishMapCallback();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00034}00034\ \ \ \ \ \textcolor{keywordtype}{void}\ publishGradientVisualizationCallback();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00035}00035\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00036}00036\ \ \ \ \ \textcolor{comment}{//\ Sensor\ data\ processing}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00037}00037\ \ \ \ \ \textcolor{keywordtype}{void}\ processLaserData();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00038}00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ isValidSonarReading(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::Range>\ msg)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00039}00039\ \ \ \ \ nav\_msgs::msg::Odometry::SharedPtr\ getLatestOdom()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00040}00040\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00041}00041\ \ \ \ \ \textcolor{comment}{//\ ROS\ communication\ setup}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00042}00042\ \ \ \ \ \textcolor{keywordtype}{void}\ setupSubscribers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00043}00043\ \ \ \ \ \textcolor{keywordtype}{void}\ setupPublishers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00044}00044\ \ \ \ \ \textcolor{keywordtype}{void}\ setupTimers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ Subscribers,\ Publishers,\ and\ Timers}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00047}00047\ \ \ \ \ rclcpp::Subscription<sensor\_msgs::msg::LaserScan>::SharedPtr\ laser\_sub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00048}00048\ \ \ \ \ rclcpp::Subscription<sensor\_msgs::msg::Range>::SharedPtr\ sonar\_sub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00049}00049\ \ \ \ \ rclcpp::Subscription<nav\_msgs::msg::Odometry>::SharedPtr\ odom\_sub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00050}00050\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00051}00051\ \ \ \ \ rclcpp::Publisher<grid\_map\_msgs::msg::GridMap>::SharedPtr\ grid\_map\_pub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00052}00052\ \ \ \ \ rclcpp::Publisher<std\_msgs::msg::Bool>::SharedPtr\ obstacle\_detected\_pub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00053}00053\ \ \ \ \ rclcpp::Publisher<visualization\_msgs::msg::MarkerArray>::SharedPtr\ gradient\_arrows\_pub\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00054}00054\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00055}00055\ \ \ \ \ rclcpp::TimerBase::SharedPtr\ publish\_timer\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00056}00056\ \ \ \ \ rclcpp::TimerBase::SharedPtr\ gradient\_timer\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00057}00057\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00058}00058\ \ \ \ \ \textcolor{comment}{//\ Thread-\/safe\ sensor\ data\ storage}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00059}00059\ \ \ \ \ \textcolor{keyword}{mutable}\ std::mutex\ laser\_mutex\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00060}00060\ \ \ \ \ \textcolor{keyword}{mutable}\ std::mutex\ sonar\_mutex\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00061}00061\ \ \ \ \ \textcolor{keyword}{mutable}\ std::mutex\ odom\_mutex\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00062}00062\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00063}00063\ \ \ \ \ \textcolor{comment}{//\ Latest\ sensor\ readings}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00064}00064\ \ \ \ \ sensor\_msgs::msg::LaserScan::SharedPtr\ latest\_laser\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00065}00065\ \ \ \ \ sensor\_msgs::msg::Range::SharedPtr\ latest\_sonar\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00066}00066\ \ \ \ \ nav\_msgs::msg::Odometry::SharedPtr\ latest\_odom\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00067}00067\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00068}00068\ \ \ \ \ \textcolor{comment}{//\ Obstacle\ detection}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00069}00069\ \ \ \ \ std::atomic<bool>\ obstacle\_detected\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00070}00070\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00071}00071\ \ \ \ \ \textcolor{comment}{//\ Sensor\ processing\ utilities}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00072}00072\ \ \ \ \ std::unique\_ptr<LaserProcessing>\ laser\_processor\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00073}00073\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00074}00074\ \ \ \ \ \textcolor{comment}{//\ Use\ TerrainMap\ for\ all\ mapping\ operations}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00075}00075\ \ \ \ \ std::unique\_ptr<TerrainMap>\ terrain\_map\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00076}00076\ \};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8h_source_l00078}00078\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ SENSOR\_NODE\_H}}
+
+\end{DoxyCode}

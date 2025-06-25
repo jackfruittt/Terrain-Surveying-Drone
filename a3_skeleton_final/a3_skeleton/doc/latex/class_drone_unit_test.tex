@@ -1,0 +1,214 @@
+\doxysection{Drone\+Unit\+Test Class Reference}
+\hypertarget{class_drone_unit_test}{}\label{class_drone_unit_test}\index{DroneUnitTest@{DroneUnitTest}}
+
+
+Inheritance diagram for Drone\+Unit\+Test\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=180pt]{class_drone_unit_test__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Drone\+Unit\+Test\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=180pt]{class_drone_unit_test__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_drone_unit_test_aed77fa3cce90b31a3d8652ac22a12168}{Set\+Up}} () override
+\item 
+void \mbox{\hyperlink{class_drone_unit_test_ab476165860a22948f594c25290447bd0}{Tear\+Down}} () override
+\item 
+bool \mbox{\hyperlink{class_drone_unit_test_a63d986fdc65fc01dc88a19c9034ec3bc}{load\+ROSbag\+Data}} (const std\+::string \&bag\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Load ROSbag data and extract relevant messages. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+rclcpp\+::\+Node\+::\+Shared\+Ptr \mbox{\hyperlink{class_drone_unit_test_a122bd9f58ab2c12e5a27c94f1bfa467a}{node\+\_\+}}
+\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_terrain_map}{Terrain\+Map}} $>$ \mbox{\hyperlink{class_drone_unit_test_af88bf198bc78f4659740044e751d4aec}{terrain\+\_\+map\+\_\+}}
+\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_t_s_p_solver}{TSPSolver}} $>$ \mbox{\hyperlink{class_drone_unit_test_a2b5d87b743962fe8152459e615c4d05f}{tsp\+\_\+solver\+\_\+}}
+\item 
+std\+::vector$<$ nav\+\_\+msgs\+::msg\+::\+Odometry\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{class_drone_unit_test_a29679114c6e9258652e218ee632cfcd7}{odom\+\_\+messages\+\_\+}}
+\item 
+std\+::vector$<$ sensor\+\_\+msgs\+::msg\+::\+Range\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{class_drone_unit_test_afcab2edf8426f1162f4d6c87dcb5b632}{sonar\+\_\+messages\+\_\+}}
+\item 
+std\+::vector$<$ geometry\+\_\+msgs\+::msg\+::\+Pose\+Array\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{class_drone_unit_test_a9538ad2d7ba7d160932d805070d4be70}{goals\+\_\+messages\+\_\+}}
+\item 
+std\+::vector$<$ grid\+\_\+map\+\_\+msgs\+::msg\+::\+Grid\+Map\+::\+Shared\+Ptr $>$ \mbox{\hyperlink{class_drone_unit_test_a7f518b5695acc5d1a1b645cae89a1f58}{map\+\_\+messages\+\_\+}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00017}{17}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_drone_unit_test_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_drone_unit_test_a63d986fdc65fc01dc88a19c9034ec3bc}\index{DroneUnitTest@{DroneUnitTest}!loadROSbagData@{loadROSbagData}}
+\index{loadROSbagData@{loadROSbagData}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{loadROSbagData()}{loadROSbagData()}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a63d986fdc65fc01dc88a19c9034ec3bc} 
+bool Drone\+Unit\+Test\+::load\+ROSbag\+Data (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{bag\+\_\+path}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+Load ROSbag data and extract relevant messages. 
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{45}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00112}{goals\+\_\+messages\+\_\+}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00113}{map\+\_\+messages\+\_\+}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00105}{node\+\_\+}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00110}{odom\+\_\+messages\+\_\+}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00111}{sonar\+\_\+messages\+\_\+}}.
+
+\Hypertarget{class_drone_unit_test_aed77fa3cce90b31a3d8652ac22a12168}\index{DroneUnitTest@{DroneUnitTest}!SetUp@{SetUp}}
+\index{SetUp@{SetUp}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{SetUp()}{SetUp()}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_aed77fa3cce90b31a3d8652ac22a12168} 
+void Drone\+Unit\+Test\+::\+Set\+Up (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00105}{node\+\_\+}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00106}{terrain\+\_\+map\+\_\+}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00107}{tsp\+\_\+solver\+\_\+}}.
+
+\Hypertarget{class_drone_unit_test_ab476165860a22948f594c25290447bd0}\index{DroneUnitTest@{DroneUnitTest}!TearDown@{TearDown}}
+\index{TearDown@{TearDown}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{TearDown()}{TearDown()}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_ab476165860a22948f594c25290447bd0} 
+void Drone\+Unit\+Test\+::\+Tear\+Down (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00035}{35}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00105}{node\+\_\+}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00106}{terrain\+\_\+map\+\_\+}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00107}{tsp\+\_\+solver\+\_\+}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{class_drone_unit_test_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_drone_unit_test_a9538ad2d7ba7d160932d805070d4be70}\index{DroneUnitTest@{DroneUnitTest}!goals\_messages\_@{goals\_messages\_}}
+\index{goals\_messages\_@{goals\_messages\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{goals\_messages\_}{goals\_messages\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a9538ad2d7ba7d160932d805070d4be70} 
+std\+::vector$<$geometry\+\_\+msgs\+::msg\+::\+Pose\+Array\+::\+Shared\+Ptr$>$ Drone\+Unit\+Test\+::goals\+\_\+messages\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00112}{112}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{load\+ROSbag\+Data()}}.
+
+\Hypertarget{class_drone_unit_test_a7f518b5695acc5d1a1b645cae89a1f58}\index{DroneUnitTest@{DroneUnitTest}!map\_messages\_@{map\_messages\_}}
+\index{map\_messages\_@{map\_messages\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{map\_messages\_}{map\_messages\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a7f518b5695acc5d1a1b645cae89a1f58} 
+std\+::vector$<$grid\+\_\+map\+\_\+msgs\+::msg\+::\+Grid\+Map\+::\+Shared\+Ptr$>$ Drone\+Unit\+Test\+::map\+\_\+messages\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00113}{113}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{load\+ROSbag\+Data()}}.
+
+\Hypertarget{class_drone_unit_test_a122bd9f58ab2c12e5a27c94f1bfa467a}\index{DroneUnitTest@{DroneUnitTest}!node\_@{node\_}}
+\index{node\_@{node\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{node\_}{node\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a122bd9f58ab2c12e5a27c94f1bfa467a} 
+rclcpp\+::\+Node\+::\+Shared\+Ptr Drone\+Unit\+Test\+::node\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00105}{105}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{load\+ROSbag\+Data()}}, \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00020}{Set\+Up()}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00035}{Tear\+Down()}}.
+
+\Hypertarget{class_drone_unit_test_a29679114c6e9258652e218ee632cfcd7}\index{DroneUnitTest@{DroneUnitTest}!odom\_messages\_@{odom\_messages\_}}
+\index{odom\_messages\_@{odom\_messages\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{odom\_messages\_}{odom\_messages\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a29679114c6e9258652e218ee632cfcd7} 
+std\+::vector$<$nav\+\_\+msgs\+::msg\+::\+Odometry\+::\+Shared\+Ptr$>$ Drone\+Unit\+Test\+::odom\+\_\+messages\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00110}{110}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{load\+ROSbag\+Data()}}.
+
+\Hypertarget{class_drone_unit_test_afcab2edf8426f1162f4d6c87dcb5b632}\index{DroneUnitTest@{DroneUnitTest}!sonar\_messages\_@{sonar\_messages\_}}
+\index{sonar\_messages\_@{sonar\_messages\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{sonar\_messages\_}{sonar\_messages\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_afcab2edf8426f1162f4d6c87dcb5b632} 
+std\+::vector$<$sensor\+\_\+msgs\+::msg\+::\+Range\+::\+Shared\+Ptr$>$ Drone\+Unit\+Test\+::sonar\+\_\+messages\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00111}{111}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00045}{load\+ROSbag\+Data()}}.
+
+\Hypertarget{class_drone_unit_test_af88bf198bc78f4659740044e751d4aec}\index{DroneUnitTest@{DroneUnitTest}!terrain\_map\_@{terrain\_map\_}}
+\index{terrain\_map\_@{terrain\_map\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{terrain\_map\_}{terrain\_map\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_af88bf198bc78f4659740044e751d4aec} 
+std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_terrain_map}{Terrain\+Map}}$>$ Drone\+Unit\+Test\+::terrain\+\_\+map\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00106}{106}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00020}{Set\+Up()}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00035}{Tear\+Down()}}.
+
+\Hypertarget{class_drone_unit_test_a2b5d87b743962fe8152459e615c4d05f}\index{DroneUnitTest@{DroneUnitTest}!tsp\_solver\_@{tsp\_solver\_}}
+\index{tsp\_solver\_@{tsp\_solver\_}!DroneUnitTest@{DroneUnitTest}}
+\doxysubsubsection{\texorpdfstring{tsp\_solver\_}{tsp\_solver\_}}
+{\footnotesize\ttfamily \label{class_drone_unit_test_a2b5d87b743962fe8152459e615c4d05f} 
+std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_t_s_p_solver}{TSPSolver}}$>$ Drone\+Unit\+Test\+::tsp\+\_\+solver\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00107}{107}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00020}{Set\+Up()}}, and \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00035}{Tear\+Down()}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+test/\mbox{\hyperlink{drone__survey__tests_8cpp}{drone\+\_\+survey\+\_\+tests.\+cpp}}\end{DoxyCompactItemize}

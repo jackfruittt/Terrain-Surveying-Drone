@@ -1,0 +1,113 @@
+\doxysection{test/drone\+\_\+survey\+\_\+tests.cpp File Reference}
+\hypertarget{drone__survey__tests_8cpp}{}\label{drone__survey__tests_8cpp}\index{test/drone\_survey\_tests.cpp@{test/drone\_survey\_tests.cpp}}
+{\ttfamily \#include $<$gtest/gtest.\+h$>$}\newline
+{\ttfamily \#include $<$rclcpp/rclcpp.\+hpp$>$}\newline
+{\ttfamily \#include $<$rosbag2\+\_\+cpp/readers/sequential\+\_\+reader.\+hpp$>$}\newline
+{\ttfamily \#include $<$rosbag2\+\_\+storage/storage\+\_\+options.\+hpp$>$}\newline
+{\ttfamily \#include $<$rosbag2\+\_\+cpp/reader.\+hpp$>$}\newline
+{\ttfamily \#include $<$geometry\+\_\+msgs/msg/pose\+\_\+array.\+hpp$>$}\newline
+{\ttfamily \#include $<$nav\+\_\+msgs/msg/odometry.\+hpp$>$}\newline
+{\ttfamily \#include $<$sensor\+\_\+msgs/msg/range.\+hpp$>$}\newline
+{\ttfamily \#include $<$grid\+\_\+map\+\_\+msgs/msg/grid\+\_\+map.\+hpp$>$}\newline
+{\ttfamily \#include $<$grid\+\_\+map\+\_\+ros/grid\+\_\+map\+\_\+ros.\+hpp$>$}\newline
+{\ttfamily \#include "{}terrain\+\_\+map.\+h"{}}\newline
+{\ttfamily \#include "{}drone\+\_\+node.\+h"{}}\newline
+{\ttfamily \#include "{}tsp\+\_\+solver.\+h"{}}\newline
+{\ttfamily \#include "{}waypoint\+\_\+manager.\+h"{}}\newline
+Include dependency graph for drone\+\_\+survey\+\_\+tests.\+cpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{drone__survey__tests_8cpp__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{drone__survey__tests_8cpp_a2df20e2d0d416ede74f0ffa700e98ba9}{TEST\+\_\+F}} (\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}, Test\+Grid\+Map\+Creation)
+\begin{DoxyCompactList}\small\item\em Test 1\+: Creating Grid\+Map from Sonar and Odometry data. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{drone__survey__tests_8cpp_a0004bffa7f1781c3ec8e7d139b7f7ba7}{TEST\+\_\+F}} (\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}, Test\+Goal\+Traversability)
+\begin{DoxyCompactList}\small\item\em Test 2\+: Goal Traversability Detection. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{drone__survey__tests_8cpp_a4b30b62d977ba9b4bbb27f0d1a56102f}{TEST\+\_\+F}} (\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}, Test\+TSPSolver)
+\begin{DoxyCompactList}\small\item\em Test 3\+: TSP Solver with \doxylink{class_graph}{Graph} Construction (D/\+HD requirement) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{drone__survey__tests_8cpp_a7f878ef3a98f55a99fac339e5866fa7f}{TEST\+\_\+F}} (\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}, Test\+Boundary\+Conditions)
+\begin{DoxyCompactList}\small\item\em Test 4\+: Boundary Conditions and \doxylink{struct_edge}{Edge} Cases. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{drone__survey__tests_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main}} (int argc, char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}argv)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{drone__survey__tests_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{drone__survey__tests_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}\index{drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}!main@{main}}
+\index{main@{main}!drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{drone__survey__tests_8cpp_a3c04138a5bfe5d72780bb7e82a18e627} 
+int main (\begin{DoxyParamCaption}\item[{int}]{argc}{, }\item[{char \texorpdfstring{$\ast$}{*}\texorpdfstring{$\ast$}{*}}]{argv}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00616}{616}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+\Hypertarget{drone__survey__tests_8cpp_a7f878ef3a98f55a99fac339e5866fa7f}\index{drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily \label{drone__survey__tests_8cpp_a7f878ef3a98f55a99fac339e5866fa7f} 
+TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}}]{}{, }\item[{Test\+Boundary\+Conditions}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test 4\+: Boundary Conditions and \doxylink{struct_edge}{Edge} Cases. 
+
+
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00588}{588}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+\Hypertarget{drone__survey__tests_8cpp_a0004bffa7f1781c3ec8e7d139b7f7ba7}\index{drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily \label{drone__survey__tests_8cpp_a0004bffa7f1781c3ec8e7d139b7f7ba7} 
+TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}}]{}{, }\item[{Test\+Goal\+Traversability}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test 2\+: Goal Traversability Detection. 
+
+This test verifies that the system can correctly determine if goals are traversable based on terrain gradients from the elevation map. 
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00212}{212}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+\Hypertarget{drone__survey__tests_8cpp_a2df20e2d0d416ede74f0ffa700e98ba9}\index{drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily \label{drone__survey__tests_8cpp_a2df20e2d0d416ede74f0ffa700e98ba9} 
+TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}}]{}{, }\item[{Test\+Grid\+Map\+Creation}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test 1\+: Creating Grid\+Map from Sonar and Odometry data. 
+
+This test verifies that the terrain mapping system can correctly build an elevation map from recorded sonar and odometry data. 
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00122}{122}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+
+\Hypertarget{drone__survey__tests_8cpp_a4b30b62d977ba9b4bbb27f0d1a56102f}\index{drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!drone\_survey\_tests.cpp@{drone\_survey\_tests.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily \label{drone__survey__tests_8cpp_a4b30b62d977ba9b4bbb27f0d1a56102f} 
+TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_drone_unit_test}{Drone\+Unit\+Test}}}]{}{, }\item[{Test\+TSPSolver}]{}{}\end{DoxyParamCaption})}
+
+
+
+Test 3\+: TSP Solver with \doxylink{class_graph}{Graph} Construction (D/\+HD requirement) 
+
+This test constructs a graph of possible traversable paths between nodes, then uses TSP to determine the shortest path to visit all nodes once. The graph is stored without start/end nodes for reuse. 
+
+Definition at line \mbox{\hyperlink{drone__survey__tests_8cpp_source_l00306}{306}} of file \mbox{\hyperlink{drone__survey__tests_8cpp_source}{drone\+\_\+survey\+\_\+tests.\+cpp}}.
+

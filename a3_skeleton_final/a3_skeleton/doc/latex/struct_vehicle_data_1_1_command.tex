@@ -1,0 +1,166 @@
+\doxysection{Vehicle\+Data\+::Command Struct Reference}
+\hypertarget{struct_vehicle_data_1_1_command}{}\label{struct_vehicle_data_1_1_command}\index{VehicleData::Command@{VehicleData::Command}}
+
+
+{\ttfamily \#include $<$common.\+h$>$}
+
+
+
+Collaboration diagram for Vehicle\+Data\+::Command\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{struct_vehicle_data_1_1_command__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}} \{ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a8fabc74a4ed0781d663336cbf8c9c53d}{TAKEOFF}}
+, \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524}{LANDING}}
+, \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{FLYING}}
+, \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}{STOP}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc}{Command}} ()
+\item 
+\mbox{\hyperlink{struct_vehicle_data_1_1_command_a3e643e287a8d81b8c9a74d2e258956c2}{Command}} (\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}} t)
+\item 
+\mbox{\hyperlink{struct_vehicle_data_1_1_command_a99b2cfe8552a6dd27f8226f66687e7e6}{Command}} (\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}} t, const geometry\+\_\+msgs\+::msg\+::\+Pose \&g)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}} \mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}
+\item 
+geometry\+\_\+msgs\+::msg\+::\+Pose \mbox{\hyperlink{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}{goal}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00076}{76}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{struct_vehicle_data_1_1_command_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}\index{VehicleData::Command@{VehicleData::Command}!Type@{Type}}
+\index{Type@{Type}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{Type}{Type}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581} 
+enum class \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Vehicle\+Data\+::\+Command\+::\+Type}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TAKEOFF@{TAKEOFF}!VehicleData::Command@{VehicleData::Command}}\index{VehicleData::Command@{VehicleData::Command}!TAKEOFF@{TAKEOFF}}}\Hypertarget{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a8fabc74a4ed0781d663336cbf8c9c53d}\label{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a8fabc74a4ed0781d663336cbf8c9c53d} 
+TAKEOFF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LANDING@{LANDING}!VehicleData::Command@{VehicleData::Command}}\index{VehicleData::Command@{VehicleData::Command}!LANDING@{LANDING}}}\Hypertarget{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524}\label{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524} 
+LANDING&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FLYING@{FLYING}!VehicleData::Command@{VehicleData::Command}}\index{VehicleData::Command@{VehicleData::Command}!FLYING@{FLYING}}}\Hypertarget{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}\label{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa} 
+FLYING&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{STOP@{STOP}!VehicleData::Command@{VehicleData::Command}}\index{VehicleData::Command@{VehicleData::Command}!STOP@{STOP}}}\Hypertarget{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}\label{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111} 
+STOP&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00077}{77}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{struct_vehicle_data_1_1_command_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc}\index{VehicleData::Command@{VehicleData::Command}!Command@{Command}}
+\index{Command@{Command}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{Command()}{Command()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_a17b206c8d27308a0f97b51e3275b91cc} 
+Vehicle\+Data\+::\+Command\+::\+Command (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00088}{88}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00085}{goal}}, \mbox{\hyperlink{common_8h_source_l00081}{STOP}}, and \mbox{\hyperlink{common_8h_source_l00084}{type}}.
+
+\Hypertarget{struct_vehicle_data_1_1_command_a3e643e287a8d81b8c9a74d2e258956c2}\index{VehicleData::Command@{VehicleData::Command}!Command@{Command}}
+\index{Command@{Command}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{Command()}{Command()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_a3e643e287a8d81b8c9a74d2e258956c2} 
+Vehicle\+Data\+::\+Command\+::\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}}]{t}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00091}{91}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00085}{goal}}, and \mbox{\hyperlink{common_8h_source_l00084}{type}}.
+
+\Hypertarget{struct_vehicle_data_1_1_command_a99b2cfe8552a6dd27f8226f66687e7e6}\index{VehicleData::Command@{VehicleData::Command}!Command@{Command}}
+\index{Command@{Command}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{Command()}{Command()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_a99b2cfe8552a6dd27f8226f66687e7e6} 
+Vehicle\+Data\+::\+Command\+::\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}}}]{t}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Pose \&}]{g}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00094}{94}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00085}{goal}}, and \mbox{\hyperlink{common_8h_source_l00084}{type}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_vehicle_data_1_1_command_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0}\index{VehicleData::Command@{VehicleData::Command}!goal@{goal}}
+\index{goal@{goal}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{goal}{goal}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_a535b4b5836f0c1f681e9742c3b540ba0} 
+geometry\+\_\+msgs\+::msg\+::\+Pose Vehicle\+Data\+::\+Command\+::goal}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00085}{85}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{common_8h_source_l00088}{Command()}}, \mbox{\hyperlink{common_8h_source_l00091}{Command()}}, \mbox{\hyperlink{common_8h_source_l00094}{Command()}}, and \mbox{\hyperlink{controller_8cpp_source_l00017}{Controller\+::process\+Command()}}.
+
+\Hypertarget{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}\index{VehicleData::Command@{VehicleData::Command}!type@{type}}
+\index{type@{type}!VehicleData::Command@{VehicleData::Command}}
+\doxysubsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7} 
+\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581}{Type}} Vehicle\+Data\+::\+Command\+::type}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00084}{84}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{common_8h_source_l00088}{Command()}}, \mbox{\hyperlink{common_8h_source_l00091}{Command()}}, \mbox{\hyperlink{common_8h_source_l00094}{Command()}}, and \mbox{\hyperlink{controller_8cpp_source_l00017}{Controller\+::process\+Command()}}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{common_8h}{common.\+h}}\end{DoxyCompactItemize}

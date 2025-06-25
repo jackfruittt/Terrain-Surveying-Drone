@@ -1,0 +1,112 @@
+\doxysection{Drone\+Node Class Reference}
+\hypertarget{class_drone_node}{}\label{class_drone_node}\index{DroneNode@{DroneNode}}
+
+
+\doxylink{class_drone_node}{Drone\+Node} class for managing multiple drones.  
+
+
+
+
+{\ttfamily \#include $<$drone\+\_\+node.\+h$>$}
+
+
+
+Inheritance diagram for Drone\+Node\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{class_drone_node__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Drone\+Node\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=172pt]{class_drone_node__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_drone_node_a11cf944a3da88eb88143875033ceba1d}{Drone\+Node}} ()
+\begin{DoxyCompactList}\small\item\em Constructor for \doxylink{class_drone_node}{Drone\+Node}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_drone_node_a2f6bd84349e146e44e2b3d2c19e99d3e}{\texorpdfstring{$\sim$}{\string~}\+Drone\+Node}} ()
+\begin{DoxyCompactList}\small\item\em Destructor for \doxylink{class_drone_node}{Drone\+Node}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_drone_node_aa500d3ccd7a1b50601d29eb1e8b84fe7}{set\+Sensor\+Node}} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_sensor_node}{Sensor\+Node}} $>$ sensor\+\_\+node)
+\begin{DoxyCompactList}\small\item\em Method to set sensor node reference. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_drone_node}{Drone\+Node} class for managing multiple drones. 
+
+This class implements a threaded controller that can manage multiple drones for terrain surveying. 
+
+Definition at line \mbox{\hyperlink{drone__node_8h_source_l00019}{19}} of file \mbox{\hyperlink{drone__node_8h_source}{drone\+\_\+node.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_drone_node_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_drone_node_a11cf944a3da88eb88143875033ceba1d}\index{DroneNode@{DroneNode}!DroneNode@{DroneNode}}
+\index{DroneNode@{DroneNode}!DroneNode@{DroneNode}}
+\doxysubsubsection{\texorpdfstring{DroneNode()}{DroneNode()}}
+{\footnotesize\ttfamily \label{class_drone_node_a11cf944a3da88eb88143875033ceba1d} 
+Drone\+Node\+::\+Drone\+Node (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxylink{class_drone_node}{Drone\+Node}. 
+
+Initialises publishers, subscribers, services, and starts the controller thread 
+
+Definition at line \mbox{\hyperlink{drone__node_8cpp_source_l00007}{7}} of file \mbox{\hyperlink{drone__node_8cpp_source}{drone\+\_\+node.\+cpp}}.
+
+\Hypertarget{class_drone_node_a2f6bd84349e146e44e2b3d2c19e99d3e}\index{DroneNode@{DroneNode}!````~DroneNode@{\texorpdfstring{$\sim$}{\string~}DroneNode}}
+\index{````~DroneNode@{\texorpdfstring{$\sim$}{\string~}DroneNode}!DroneNode@{DroneNode}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}DroneNode()}{\string~DroneNode()}}
+{\footnotesize\ttfamily \label{class_drone_node_a2f6bd84349e146e44e2b3d2c19e99d3e} 
+Drone\+Node\+::\texorpdfstring{$\sim$}{\string~}\+Drone\+Node (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destructor for \doxylink{class_drone_node}{Drone\+Node}. 
+
+Ensures proper cleanup, especially for threads 
+
+Definition at line \mbox{\hyperlink{drone__node_8cpp_source_l00129}{129}} of file \mbox{\hyperlink{drone__node_8cpp_source}{drone\+\_\+node.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_drone_node_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_drone_node_aa500d3ccd7a1b50601d29eb1e8b84fe7}\index{DroneNode@{DroneNode}!setSensorNode@{setSensorNode}}
+\index{setSensorNode@{setSensorNode}!DroneNode@{DroneNode}}
+\doxysubsubsection{\texorpdfstring{setSensorNode()}{setSensorNode()}}
+{\footnotesize\ttfamily \label{class_drone_node_aa500d3ccd7a1b50601d29eb1e8b84fe7} 
+void Drone\+Node\+::set\+Sensor\+Node (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_sensor_node}{Sensor\+Node}} $>$}]{sensor\+\_\+node}{}\end{DoxyParamCaption})}
+
+
+
+Method to set sensor node reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sensor\+\_\+node} & Shared pointer to the sensor node \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{drone__node_8cpp_source_l00719}{719}} of file \mbox{\hyperlink{drone__node_8cpp_source}{drone\+\_\+node.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{drone__node_8h}{drone\+\_\+node.\+h}}\item 
+src/\mbox{\hyperlink{drone__node_8cpp}{drone\+\_\+node.\+cpp}}\end{DoxyCompactItemize}

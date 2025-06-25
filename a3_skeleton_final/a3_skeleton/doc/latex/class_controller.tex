@@ -1,0 +1,476 @@
+\doxysection{Controller Class Reference}
+\hypertarget{class_controller}{}\label{class_controller}\index{Controller@{Controller}}
+
+
+{\ttfamily \#include $<$controller.\+h$>$}
+
+
+
+Collaboration diagram for Controller\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=235pt]{class_controller__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_controller_a3ee84c4beb2734e1e90382f2f9c1047b}{Controller}} (const rclcpp\+::\+Publisher$<$ geometry\+\_\+msgs\+::msg\+::\+Twist $>$\+::\+Shared\+Ptr \&cmd\+\_\+vel\+\_\+pub, const rclcpp\+::\+Publisher$<$ std\+\_\+msgs\+::msg\+::\+Empty $>$\+::\+Shared\+Ptr \&takeoff\+\_\+pub, const rclcpp\+::\+Publisher$<$ std\+\_\+msgs\+::msg\+::\+Empty $>$\+::\+Shared\+Ptr \&land\+\_\+pub, const rclcpp\+::\+Logger \&logger)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxylink{class_controller}{Controller}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_a6ba57da8b9aef7e4e894e903414e6383}{process\+Command}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle, const \mbox{\hyperlink{struct_vehicle_data_1_1_command}{Vehicle\+Data\+::\+Command}} \&command)
+\begin{DoxyCompactList}\small\item\em Process a vehicle\textquotesingle{}s command. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_a80ae4d8c4f5f5d8691949ac6bc72a2bc}{start\+Mission}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle)
+\begin{DoxyCompactList}\small\item\em Start a mission for a vehicle. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_a820ca479686e960d1379f82dad460441}{stop\+Mission}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle)
+\begin{DoxyCompactList}\small\item\em Stop the mission for a vehicle. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_a68cafe80a04b33fb2a6abd3ada2c6e47}{takeoff}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle)
+\begin{DoxyCompactList}\small\item\em Command the drone to take off. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_ad88269eeca9c75ba490895d693a08260}{land}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle)
+\begin{DoxyCompactList}\small\item\em Command the drone to land. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_a7db93fa14ecab45aff1cd799ac922411}{fly\+To\+Goal}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle, const geometry\+\_\+msgs\+::msg\+::\+Pose \&goal)
+\begin{DoxyCompactList}\small\item\em Fly to a goal position. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_controller_a98a5028b8184631ddd6aab9b2dea12ca}{calculate\+Distance}} (const geometry\+\_\+msgs\+::msg\+::\+Point \&p1, const geometry\+\_\+msgs\+::msg\+::\+Point \&p2)
+\begin{DoxyCompactList}\small\item\em Calculate the distance between two points. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_ac12e40ab614fa55783149718a22ce68e}{abort\+Mission}} (\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&vehicle)
+\begin{DoxyCompactList}\small\item\em Abort mission if waypoints are not traversable. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_aa02ddd33030d8be14cb453655c08cba0}{check\+For\+Obstacles}} (const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&laser\+\_\+scan)
+\begin{DoxyCompactList}\small\item\em Check for obstacles using laser data (360-\/degree emergency detection) \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_controller_a4ab193fb724ed8e6228b8628cc377ba7}{calculate\+Altitude\+Adjustment}} (double current\+\_\+altitude, double sonar\+\_\+range)
+\begin{DoxyCompactList}\small\item\em Calculate altitude adjustment based on sonar reading. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_controller_aa76d7b14d14ab907980345054bf25064}{set\+Altitude\+Adjustment}} (double adjustment)
+\begin{DoxyCompactList}\small\item\em Set the current altitude adjustment Used to maintain altitude control during flight. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_a7e099c78a6a80248e4b7b61635c8d037}{check\+Obstacles\+In\+Direction}} (const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&laser\+\_\+scan, const geometry\+\_\+msgs\+::msg\+::\+Point \&current\+\_\+pos, const geometry\+\_\+msgs\+::msg\+::\+Point \&target\+\_\+pos)
+\begin{DoxyCompactList}\small\item\em Check for obstacles in the direction of travel. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_controller_ad9caf514c18493600e2d3efbf5fa7818}{is\+Obstacle\+Clearance\+Achieved}} (const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&laser\+\_\+scan, const geometry\+\_\+msgs\+::msg\+::\+Point \&current\+\_\+pos, const geometry\+\_\+msgs\+::msg\+::\+Point \&target\+\_\+pos, double clearance\+\_\+distance=4.\+0)
+\begin{DoxyCompactList}\small\item\em Check if obstacle clearance has been achieved. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{controller_8h_source_l00006}{6}} of file \mbox{\hyperlink{controller_8h_source}{controller.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_controller_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_controller_a3ee84c4beb2734e1e90382f2f9c1047b}\index{Controller@{Controller}!Controller@{Controller}}
+\index{Controller@{Controller}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{Controller()}{Controller()}}
+{\footnotesize\ttfamily \label{class_controller_a3ee84c4beb2734e1e90382f2f9c1047b} 
+Controller\+::\+Controller (\begin{DoxyParamCaption}\item[{const rclcpp\+::\+Publisher$<$ geometry\+\_\+msgs\+::msg\+::\+Twist $>$\+::\+Shared\+Ptr \&}]{cmd\+\_\+vel\+\_\+pub}{, }\item[{const rclcpp\+::\+Publisher$<$ std\+\_\+msgs\+::msg\+::\+Empty $>$\+::\+Shared\+Ptr \&}]{takeoff\+\_\+pub}{, }\item[{const rclcpp\+::\+Publisher$<$ std\+\_\+msgs\+::msg\+::\+Empty $>$\+::\+Shared\+Ptr \&}]{land\+\_\+pub}{, }\item[{const rclcpp\+::\+Logger \&}]{logger}{}\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxylink{class_controller}{Controller}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmd\+\_\+vel\+\_\+pub} & Publisher for velocity commands \\
+\hline
+{\em takeoff\+\_\+pub} & Publisher for takeoff commands \\
+\hline
+{\em land\+\_\+pub} & Publisher for landing commands \\
+\hline
+{\em logger} & Logger to use \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00005}{5}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_controller_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_controller_ac12e40ab614fa55783149718a22ce68e}\index{Controller@{Controller}!abortMission@{abortMission}}
+\index{abortMission@{abortMission}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{abortMission()}{abortMission()}}
+{\footnotesize\ttfamily \label{class_controller_ac12e40ab614fa55783149718a22ce68e} 
+void Controller\+::abort\+Mission (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{}\end{DoxyParamCaption})}
+
+
+
+Abort mission if waypoints are not traversable. 
+
+Computes the Euclidean distance between two positions 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00322}{322}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{controller_8cpp_source_l00544}{calculate\+Distance()}}, \mbox{\hyperlink{common_8h_source_l00097}{Vehicle\+Data\+::command\+\_\+queue}}, \mbox{\hyperlink{common_8h_source_l00060}{Vehicle\+Data\+::current\+\_\+odom}}, \mbox{\hyperlink{common_8h_source_l00080}{Vehicle\+Data\+::\+Command\+::\+FLYING}}, \mbox{\hyperlink{common_8h_source_l00059}{Vehicle\+Data\+::id}}, \mbox{\hyperlink{common_8h_source_l00079}{Vehicle\+Data\+::\+Command\+::\+LANDING}}, \mbox{\hyperlink{common_8h_source_l00065}{Vehicle\+Data\+::mission\+\_\+active}}, \mbox{\hyperlink{common_8h_source_l00072}{Vehicle\+Data\+::odom\+\_\+mutex}}, \mbox{\hyperlink{common_8h_source_l00099}{Vehicle\+Data\+::queue\+\_\+cv}}, \mbox{\hyperlink{common_8h_source_l00098}{Vehicle\+Data\+::queue\+\_\+mutex}}, and \mbox{\hyperlink{common_8h_source_l00063}{Vehicle\+Data\+::start\+\_\+position}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_controller_ac12e40ab614fa55783149718a22ce68e_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_controller_a4ab193fb724ed8e6228b8628cc377ba7}\index{Controller@{Controller}!calculateAltitudeAdjustment@{calculateAltitudeAdjustment}}
+\index{calculateAltitudeAdjustment@{calculateAltitudeAdjustment}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{calculateAltitudeAdjustment()}{calculateAltitudeAdjustment()}}
+{\footnotesize\ttfamily \label{class_controller_a4ab193fb724ed8e6228b8628cc377ba7} 
+double Controller\+::calculate\+Altitude\+Adjustment (\begin{DoxyParamCaption}\item[{double}]{current\+\_\+altitude}{, }\item[{double}]{sonar\+\_\+range}{}\end{DoxyParamCaption})}
+
+
+
+Calculate altitude adjustment based on sonar reading. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em current\+\_\+altitude} & Current drone altitude \\
+\hline
+{\em sonar\+\_\+range} & Distance to ground from sonar \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Vertical velocity adjustment 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00432}{432}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+\Hypertarget{class_controller_a98a5028b8184631ddd6aab9b2dea12ca}\index{Controller@{Controller}!calculateDistance@{calculateDistance}}
+\index{calculateDistance@{calculateDistance}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{calculateDistance()}{calculateDistance()}}
+{\footnotesize\ttfamily \label{class_controller_a98a5028b8184631ddd6aab9b2dea12ca} 
+double Controller\+::calculate\+Distance (\begin{DoxyParamCaption}\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{p1}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{p2}{}\end{DoxyParamCaption})}
+
+
+
+Calculate the distance between two points. 
+
+Computes the Euclidean distance between two positions 
+\begin{DoxyParams}{Parameters}
+{\em p1} & First position \\
+\hline
+{\em p2} & Second position \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Distance in meters 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00544}{544}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{abort\+Mission()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_controller_a98a5028b8184631ddd6aab9b2dea12ca_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_controller_aa02ddd33030d8be14cb453655c08cba0}\index{Controller@{Controller}!checkForObstacles@{checkForObstacles}}
+\index{checkForObstacles@{checkForObstacles}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{checkForObstacles()}{checkForObstacles()}}
+{\footnotesize\ttfamily \label{class_controller_aa02ddd33030d8be14cb453655c08cba0} 
+bool Controller\+::check\+For\+Obstacles (\begin{DoxyParamCaption}\item[{const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&}]{laser\+\_\+scan}{}\end{DoxyParamCaption})}
+
+
+
+Check for obstacles using laser data (360-\/degree emergency detection) 
+
+Scans all laser readings for very close obstacles that require immediate emergency ascent regardless of travel direction.
+
+
+\begin{DoxyParams}{Parameters}
+{\em laser\+\_\+scan} & Latest laser scan data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if critical obstacle detected requiring emergency ascent, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00364}{364}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+\Hypertarget{class_controller_a7e099c78a6a80248e4b7b61635c8d037}\index{Controller@{Controller}!checkObstaclesInDirection@{checkObstaclesInDirection}}
+\index{checkObstaclesInDirection@{checkObstaclesInDirection}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{checkObstaclesInDirection()}{checkObstaclesInDirection()}}
+{\footnotesize\ttfamily \label{class_controller_a7e099c78a6a80248e4b7b61635c8d037} 
+bool Controller\+::check\+Obstacles\+In\+Direction (\begin{DoxyParamCaption}\item[{const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&}]{laser\+\_\+scan}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{current\+\_\+pos}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{target\+\_\+pos}{}\end{DoxyParamCaption})}
+
+
+
+Check for obstacles in the direction of travel. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em laser\+\_\+scan} & Latest laser scan data \\
+\hline
+{\em current\+\_\+pos} & Current drone position \\
+\hline
+{\em target\+\_\+pos} & Target position we\textquotesingle{}re navigating to \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if obstacle detected in travel direction, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00554}{554}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+\Hypertarget{class_controller_a7db93fa14ecab45aff1cd799ac922411}\index{Controller@{Controller}!flyToGoal@{flyToGoal}}
+\index{flyToGoal@{flyToGoal}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{flyToGoal()}{flyToGoal()}}
+{\footnotesize\ttfamily \label{class_controller_a7db93fa14ecab45aff1cd799ac922411} 
+bool Controller\+::fly\+To\+Goal (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Pose \&}]{goal}{}\end{DoxyParamCaption})}
+
+
+
+Fly to a goal position. 
+
+Controls the drone to reach a specified goal position 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+{\em goal} & The goal position to reach \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if goal reached successfully, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00192}{192}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00060}{Vehicle\+Data\+::current\+\_\+odom}}, \mbox{\hyperlink{common_8h_source_l00059}{Vehicle\+Data\+::id}}, \mbox{\hyperlink{common_8h_source_l00065}{Vehicle\+Data\+::mission\+\_\+active}}, and \mbox{\hyperlink{common_8h_source_l00072}{Vehicle\+Data\+::odom\+\_\+mutex}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00017}{process\+Command()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_controller_a7db93fa14ecab45aff1cd799ac922411_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_controller_ad9caf514c18493600e2d3efbf5fa7818}\index{Controller@{Controller}!isObstacleClearanceAchieved@{isObstacleClearanceAchieved}}
+\index{isObstacleClearanceAchieved@{isObstacleClearanceAchieved}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{isObstacleClearanceAchieved()}{isObstacleClearanceAchieved()}}
+{\footnotesize\ttfamily \label{class_controller_ad9caf514c18493600e2d3efbf5fa7818} 
+bool Controller\+::is\+Obstacle\+Clearance\+Achieved (\begin{DoxyParamCaption}\item[{const sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan\+::\+Shared\+Ptr \&}]{laser\+\_\+scan}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{current\+\_\+pos}{, }\item[{const geometry\+\_\+msgs\+::msg\+::\+Point \&}]{target\+\_\+pos}{, }\item[{double}]{clearance\+\_\+distance}{ = {\ttfamily 4.0}}\end{DoxyParamCaption})}
+
+
+
+Check if obstacle clearance has been achieved. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em laser\+\_\+scan} & Latest laser scan data \\
+\hline
+{\em current\+\_\+pos} & Current drone position \\
+\hline
+{\em target\+\_\+pos} & Target position we\textquotesingle{}re navigating to \\
+\hline
+{\em clearance\+\_\+distance} & Minimum clearance distance required \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if path is clear, false if obstacles still present 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00632}{632}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+\Hypertarget{class_controller_ad88269eeca9c75ba490895d693a08260}\index{Controller@{Controller}!land@{land}}
+\index{land@{land}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{land()}{land()}}
+{\footnotesize\ttfamily \label{class_controller_ad88269eeca9c75ba490895d693a08260} 
+bool Controller\+::land (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{}\end{DoxyParamCaption})}
+
+
+
+Command the drone to land. 
+
+Sends the drone landing command 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if landing command sent successfully 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00180}{180}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00059}{Vehicle\+Data\+::id}}, and \mbox{\hyperlink{common_8h_source_l00066}{Vehicle\+Data\+::takeoff\+\_\+complete}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00017}{process\+Command()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{class_controller_ad88269eeca9c75ba490895d693a08260_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_controller_a6ba57da8b9aef7e4e894e903414e6383}\index{Controller@{Controller}!processCommand@{processCommand}}
+\index{processCommand@{processCommand}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{processCommand()}{processCommand()}}
+{\footnotesize\ttfamily \label{class_controller_a6ba57da8b9aef7e4e894e903414e6383} 
+bool Controller\+::process\+Command (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{, }\item[{const \mbox{\hyperlink{struct_vehicle_data_1_1_command}{Vehicle\+Data\+::\+Command}} \&}]{command}{}\end{DoxyParamCaption})}
+
+
+
+Process a vehicle\textquotesingle{}s command. 
+
+Executes a command from the vehicle\textquotesingle{}s queue 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+{\em command} & Command to execute \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if command executed successfully, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00017}{17}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00080}{Vehicle\+Data\+::\+Command\+::\+FLYING}}, \mbox{\hyperlink{controller_8cpp_source_l00192}{fly\+To\+Goal()}}, \mbox{\hyperlink{common_8h_source_l00085}{Vehicle\+Data\+::\+Command\+::goal}}, \mbox{\hyperlink{common_8h_source_l00059}{Vehicle\+Data\+::id}}, \mbox{\hyperlink{controller_8cpp_source_l00180}{land()}}, \mbox{\hyperlink{common_8h_source_l00079}{Vehicle\+Data\+::\+Command\+::\+LANDING}}, \mbox{\hyperlink{common_8h_source_l00065}{Vehicle\+Data\+::mission\+\_\+active}}, \mbox{\hyperlink{common_8h_source_l00081}{Vehicle\+Data\+::\+Command\+::\+STOP}}, \mbox{\hyperlink{common_8h_source_l00078}{Vehicle\+Data\+::\+Command\+::\+TAKEOFF}}, \mbox{\hyperlink{controller_8cpp_source_l00105}{takeoff()}}, and \mbox{\hyperlink{common_8h_source_l00084}{Vehicle\+Data\+::\+Command\+::type}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_controller_a6ba57da8b9aef7e4e894e903414e6383_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_controller_aa76d7b14d14ab907980345054bf25064}\index{Controller@{Controller}!setAltitudeAdjustment@{setAltitudeAdjustment}}
+\index{setAltitudeAdjustment@{setAltitudeAdjustment}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{setAltitudeAdjustment()}{setAltitudeAdjustment()}}
+{\footnotesize\ttfamily \label{class_controller_aa76d7b14d14ab907980345054bf25064} 
+void Controller\+::set\+Altitude\+Adjustment (\begin{DoxyParamCaption}\item[{double}]{adjustment}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the current altitude adjustment Used to maintain altitude control during flight. 
+
+
+
+Definition at line \mbox{\hyperlink{controller_8h_source_l00118}{118}} of file \mbox{\hyperlink{controller_8h_source}{controller.\+h}}.
+
+\Hypertarget{class_controller_a80ae4d8c4f5f5d8691949ac6bc72a2bc}\index{Controller@{Controller}!startMission@{startMission}}
+\index{startMission@{startMission}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{startMission()}{startMission()}}
+{\footnotesize\ttfamily \label{class_controller_a80ae4d8c4f5f5d8691949ac6bc72a2bc} 
+void Controller\+::start\+Mission (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{}\end{DoxyParamCaption})}
+
+
+
+Start a mission for a vehicle. 
+
+Creates and queues commands for a complete mission 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00045}{45}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00097}{Vehicle\+Data\+::command\+\_\+queue}}, \mbox{\hyperlink{common_8h_source_l00067}{Vehicle\+Data\+::current\+\_\+goal\+\_\+index}}, \mbox{\hyperlink{common_8h_source_l00080}{Vehicle\+Data\+::\+Command\+::\+FLYING}}, \mbox{\hyperlink{common_8h_source_l00061}{Vehicle\+Data\+::goals}}, \mbox{\hyperlink{common_8h_source_l00073}{Vehicle\+Data\+::goals\+\_\+mutex}}, \mbox{\hyperlink{common_8h_source_l00065}{Vehicle\+Data\+::mission\+\_\+active}}, \mbox{\hyperlink{common_8h_source_l00068}{Vehicle\+Data\+::mission\+\_\+progress}}, \mbox{\hyperlink{common_8h_source_l00099}{Vehicle\+Data\+::queue\+\_\+cv}}, \mbox{\hyperlink{common_8h_source_l00098}{Vehicle\+Data\+::queue\+\_\+mutex}}, \mbox{\hyperlink{common_8h_source_l00078}{Vehicle\+Data\+::\+Command\+::\+TAKEOFF}}, and \mbox{\hyperlink{common_8h_source_l00066}{Vehicle\+Data\+::takeoff\+\_\+complete}}.
+
+\Hypertarget{class_controller_a820ca479686e960d1379f82dad460441}\index{Controller@{Controller}!stopMission@{stopMission}}
+\index{stopMission@{stopMission}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{stopMission()}{stopMission()}}
+{\footnotesize\ttfamily \label{class_controller_a820ca479686e960d1379f82dad460441} 
+void Controller\+::stop\+Mission (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{}\end{DoxyParamCaption})}
+
+
+
+Stop the mission for a vehicle. 
+
+Clears command queue and adds a STOP command 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00086}{86}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00097}{Vehicle\+Data\+::command\+\_\+queue}}, \mbox{\hyperlink{common_8h_source_l00079}{Vehicle\+Data\+::\+Command\+::\+LANDING}}, \mbox{\hyperlink{common_8h_source_l00099}{Vehicle\+Data\+::queue\+\_\+cv}}, \mbox{\hyperlink{common_8h_source_l00098}{Vehicle\+Data\+::queue\+\_\+mutex}}, and \mbox{\hyperlink{common_8h_source_l00081}{Vehicle\+Data\+::\+Command\+::\+STOP}}.
+
+\Hypertarget{class_controller_a68cafe80a04b33fb2a6abd3ada2c6e47}\index{Controller@{Controller}!takeoff@{takeoff}}
+\index{takeoff@{takeoff}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{takeoff()}{takeoff()}}
+{\footnotesize\ttfamily \label{class_controller_a68cafe80a04b33fb2a6abd3ada2c6e47} 
+bool Controller\+::takeoff (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_vehicle_data}{Vehicle\+Data}} \&}]{vehicle}{}\end{DoxyParamCaption})}
+
+
+
+Command the drone to take off. 
+
+Sends the drone takeoff command and monitors altitude 
+\begin{DoxyParams}{Parameters}
+{\em vehicle} & Vehicle data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if takeoff successful, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{controller_8cpp_source_l00105}{105}} of file \mbox{\hyperlink{controller_8cpp_source}{controller.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00060}{Vehicle\+Data\+::current\+\_\+odom}}, \mbox{\hyperlink{common_8h_source_l00059}{Vehicle\+Data\+::id}}, \mbox{\hyperlink{common_8h_source_l00072}{Vehicle\+Data\+::odom\+\_\+mutex}}, and \mbox{\hyperlink{common_8h_source_l00066}{Vehicle\+Data\+::takeoff\+\_\+complete}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00017}{process\+Command()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_controller_a68cafe80a04b33fb2a6abd3ada2c6e47_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{controller_8h}{controller.\+h}}\item 
+src/\mbox{\hyperlink{controller_8cpp}{controller.\+cpp}}\end{DoxyCompactItemize}

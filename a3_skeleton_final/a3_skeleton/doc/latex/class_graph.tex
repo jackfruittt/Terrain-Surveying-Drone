@@ -1,0 +1,354 @@
+\doxysection{Graph Class Reference}
+\hypertarget{class_graph}{}\label{class_graph}\index{Graph@{Graph}}
+
+
+\doxylink{class_graph}{Graph} class for representing traversability routes between waypoints.  
+
+
+
+
+{\ttfamily \#include $<$graph.\+h$>$}
+
+
+
+Collaboration diagram for Graph\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=190pt]{class_graph__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_graph_a67e10bbd720efcda1161c21010963e5d}{Graph}} (size\+\_\+t num\+\_\+nodes)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxylink{class_graph}{Graph}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_graph_a4647871c38faad33134f3c476e2a5d32}{add\+Edge}} (size\+\_\+t from, size\+\_\+t to, double cost)
+\begin{DoxyCompactList}\small\item\em Add an edge between two nodes (bidirectional) \end{DoxyCompactList}\item 
+const std\+::vector$<$ \mbox{\hyperlink{struct_edge}{Edge}} $>$ \& \mbox{\hyperlink{class_graph_a2fedc71645fc770d01c924f0af46a6fb}{get\+Edges}} (size\+\_\+t node) const
+\begin{DoxyCompactList}\small\item\em Get all edges from a specific node. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{class_graph_a2291faa33fe8414a11e403cebee5fa14}{get\+Num\+Nodes}} () const
+\begin{DoxyCompactList}\small\item\em Get the number of nodes in the graph. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_graph_adab0504921ee6b0ec844425cdd0278f5}{has\+Edge}} (size\+\_\+t from, size\+\_\+t to) const
+\begin{DoxyCompactList}\small\item\em Check if there\textquotesingle{}s a direct edge between two nodes. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_graph_a2800611842a98a847b34f4be262a35b3}{get\+Edge\+Cost}} (size\+\_\+t from, size\+\_\+t to) const
+\begin{DoxyCompactList}\small\item\em Get the cost of the edge between two nodes. \end{DoxyCompactList}\item 
+std\+::vector$<$ size\+\_\+t $>$ \mbox{\hyperlink{class_graph_ace4be813233b649bead345872b3ad06b}{find\+Shortest\+Path}} (size\+\_\+t start, size\+\_\+t end) const
+\begin{DoxyCompactList}\small\item\em Find shortest path between two nodes using Dijkstra\textquotesingle{}s algorithm. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_graph_a591d7188ab17c21c05b7ef4cac9de791}{calculate\+Path\+Cost}} (const std\+::vector$<$ size\+\_\+t $>$ \&path) const
+\begin{DoxyCompactList}\small\item\em Calculate total cost of a given path. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ \mbox{\hyperlink{class_graph_ad0c473a5d4e3d865b3f468a561579312}{get\+All\+Paths}} (size\+\_\+t start, size\+\_\+t end, size\+\_\+t max\+\_\+depth=10) const
+\begin{DoxyCompactList}\small\item\em Get all possible paths between two nodes (up to a maximum depth) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_graph_af44c5612d1b0737046be93c5c7e4861f}{print\+Graph\+Info}} (const rclcpp\+::\+Logger \&logger) const
+\begin{DoxyCompactList}\small\item\em Print graph statistics and connectivity information. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \mbox{\hyperlink{class_graph_a48b292f42a344c4330ada12a2e73346f}{get\+Adjacency\+Matrix}} () const
+\begin{DoxyCompactList}\small\item\em Get connectivity matrix (for visualisation or analysis) \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_graph}{Graph} class for representing traversability routes between waypoints. 
+
+Definition at line \mbox{\hyperlink{graph_8h_source_l00023}{23}} of file \mbox{\hyperlink{graph_8h_source}{graph.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_graph_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_graph_a67e10bbd720efcda1161c21010963e5d}\index{Graph@{Graph}!Graph@{Graph}}
+\index{Graph@{Graph}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{Graph()}{Graph()}}
+{\footnotesize\ttfamily \label{class_graph_a67e10bbd720efcda1161c21010963e5d} 
+Graph\+::\+Graph (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{num\+\_\+nodes}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Constructor for \doxylink{class_graph}{Graph}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+\_\+nodes} & Number of nodes (waypoints) in the graph \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00006}{6}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_graph_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_graph_a4647871c38faad33134f3c476e2a5d32}\index{Graph@{Graph}!addEdge@{addEdge}}
+\index{addEdge@{addEdge}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{addEdge()}{addEdge()}}
+{\footnotesize\ttfamily \label{class_graph_a4647871c38faad33134f3c476e2a5d32} 
+void Graph\+::add\+Edge (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{from}{, }\item[{size\+\_\+t}]{to}{, }\item[{double}]{cost}{}\end{DoxyParamCaption})}
+
+
+
+Add an edge between two nodes (bidirectional) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em from} & Source node index \\
+\hline
+{\em to} & Destination node index \\
+\hline
+{\em cost} & Cost/distance of the edge \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00010}{10}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_a591d7188ab17c21c05b7ef4cac9de791}\index{Graph@{Graph}!calculatePathCost@{calculatePathCost}}
+\index{calculatePathCost@{calculatePathCost}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{calculatePathCost()}{calculatePathCost()}}
+{\footnotesize\ttfamily \label{class_graph_a591d7188ab17c21c05b7ef4cac9de791} 
+double Graph\+::calculate\+Path\+Cost (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ size\+\_\+t $>$ \&}]{path}{}\end{DoxyParamCaption}) const}
+
+
+
+Calculate total cost of a given path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em path} & Vector of node indices representing the path \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Total cost of the path 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00113}{113}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{graph_8cpp_source_l00042}{get\+Edge\+Cost()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_graph_a591d7188ab17c21c05b7ef4cac9de791_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_graph_ace4be813233b649bead345872b3ad06b}\index{Graph@{Graph}!findShortestPath@{findShortestPath}}
+\index{findShortestPath@{findShortestPath}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{findShortestPath()}{findShortestPath()}}
+{\footnotesize\ttfamily \label{class_graph_ace4be813233b649bead345872b3ad06b} 
+std\+::vector$<$ size\+\_\+t $>$ Graph\+::find\+Shortest\+Path (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{start}{, }\item[{size\+\_\+t}]{end}{}\end{DoxyParamCaption}) const}
+
+
+
+Find shortest path between two nodes using Dijkstra\textquotesingle{}s algorithm. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & Start node index \\
+\hline
+{\em end} & End node index \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Vector of node indices representing the shortest path 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00054}{54}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_a48b292f42a344c4330ada12a2e73346f}\index{Graph@{Graph}!getAdjacencyMatrix@{getAdjacencyMatrix}}
+\index{getAdjacencyMatrix@{getAdjacencyMatrix}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{getAdjacencyMatrix()}{getAdjacencyMatrix()}}
+{\footnotesize\ttfamily \label{class_graph_a48b292f42a344c4330ada12a2e73346f} 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ Graph\+::get\+Adjacency\+Matrix (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get connectivity matrix (for visualisation or analysis) 
+
+\begin{DoxyReturn}{Returns}
+2D vector representing the adjacency matrix with costs 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00194}{194}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_ad0c473a5d4e3d865b3f468a561579312}\index{Graph@{Graph}!getAllPaths@{getAllPaths}}
+\index{getAllPaths@{getAllPaths}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{getAllPaths()}{getAllPaths()}}
+{\footnotesize\ttfamily \label{class_graph_ad0c473a5d4e3d865b3f468a561579312} 
+std\+::vector$<$ std\+::vector$<$ size\+\_\+t $>$ $>$ Graph\+::get\+All\+Paths (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{start}{, }\item[{size\+\_\+t}]{end}{, }\item[{size\+\_\+t}]{max\+\_\+depth}{ = {\ttfamily 10}}\end{DoxyParamCaption}) const}
+
+
+
+Get all possible paths between two nodes (up to a maximum depth) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & Start node index \\
+\hline
+{\em end} & End node index \\
+\hline
+{\em max\+\_\+depth} & Maximum search depth to prevent infinite loops \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Vector of paths, each path is a vector of node indices 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00130}{130}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_a2800611842a98a847b34f4be262a35b3}\index{Graph@{Graph}!getEdgeCost@{getEdgeCost}}
+\index{getEdgeCost@{getEdgeCost}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{getEdgeCost()}{getEdgeCost()}}
+{\footnotesize\ttfamily \label{class_graph_a2800611842a98a847b34f4be262a35b3} 
+double Graph\+::get\+Edge\+Cost (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{from}{, }\item[{size\+\_\+t}]{to}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the cost of the edge between two nodes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em from} & Source node \\
+\hline
+{\em to} & Destination node \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Cost of the edge, or infinity if no edge exists 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00042}{42}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{graph_8cpp_source_l00032}{has\+Edge()}}.
+
+
+
+Referenced by \mbox{\hyperlink{graph_8cpp_source_l00113}{calculate\+Path\+Cost()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=308pt]{class_graph_a2800611842a98a847b34f4be262a35b3_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_graph_a2800611842a98a847b34f4be262a35b3_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_graph_a2fedc71645fc770d01c924f0af46a6fb}\index{Graph@{Graph}!getEdges@{getEdges}}
+\index{getEdges@{getEdges}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{getEdges()}{getEdges()}}
+{\footnotesize\ttfamily \label{class_graph_a2fedc71645fc770d01c924f0af46a6fb} 
+const std\+::vector$<$ \mbox{\hyperlink{struct_edge}{Edge}} $>$ \& Graph\+::get\+Edges (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{node}{}\end{DoxyParamCaption}) const}
+
+
+
+Get all edges from a specific node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em node} & Node index \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Vector of edges from the node 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_a2291faa33fe8414a11e403cebee5fa14}\index{Graph@{Graph}!getNumNodes@{getNumNodes}}
+\index{getNumNodes@{getNumNodes}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{getNumNodes()}{getNumNodes()}}
+{\footnotesize\ttfamily \label{class_graph_a2291faa33fe8414a11e403cebee5fa14} 
+size\+\_\+t Graph\+::get\+Num\+Nodes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Get the number of nodes in the graph. 
+
+\begin{DoxyReturn}{Returns}
+Number of nodes 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00028}{28}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+\Hypertarget{class_graph_adab0504921ee6b0ec844425cdd0278f5}\index{Graph@{Graph}!hasEdge@{hasEdge}}
+\index{hasEdge@{hasEdge}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{hasEdge()}{hasEdge()}}
+{\footnotesize\ttfamily \label{class_graph_adab0504921ee6b0ec844425cdd0278f5} 
+bool Graph\+::has\+Edge (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{from}{, }\item[{size\+\_\+t}]{to}{}\end{DoxyParamCaption}) const}
+
+
+
+Check if there\textquotesingle{}s a direct edge between two nodes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em from} & Source node \\
+\hline
+{\em to} & Destination node \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if edge exists, false otherwise 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00032}{32}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{graph_8cpp_source_l00042}{get\+Edge\+Cost()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_graph_adab0504921ee6b0ec844425cdd0278f5_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_graph_af44c5612d1b0737046be93c5c7e4861f}\index{Graph@{Graph}!printGraphInfo@{printGraphInfo}}
+\index{printGraphInfo@{printGraphInfo}!Graph@{Graph}}
+\doxysubsubsection{\texorpdfstring{printGraphInfo()}{printGraphInfo()}}
+{\footnotesize\ttfamily \label{class_graph_af44c5612d1b0737046be93c5c7e4861f} 
+void Graph\+::print\+Graph\+Info (\begin{DoxyParamCaption}\item[{const rclcpp\+::\+Logger \&}]{logger}{}\end{DoxyParamCaption}) const}
+
+
+
+Print graph statistics and connectivity information. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em logger} & ROS logger for output \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{graph_8cpp_source_l00172}{172}} of file \mbox{\hyperlink{graph_8cpp_source}{graph.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{graph_8h}{graph.\+h}}\item 
+src/\mbox{\hyperlink{graph_8cpp}{graph.\+cpp}}\end{DoxyCompactItemize}

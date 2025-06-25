@@ -1,0 +1,108 @@
+\doxysection{Laser\+Processing Class Reference}
+\hypertarget{class_laser_processing}{}\label{class_laser_processing}\index{LaserProcessing@{LaserProcessing}}
+
+
+{\ttfamily \#include $<$laserprocessing.\+h$>$}
+
+
+
+Collaboration diagram for Laser\+Processing\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{class_laser_processing__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_laser_processing_ae0089ac929583ff75e86c4dd4f3c82b3}{Laser\+Processing}} (sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan laser\+Scan)
+\begin{DoxyCompactList}\small\item\em Constructor that allocates internals. \end{DoxyCompactList}\item 
+unsigned int \mbox{\hyperlink{class_laser_processing_a475ef7bcb5eeaec26e4a409138797531}{count\+Object\+Readings}} ()
+\begin{DoxyCompactList}\small\item\em Count number of readings belonging to objects (not infinity, nan or max range) from the last laser scan provided (either via. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a}{new\+Scan}} (sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan laser\+Scan)
+\begin{DoxyCompactList}\small\item\em Accepts a new laser\+Scan, threadsafe function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{laserprocessing_8h_source_l00009}{9}} of file \mbox{\hyperlink{laserprocessing_8h_source}{laserprocessing.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_laser_processing_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_laser_processing_ae0089ac929583ff75e86c4dd4f3c82b3}\index{LaserProcessing@{LaserProcessing}!LaserProcessing@{LaserProcessing}}
+\index{LaserProcessing@{LaserProcessing}!LaserProcessing@{LaserProcessing}}
+\doxysubsubsection{\texorpdfstring{LaserProcessing()}{LaserProcessing()}}
+{\footnotesize\ttfamily \label{class_laser_processing_ae0089ac929583ff75e86c4dd4f3c82b3} 
+Laser\+Processing\+::\+Laser\+Processing (\begin{DoxyParamCaption}\item[{sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan}]{laser\+Scan}{}\end{DoxyParamCaption})}
+
+
+
+Constructor that allocates internals. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{in}}  & {\em laser\+Scan} & -\/ laser\+Scan to be processed \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{laserprocessing_8cpp_source_l00008}{8}} of file \mbox{\hyperlink{laserprocessing_8cpp_source}{laserprocessing.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_laser_processing_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_laser_processing_a475ef7bcb5eeaec26e4a409138797531}\index{LaserProcessing@{LaserProcessing}!countObjectReadings@{countObjectReadings}}
+\index{countObjectReadings@{countObjectReadings}!LaserProcessing@{LaserProcessing}}
+\doxysubsubsection{\texorpdfstring{countObjectReadings()}{countObjectReadings()}}
+{\footnotesize\ttfamily \label{class_laser_processing_a475ef7bcb5eeaec26e4a409138797531} 
+unsigned int Laser\+Processing\+::count\+Object\+Readings (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Count number of readings belonging to objects (not infinity, nan or max range) from the last laser scan provided (either via. 
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a}{new\+Scan} or 
+
+\doxylink{class_laser_processing}{Laser\+Processing} constructor) thread-\/safe function, internally creates a copy fo laser\+Scan\+\_\+
+\end{DoxySeeAlso}
+\begin{DoxyReturn}{Returns}
+the number of laser readings that belong to objects 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{laserprocessing_8cpp_source_l00015}{15}} of file \mbox{\hyperlink{laserprocessing_8cpp_source}{laserprocessing.\+cpp}}.
+
+\Hypertarget{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a}\index{LaserProcessing@{LaserProcessing}!newScan@{newScan}}
+\index{newScan@{newScan}!LaserProcessing@{LaserProcessing}}
+\doxysubsubsection{\texorpdfstring{newScan()}{newScan()}}
+{\footnotesize\ttfamily \label{class_laser_processing_ad3230e5cf34ce2bdce92dcf96baf497a} 
+void Laser\+Processing\+::new\+Scan (\begin{DoxyParamCaption}\item[{sensor\+\_\+msgs\+::msg\+::\+Laser\+Scan}]{laser\+Scan}{}\end{DoxyParamCaption})}
+
+
+
+Accepts a new laser\+Scan, threadsafe function. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{in}}  & {\em laser\+Scan} & -\/ laser\+Scan supplied \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{laserprocessing_8cpp_source_l00038}{38}} of file \mbox{\hyperlink{laserprocessing_8cpp_source}{laserprocessing.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{laserprocessing_8h}{laserprocessing.\+h}}\item 
+src/\mbox{\hyperlink{laserprocessing_8cpp}{laserprocessing.\+cpp}}\end{DoxyCompactItemize}

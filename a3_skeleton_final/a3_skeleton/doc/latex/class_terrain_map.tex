@@ -1,0 +1,303 @@
+\doxysection{Terrain\+Map Class Reference}
+\hypertarget{class_terrain_map}{}\label{class_terrain_map}\index{TerrainMap@{TerrainMap}}
+
+
+\doxylink{class_terrain_map}{Terrain\+Map} class for incremental 1x1m cell-\/by-\/cell terrain mapping.  
+
+
+
+
+{\ttfamily \#include $<$terrain\+\_\+map.\+h$>$}
+
+
+
+Collaboration diagram for Terrain\+Map\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=232pt]{class_terrain_map__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_terrain_map_a2dd1d760f543118ec2bd98105348dd75}{Terrain\+Map}} (const rclcpp\+::\+Logger \&logger, double resolution=0.\+1, double initial\+\_\+size=1.\+0)
+\begin{DoxyCompactList}\small\item\em Constructor for \doxylink{class_terrain_map}{Terrain\+Map}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_terrain_map_acc2ef7e04a9c84d7c7193e090803987d}{\texorpdfstring{$\sim$}{\string~}\+Terrain\+Map}} ()=default
+\item 
+bool \mbox{\hyperlink{class_terrain_map_a56e0970514cfebea150832afff613ad5}{update\+Elevation}} (double x, double y, double elevation)
+\item 
+double \mbox{\hyperlink{class_terrain_map_a604bb74394013caab47e00f9d1871c40}{get\+Elevation\+At\+Point}} (double x, double y) const
+\item 
+double \mbox{\hyperlink{class_terrain_map_ad1c2ba18cd0551db76ddf04f34813a89}{get\+Gradient\+Magnitude\+At\+Point}} (double x, double y) const
+\item 
+void \mbox{\hyperlink{class_terrain_map_a7bf84e5baef3b9177e82a5e94d36ec0c}{calculate\+Gradients\+Around\+Point}} (double x, double y, double radius=1.\+0)
+\item 
+void \mbox{\hyperlink{class_terrain_map_abcccf16b8f9eebdb6b10b203f93a48e0}{check\+And\+Expand\+For\+Position}} (double x, double y)
+\item 
+bool \mbox{\hyperlink{class_terrain_map_ae7a49ba78b5059379de6d2fc4f16174b}{is\+Position\+In\+Map}} (double x, double y) const
+\item 
+void \mbox{\hyperlink{class_terrain_map_a6e2dbce1b6b1634d0354df177b221952}{get\+Grid\+Map}} (grid\+\_\+map\+::\+Grid\+Map \&map) const
+\item 
+grid\+\_\+map\+\_\+msgs\+::msg\+::\+Grid\+Map \mbox{\hyperlink{class_terrain_map_a048f02a382406a979a0ddc6d6b308775}{get\+Grid\+Map\+Message}} () const
+\item 
+visualization\+\_\+msgs\+::msg\+::\+Marker\+Array \mbox{\hyperlink{class_terrain_map_a441e9a1b8e309fdbe606343bf1733fd3}{get\+Gradient\+Arrows}} () const
+\item 
+void \mbox{\hyperlink{class_terrain_map_a56a17e13e2e51f8a0eb0302cad76f6a8}{log\+Statistics}} () const
+\item 
+void \mbox{\hyperlink{class_terrain_map_a2c37fa1a218a4619580380d6458111e1}{log\+Map\+Bounds}} () const
+\item 
+size\+\_\+t \mbox{\hyperlink{class_terrain_map_a404a3c4a4e82d249c8f5bde2de8da230}{get\+Active\+Areas\+Count}} () const
+\item 
+grid\+\_\+map\+::\+Position \mbox{\hyperlink{class_terrain_map_a9f1cf04648915a7c3b41d1f89c551201}{get\+Map\+Centre}} () const
+\item 
+grid\+\_\+map\+::\+Length \mbox{\hyperlink{class_terrain_map_a4813792463370d6a86e4841e78a45c07}{get\+Map\+Size}} () const
+\item 
+void \mbox{\hyperlink{class_terrain_map_abaf3fc40dd043de310302741c94c08d6}{set\+Expansion\+Parameters}} (double margin, double threshold, double max\+\_\+size)
+\item 
+void \mbox{\hyperlink{class_terrain_map_aa5d96030aaf7ab1194a151660f3c21d9}{set\+Directional\+Expansion}} (bool enabled)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\doxylink{class_terrain_map}{Terrain\+Map} class for incremental 1x1m cell-\/by-\/cell terrain mapping. 
+
+This class handles drone-\/centric grid map operations\+:
+\begin{DoxyItemize}
+\item Starts with 1x1m grid centred on drone
+\item Expands by single 1m cells in flight direction
+\item Each cell represents 1m x 1m of terrain 
+\end{DoxyItemize}
+
+Definition at line \mbox{\hyperlink{terrain__map_8h_source_l00023}{23}} of file \mbox{\hyperlink{terrain__map_8h_source}{terrain\+\_\+map.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_terrain_map_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_terrain_map_a2dd1d760f543118ec2bd98105348dd75}\index{TerrainMap@{TerrainMap}!TerrainMap@{TerrainMap}}
+\index{TerrainMap@{TerrainMap}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{TerrainMap()}{TerrainMap()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a2dd1d760f543118ec2bd98105348dd75} 
+Terrain\+Map\+::\+Terrain\+Map (\begin{DoxyParamCaption}\item[{const rclcpp\+::\+Logger \&}]{logger}{, }\item[{double}]{resolution}{ = {\ttfamily 0.1}, }\item[{double}]{initial\+\_\+size}{ = {\ttfamily 1.0}}\end{DoxyParamCaption})}
+
+
+
+Constructor for \doxylink{class_terrain_map}{Terrain\+Map}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em logger} & ROS logger instance \\
+\hline
+{\em resolution} & Map resolution in metres per cell (should be 1.\+0 for 1x1m cells) \\
+\hline
+{\em initial\+\_\+size} & Initial map size in metres (should be 1.\+0 for 1x1m start) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00005}{5}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_acc2ef7e04a9c84d7c7193e090803987d}\index{TerrainMap@{TerrainMap}!````~TerrainMap@{\texorpdfstring{$\sim$}{\string~}TerrainMap}}
+\index{````~TerrainMap@{\texorpdfstring{$\sim$}{\string~}TerrainMap}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}TerrainMap()}{\string~TerrainMap()}}
+{\footnotesize\ttfamily \label{class_terrain_map_acc2ef7e04a9c84d7c7193e090803987d} 
+Terrain\+Map\+::\texorpdfstring{$\sim$}{\string~}\+Terrain\+Map (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_terrain_map_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_terrain_map_a7bf84e5baef3b9177e82a5e94d36ec0c}\index{TerrainMap@{TerrainMap}!calculateGradientsAroundPoint@{calculateGradientsAroundPoint}}
+\index{calculateGradientsAroundPoint@{calculateGradientsAroundPoint}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{calculateGradientsAroundPoint()}{calculateGradientsAroundPoint()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a7bf84e5baef3b9177e82a5e94d36ec0c} 
+void Terrain\+Map\+::calculate\+Gradients\+Around\+Point (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{, }\item[{double}]{radius}{ = {\ttfamily 1.0}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00285}{285}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_abcccf16b8f9eebdb6b10b203f93a48e0}\index{TerrainMap@{TerrainMap}!checkAndExpandForPosition@{checkAndExpandForPosition}}
+\index{checkAndExpandForPosition@{checkAndExpandForPosition}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{checkAndExpandForPosition()}{checkAndExpandForPosition()}}
+{\footnotesize\ttfamily \label{class_terrain_map_abcccf16b8f9eebdb6b10b203f93a48e0} 
+void Terrain\+Map\+::check\+And\+Expand\+For\+Position (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00117}{117}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+
+
+Referenced by \mbox{\hyperlink{terrain__map_8cpp_source_l00055}{update\+Elevation()}}.
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_terrain_map_abcccf16b8f9eebdb6b10b203f93a48e0_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{class_terrain_map_a404a3c4a4e82d249c8f5bde2de8da230}\index{TerrainMap@{TerrainMap}!getActiveAreasCount@{getActiveAreasCount}}
+\index{getActiveAreasCount@{getActiveAreasCount}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getActiveAreasCount()}{getActiveAreasCount()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a404a3c4a4e82d249c8f5bde2de8da230} 
+size\+\_\+t Terrain\+Map\+::get\+Active\+Areas\+Count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00456}{456}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a604bb74394013caab47e00f9d1871c40}\index{TerrainMap@{TerrainMap}!getElevationAtPoint@{getElevationAtPoint}}
+\index{getElevationAtPoint@{getElevationAtPoint}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getElevationAtPoint()}{getElevationAtPoint()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a604bb74394013caab47e00f9d1871c40} 
+double Terrain\+Map\+::get\+Elevation\+At\+Point (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00235}{235}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a441e9a1b8e309fdbe606343bf1733fd3}\index{TerrainMap@{TerrainMap}!getGradientArrows@{getGradientArrows}}
+\index{getGradientArrows@{getGradientArrows}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getGradientArrows()}{getGradientArrows()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a441e9a1b8e309fdbe606343bf1733fd3} 
+visualization\+\_\+msgs\+::msg\+::\+Marker\+Array Terrain\+Map\+::get\+Gradient\+Arrows (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00477}{477}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_ad1c2ba18cd0551db76ddf04f34813a89}\index{TerrainMap@{TerrainMap}!getGradientMagnitudeAtPoint@{getGradientMagnitudeAtPoint}}
+\index{getGradientMagnitudeAtPoint@{getGradientMagnitudeAtPoint}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getGradientMagnitudeAtPoint()}{getGradientMagnitudeAtPoint()}}
+{\footnotesize\ttfamily \label{class_terrain_map_ad1c2ba18cd0551db76ddf04f34813a89} 
+double Terrain\+Map\+::get\+Gradient\+Magnitude\+At\+Point (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00260}{260}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a6e2dbce1b6b1634d0354df177b221952}\index{TerrainMap@{TerrainMap}!getGridMap@{getGridMap}}
+\index{getGridMap@{getGridMap}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getGridMap()}{getGridMap()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a6e2dbce1b6b1634d0354df177b221952} 
+void Terrain\+Map\+::get\+Grid\+Map (\begin{DoxyParamCaption}\item[{grid\+\_\+map\+::\+Grid\+Map \&}]{map}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00370}{370}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a048f02a382406a979a0ddc6d6b308775}\index{TerrainMap@{TerrainMap}!getGridMapMessage@{getGridMapMessage}}
+\index{getGridMapMessage@{getGridMapMessage}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getGridMapMessage()}{getGridMapMessage()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a048f02a382406a979a0ddc6d6b308775} 
+grid\+\_\+map\+\_\+msgs\+::msg\+::\+Grid\+Map Terrain\+Map\+::get\+Grid\+Map\+Message (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00377}{377}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a9f1cf04648915a7c3b41d1f89c551201}\index{TerrainMap@{TerrainMap}!getMapCentre@{getMapCentre}}
+\index{getMapCentre@{getMapCentre}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getMapCentre()}{getMapCentre()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a9f1cf04648915a7c3b41d1f89c551201} 
+grid\+\_\+map\+::\+Position Terrain\+Map\+::get\+Map\+Centre (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00461}{461}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a4813792463370d6a86e4841e78a45c07}\index{TerrainMap@{TerrainMap}!getMapSize@{getMapSize}}
+\index{getMapSize@{getMapSize}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{getMapSize()}{getMapSize()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a4813792463370d6a86e4841e78a45c07} 
+grid\+\_\+map\+::\+Length Terrain\+Map\+::get\+Map\+Size (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00469}{469}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_ae7a49ba78b5059379de6d2fc4f16174b}\index{TerrainMap@{TerrainMap}!isPositionInMap@{isPositionInMap}}
+\index{isPositionInMap@{isPositionInMap}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{isPositionInMap()}{isPositionInMap()}}
+{\footnotesize\ttfamily \label{class_terrain_map_ae7a49ba78b5059379de6d2fc4f16174b} 
+bool Terrain\+Map\+::is\+Position\+In\+Map (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00361}{361}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a2c37fa1a218a4619580380d6458111e1}\index{TerrainMap@{TerrainMap}!logMapBounds@{logMapBounds}}
+\index{logMapBounds@{logMapBounds}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{logMapBounds()}{logMapBounds()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a2c37fa1a218a4619580380d6458111e1} 
+void Terrain\+Map\+::log\+Map\+Bounds (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00441}{441}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a56a17e13e2e51f8a0eb0302cad76f6a8}\index{TerrainMap@{TerrainMap}!logStatistics@{logStatistics}}
+\index{logStatistics@{logStatistics}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{logStatistics()}{logStatistics()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a56a17e13e2e51f8a0eb0302cad76f6a8} 
+void Terrain\+Map\+::log\+Statistics (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00422}{422}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_aa5d96030aaf7ab1194a151660f3c21d9}\index{TerrainMap@{TerrainMap}!setDirectionalExpansion@{setDirectionalExpansion}}
+\index{setDirectionalExpansion@{setDirectionalExpansion}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{setDirectionalExpansion()}{setDirectionalExpansion()}}
+{\footnotesize\ttfamily \label{class_terrain_map_aa5d96030aaf7ab1194a151660f3c21d9} 
+void Terrain\+Map\+::set\+Directional\+Expansion (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00489}{489}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_abaf3fc40dd043de310302741c94c08d6}\index{TerrainMap@{TerrainMap}!setExpansionParameters@{setExpansionParameters}}
+\index{setExpansionParameters@{setExpansionParameters}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{setExpansionParameters()}{setExpansionParameters()}}
+{\footnotesize\ttfamily \label{class_terrain_map_abaf3fc40dd043de310302741c94c08d6} 
+void Terrain\+Map\+::set\+Expansion\+Parameters (\begin{DoxyParamCaption}\item[{double}]{margin}{, }\item[{double}]{threshold}{, }\item[{double}]{max\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00484}{484}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+\Hypertarget{class_terrain_map_a56e0970514cfebea150832afff613ad5}\index{TerrainMap@{TerrainMap}!updateElevation@{updateElevation}}
+\index{updateElevation@{updateElevation}!TerrainMap@{TerrainMap}}
+\doxysubsubsection{\texorpdfstring{updateElevation()}{updateElevation()}}
+{\footnotesize\ttfamily \label{class_terrain_map_a56e0970514cfebea150832afff613ad5} 
+bool Terrain\+Map\+::update\+Elevation (\begin{DoxyParamCaption}\item[{double}]{x}{, }\item[{double}]{y}{, }\item[{double}]{elevation}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{terrain__map_8cpp_source_l00055}{55}} of file \mbox{\hyperlink{terrain__map_8cpp_source}{terrain\+\_\+map.\+cpp}}.
+
+
+
+References \mbox{\hyperlink{terrain__map_8cpp_source_l00117}{check\+And\+Expand\+For\+Position()}}.
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{class_terrain_map_a56e0970514cfebea150832afff613ad5_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{terrain__map_8h}{terrain\+\_\+map.\+h}}\item 
+src/\mbox{\hyperlink{terrain__map_8cpp}{terrain\+\_\+map.\+cpp}}\end{DoxyCompactItemize}

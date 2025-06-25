@@ -1,0 +1,949 @@
+\doxysection{drone\+\_\+node.\+cpp}
+\hypertarget{drone__node_8cpp_source}{}\label{drone__node_8cpp_source}\index{src/drone\_node.cpp@{src/drone\_node.cpp}}
+\mbox{\hyperlink{drone__node_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{drone__node_8h}{drone\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{sensor__node_8h}{sensor\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00005}00005\ \textcolor{keyword}{using\ namespace\ }std::chrono\_literals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00007}\mbox{\hyperlink{class_drone_node_a11cf944a3da88eb88143875033ceba1d}{00007}}\ \mbox{\hyperlink{class_drone_node_a11cf944a3da88eb88143875033ceba1d}{DroneNode::DroneNode}}()}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00008}00008\ \ \ \ \ :\ Node(\textcolor{stringliteral}{"{}drone\_controller"{}}),}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00009}00009\ \ \ \ \ \ \ should\_terminate\_(false),}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00010}00010\ \ \ \ \ \ \ sensor\_node\_(nullptr)\ \ \textcolor{comment}{//\ Initialise\ to\ nullptr}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00011}00011\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{comment}{//\ Declare\ parameters}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00013}00013\ \ \ \ \ this-\/>declare\_parameter(\textcolor{stringliteral}{"{}road\_gradient"{}},\ 3.0);\ \textcolor{comment}{//\ Default\ 3\%}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00014}00014\ \ \ \ \ max\_gradient\_\ =\ this-\/>get\_parameter(\textcolor{stringliteral}{"{}road\_gradient"{}}).as\_double();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00016}00016\ \ \ \ \ \textcolor{comment}{//\ Declare\ advanced\ parameter}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00017}00017\ \ \ \ \ this-\/>declare\_parameter(\textcolor{stringliteral}{"{}advanced"{}},\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00018}00018\ \ \ \ \ advanced\_mode\_\ =\ this-\/>get\_parameter(\textcolor{stringliteral}{"{}advanced"{}}).as\_bool();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00020}00020\ \ \ \ \ \textcolor{comment}{//\ Initialise\ subscribers}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00021}00021\ \ \ \ \ odom\_sub\_\ =\ this-\/>create\_subscription<nav\_msgs::msg::Odometry>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/gt\_odom"{}},\ 10,\ std::bind(\&DroneNode::odomCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00024}00024\ \ \ \ \ goals\_sub\_\ =\ this-\/>create\_subscription<geometry\_msgs::msg::PoseArray>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/mission/goals"{}},\ 10,\ std::bind(\&DroneNode::goalCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00027}00027\ \ \ \ \ grid\_map\_sub\_\ =\ this-\/>create\_subscription<grid\_map\_msgs::msg::GridMap>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00028}00028\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/grid\_map"{}},\ 10,\ std::bind(\&DroneNode::gridMapCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00030}00030\ \ \ \ \ \textcolor{comment}{//\ Subscribe\ to\ laser\ and\ sonar\ (For\ RTP)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00031}00031\ \ \ \ \ laser\_sub\_\ =\ this-\/>create\_subscription<sensor\_msgs::msg::LaserScan>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/laserscan"{}},\ 10,\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00033}00033\ \ \ \ \ \ \ \ \ [\textcolor{keyword}{this}](\textcolor{keyword}{const}\ sensor\_msgs::msg::LaserScan::SharedPtr\ msg)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(laser\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ latest\_laser\_\ =\ msg;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00036}00036\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00038}00038\ \ \ \ \ sonar\_sub\_\ =\ this-\/>create\_subscription<sensor\_msgs::msg::Range>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00039}00039\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/sonar"{}},\ 10,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00040}00040\ \ \ \ \ \ \ \ \ [\textcolor{keyword}{this}](\textcolor{keyword}{const}\ sensor\_msgs::msg::Range::SharedPtr\ msg)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00041}00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Store\ sonar\ data}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00043}00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(sonar\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ latest\_sonar\_\ =\ msg;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00047}00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ the\ drone\ is\ flying,\ update\ altitude\ adjustment}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!vehicles\_.empty()\ \&\&\ vehicles\_[0]-\/>takeoff\_complete)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ current\ altitude}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ current\_altitude\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00051}00051\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicles\_[0]-\/>odom\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00053}00053\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude\ =\ vehicles\_[0]-\/>current\_odom.pose.pose.position.z;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00054}00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00055}00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ and\ set\ altitude\ adjustment}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ adjustment\ =\ controller\_-\/>calculateAltitudeAdjustment(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00058}00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude,\ msg-\/>range);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>setAltitudeAdjustment(adjustment);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00060}00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug\ output\ with\ proper\ formatting}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ count\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (++count\ \%\ 10\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ Log\ every\ 10\ messages}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00064}00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Sonar:\ alt=\%.2fm,\ range=\%.2fm,\ adjustment=\%.2fm/s"{}},}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(msg-\/>range),\ adjustment);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00068}00068\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00069}00069\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00071}00071\ \ \ \ \ \textcolor{comment}{//\ Initialise\ publishers}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00072}00072\ \ \ \ \ cmd\_vel\_pub\_\ =\ this-\/>create\_publisher<geometry\_msgs::msg::Twist>(\textcolor{stringliteral}{"{}/drone/cmd\_vel"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00073}00073\ \ \ \ \ takeoff\_pub\_\ =\ this-\/>create\_publisher<std\_msgs::msg::Empty>(\textcolor{stringliteral}{"{}/drone/takeoff"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00074}00074\ \ \ \ \ land\_pub\_\ =\ this-\/>create\_publisher<std\_msgs::msg::Empty>(\textcolor{stringliteral}{"{}/drone/landing"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00075}00075\ \ \ \ \ waypoints\_pub\_\ =\ this-\/>create\_publisher<geometry\_msgs::msg::PoseArray>(\textcolor{stringliteral}{"{}/mission/path"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00076}00076\ \ \ \ \ markers\_pub\_\ =\ this-\/>create\_publisher<visualization\_msgs::msg::MarkerArray>(\textcolor{stringliteral}{"{}/visualization\_marker"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00078}00078\ \ \ \ \ \textcolor{comment}{//\ Initialise\ services}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00079}00079\ \ \ \ \ mission\_service\_\ =\ this-\/>create\_service<std\_srvs::srv::SetBool>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/mission/control"{}},}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00081}00081\ \ \ \ \ \ \ \ \ std::bind(\&DroneNode::missionControlCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1,\ std::placeholders::\_2));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00083}00083\ \ \ \ \ \textcolor{comment}{//\ Initialise\ timer\ for\ periodic\ updates}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00084}00084\ \ \ \ \ timer\_\ =\ this-\/>create\_wall\_timer(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00085}00085\ \ \ \ \ \ \ \ \ 500ms,\ std::bind(\&DroneNode::timerCallback,\ \textcolor{keyword}{this}));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00086}00086\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00087}00087\ \ \ \ \ \textcolor{comment}{//\ Create\ controller\ instance}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00088}00088\ \ \ \ \ controller\_\ =\ std::make\_unique<Controller>(cmd\_vel\_pub\_,\ takeoff\_pub\_,\ land\_pub\_,\ this-\/>get\_logger());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00089}00089\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{comment}{//\ Create\ waypoint\ manager}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00091}00091\ \ \ \ \ waypoint\_manager\_\ =\ std::make\_unique<WaypointManager>(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00092}00092\ \ \ \ \ \ \ \ \ this-\/>get\_logger(),}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00093}00093\ \ \ \ \ \ \ \ \ max\_gradient\_,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00094}00094\ \ \ \ \ \ \ \ \ waypoints\_pub\_,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00095}00095\ \ \ \ \ \ \ \ \ markers\_pub\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00096}00096\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00097}00097\ \ \ \ \ \textcolor{comment}{//\ Set\ the\ elevation\ function\ to\ use\ map\ data}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00098}00098\ \ \ \ \ waypoint\_manager\_-\/>setElevationFunction(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00099}00099\ \ \ \ \ \ \ \ \ [\textcolor{keyword}{this}](\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ point)\ \{\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ this-\/>getElevationAtPoint(point);\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00101}00101\ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00102}00102\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{comment}{//\ FIXED:\ Using\ real\ sensor\ data\ for\ gradient\ calculation}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00104}00104\ \ \ \ \ waypoint\_manager\_-\/>setGradientFunction([\textcolor{keyword}{this}](\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00105}00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sensor\_node\_)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ real\ gradient\ data\ from\ sensor\ node}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ sensor\_node\_-\/>getGradientMagnitudeAtPoint(x,\ y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00108}00108\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fallback\ to\ default\ if\ sensor\ node\ not\ available\ yet}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Sensor\ node\ not\ available,\ using\ default\ gradient"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.02;\ \ \textcolor{comment}{//\ 2\%\ gradient\ -\/\ safe\ default}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00113}00113\ \ \ \ \ \});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00115}00115\ \ \ \ \ \textcolor{comment}{//\ Create\ TSP\ solver\ for\ advanced\ mode}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00116}00116\ \ \ \ \ tsp\_solver\_\ =\ std::make\_unique<TSPSolver>(this-\/>get\_logger());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00117}00117\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00118}00118\ \ \ \ \ \textcolor{comment}{//\ Create\ main\ drone\ vehicle}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00119}00119\ \ \ \ \ std::unique\_ptr<VehicleData>\ main\_drone\ =\ std::make\_unique<VehicleData>(\textcolor{stringliteral}{"{}main\_drone"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00120}00120\ \ \ \ \ vehicles\_.push\_back(std::move(main\_drone));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00121}00121\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00122}00122\ \ \ \ \ \textcolor{comment}{//\ Start\ controller\ thread}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00123}00123\ \ \ \ \ controller\_thread\_\ =\ \textcolor{keyword}{new}\ std::thread(\&DroneNode::controllerThread,\ \textcolor{keyword}{this});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00125}00125\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Drone\ controller\ initialized\ with\ max\ gradient:\ \%.1f\%\%,\ advanced\ mode:\ \%s"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ max\_gradient\_,\ advanced\_mode\_\ ?\ \textcolor{stringliteral}{"{}ENABLED"{}}\ :\ \textcolor{stringliteral}{"{}DISABLED"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00127}00127\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00128}00128\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00129}\mbox{\hyperlink{class_drone_node_a2f6bd84349e146e44e2b3d2c19e99d3e}{00129}}\ \mbox{\hyperlink{class_drone_node_a2f6bd84349e146e44e2b3d2c19e99d3e}{DroneNode::\string~DroneNode}}()}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00130}00130\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00131}00131\ \ \ \ \ \textcolor{comment}{//\ Set\ termination\ flag\ and\ wait\ for\ controller\ thread\ to\ finish}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00132}00132\ \ \ \ \ should\_terminate\_\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00133}00133\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00134}00134\ \ \ \ \ \textcolor{comment}{//\ Notify\ all\ waiting\ threads}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00135}00135\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&vehicle\ :\ vehicles\_)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00136}00136\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00137}00137\ \ \ \ \ \ \ \ \ vehicle-\/>queue\_cv.notify\_all();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00138}00138\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00140}00140\ \ \ \ \ \textcolor{keywordflow}{if}\ (controller\_thread\_\ !=\ \textcolor{keyword}{nullptr}\ \&\&\ controller\_thread\_-\/>joinable())}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00141}00141\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00142}00142\ \ \ \ \ \ \ \ \ controller\_thread\_-\/>join();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}\ controller\_thread\_;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00144}00144\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00146}00146\ \ \ \ \ \textcolor{comment}{//\ Land\ all\ drones\ that\ are\ still\ flying}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00147}00147\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&vehicle\ :\ vehicles\_)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00148}00148\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00149}00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>mission\_active\ ||\ vehicle-\/>takeoff\_complete)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00150}00150\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>land(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00153}00153\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00154}00154\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00155}00155\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Drone\ controller\ shutting\ down"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00156}00156\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00157}00157\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00158}00158\ \textcolor{keywordtype}{void}\ DroneNode::odomCallback(\textcolor{keyword}{const}\ std::shared\_ptr<nav\_msgs::msg::Odometry>\ msg)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00159}00159\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00160}00160\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicles\_.empty())}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00161}00161\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00163}00163\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00165}00165\ \ \ \ \ \textcolor{comment}{//\ Update\ main\ drone\ odometry\ (can\ update\ this\ later\ if\ doing\ multi-\/drone,\ i.e.\ specifying\ drone\ id)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00166}00166\ \ \ \ \ \textcolor{keyword}{auto}\ \&vehicle\ =\ vehicles\_[0];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00167}00167\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>odom\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00168}00168\ \ \ \ \ vehicle-\/>current\_odom\ =\ *msg;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00169}00169\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00171}00171\ \textcolor{keywordtype}{void}\ DroneNode::gridMapCallback(\textcolor{keyword}{const}\ std::shared\_ptr<grid\_map\_msgs::msg::GridMap>\ msg)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00172}00172\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00173}00173\ \ \ \ \ \textcolor{comment}{//\ Store\ the\ received\ grid\ map}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00174}00174\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(grid\_map\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00175}00175\ \ \ \ \ latest\_grid\_map\_\ =\ *msg;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00176}00176\ \ \ \ \ has\_grid\_map\_\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00177}00177\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00178}00178\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00179}00179\ \textcolor{keywordtype}{void}\ DroneNode::missionControlCallback(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00180}00180\ \ \ \ \ \textcolor{keyword}{const}\ std::shared\_ptr<std\_srvs::srv::SetBool::Request>\ request,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00181}00181\ \ \ \ \ std::shared\_ptr<std\_srvs::srv::SetBool::Response>\ response)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00182}00182\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00183}00183\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicles\_.empty())}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00184}00184\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00185}00185\ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00186}00186\ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}No\ vehicles\ available"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00187}00187\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00188}00188\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00189}00189\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00190}00190\ \ \ \ \ \textcolor{keyword}{auto}\ \&vehicle\ =\ vehicles\_[0];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00192}00192\ \ \ \ \ \textcolor{keywordflow}{if}\ (request-\/>data)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00193}00193\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00194}00194\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ START\ MISSION}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00195}00195\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!vehicle-\/>mission\_active)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00196}00196\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00197}00197\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ we\ have\ goals\ to\ work\ with}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00201}00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}No\ goals\ available.\ Please\ publish\ goals\ to\ /mission/goals\ first."{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00203}00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00204}00204\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00205}00205\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00206}00206\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00207}00207\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Store\ starting\ position}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock\_odom(vehicle-\/>odom\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00210}00210\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>start\_position.position\ =\ vehicle-\/>current\_odom.pose.pose.position;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00211}00211\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>start\_position.orientation\ =\ vehicle-\/>current\_odom.pose.pose.orientation;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00212}00212\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00214}00214\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Validate\ goals\ are\ within\ terrain\ map\ boundaries}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00215}00215\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!validateAllGoals(*vehicle))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00216}00216\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00217}00217\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}Goals\ are\ outside\ terrain\ map\ boundaries\ (20x20x20m).\ Mission\ aborted."{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00218}00218\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00219}00219\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00220}00220\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Build\ traversability\ graph\ for\ route\ planning}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ graph\ =\ buildTraversabilityGraph(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ \ graph-\/>printGraphInfo(this-\/>get\_logger());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00224}00224\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00225}00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Start\ mission}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00226}00226\ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>startMission(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00227}00227\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00228}00228\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00229}00229\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}Mission\ started\ -\/\ drone\ will\ survey\ terrain\ and\ navigate\ goals"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00230}00230\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Mission\ mode\ activated\ for\ \%s\ with\ \%zu\ goals"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00231}00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>id.c\_str(),\ vehicle-\/>goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00232}00232\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00233}00233\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00234}00234\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00235}00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Already\ in\ mission\ mode}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00236}00236\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00237}00237\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}Mission\ mode\ already\ active\ -\/\ progress:\ "{}}\ +\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::to\_string(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vehicle-\/>mission\_progress))\ +\ \textcolor{stringliteral}{"{}\%"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00239}00239\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00240}00240\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00241}00241\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00242}00242\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00243}00243\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ STOP\ MISSION}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00244}00244\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>mission\_active)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00245}00245\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>stopMission(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00247}00247\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00248}00248\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}Mission\ stopped\ -\/\ drone\ will\ return\ and\ land"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Mission\ mode\ deactivated\ for\ \%s"{}},\ vehicle-\/>id.c\_str());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00250}00250\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00251}00251\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00252}00252\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00253}00253\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>success\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00254}00254\ \ \ \ \ \ \ \ \ \ \ \ \ response-\/>message\ =\ \textcolor{stringliteral}{"{}Mission\ mode\ already\ inactive"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00255}00255\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00256}00256\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00257}00257\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00258}00258\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00259}00259\ \textcolor{keywordtype}{void}\ DroneNode::goalCallback(\textcolor{keyword}{const}\ std::shared\_ptr<geometry\_msgs::msg::PoseArray>\ msg)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00260}00260\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00261}00261\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicles\_.empty())}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00262}00262\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00263}00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00264}00264\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00265}00265\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00266}00266\ \ \ \ \ \textcolor{keyword}{auto}\ \&vehicle\ =\ vehicles\_[0];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00267}00267\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00268}00268\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Received\ \%zu\ new\ goals\ -\/\ mode:\ \%s"{}},}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00269}00269\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ msg-\/>poses.size(),\ advanced\_mode\_\ ?\ \textcolor{stringliteral}{"{}ADVANCED\ (TSP)"{}}\ :\ \textcolor{stringliteral}{"{}BASIC\ (Sequential)"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00270}00270\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00271}00271\ \ \ \ \ \textcolor{comment}{//\ Store\ new\ goals\ in\ the\ vehicle's\ goals\ vector}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00272}00272\ \ \ \ \ storeMissionGoals(*vehicle,\ msg-\/>poses);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00273}00273\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00274}00274\ \ \ \ \ \textcolor{comment}{//\ Log\ altitude\ mode\ for\ each\ goal}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00275}00275\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ msg-\/>poses.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00276}00276\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ goal\ =\ msg-\/>poses[i];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00277}00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (goal.position.z\ >\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00278}00278\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Goal\ \%zu:\ (\%.2f,\ \%.2f,\ \%.2f)\ -\/\ MANUAL\ ALTITUDE"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00279}00279\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i,\ goal.position.x,\ goal.position.y,\ goal.position.z);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00280}00280\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00281}00281\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Goal\ \%zu:\ (\%.2f,\ \%.2f,\ terrain)\ -\/\ TERRAIN\ FOLLOWING"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00282}00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i,\ goal.position.x,\ goal.position.y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00283}00283\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00284}00284\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00285}00285\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00286}00286\ \ \ \ \ \textcolor{comment}{//\ ADVANCED\ MODE:\ Use\ TSP\ to\ optimise\ goal\ order}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00287}00287\ \ \ \ \ \textcolor{keywordflow}{if}\ (advanced\_mode\_\ \&\&\ msg-\/>poses.size()\ >\ 1)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00288}00288\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}ADVANCED\ MODE:\ Running\ TSP\ solver\ for\ \%zu\ goals..."{}},\ msg-\/>poses.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00289}00289\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00290}00290\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!solveTSPAndReorderGoals(*vehicle))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00291}00291\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP\ solver\ failed\ -\/\ falling\ back\ to\ sequential\ order"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00292}00292\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00293}00293\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (advanced\_mode\_)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00294}00294\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}ADVANCED\ MODE:\ Single\ goal,\ no\ TSP\ optimization\ needed"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00295}00295\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00296}00296\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00297}00297\ \ \ \ \ \textcolor{comment}{//\ HANDLE\ ALL\ MISSION\ STATES}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00298}00298\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>mission\_active\ \&\&\ vehicle-\/>takeoff\_complete)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00299}00299\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00300}00300\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Validate\ if\ goals\ are\ within\ terrain\ map\ boundaries}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00301}00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!validateAllGoals(*vehicle))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00302}00302\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Some\ goals\ are\ outside\ terrain\ map\ boundaries.\ Returning\ to\ origin\ and\ landing."{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00303}00303\ \ \ \ \ \ \ \ \ \ \ \ \ returnToOriginAndLand(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00304}00304\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00305}00305\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00306}00306\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00307}00307\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}MISSION\ ACTIVE\ -\/\ Adding\ new\ goals\ to\ queue"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00308}00308\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00309}00309\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ALWAYS\ add\ new\ goals\ to\ the\ command\ queue}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00310}00310\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00311}00311\ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>queue\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00312}00312\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00313}00313\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clear\ existing\ commands\ and\ add\ new\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00314}00314\ \ \ \ \ \ \ \ \ \ \ \ \ std::queue<VehicleData::Command>\ empty;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ std::swap(vehicle-\/>command\_queue,\ empty);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00316}00316\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00317}00317\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ new\ goal\ commands\ in\ order}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ ordered\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00319}00319\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00320}00320\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ goals\_lock(vehicle-\/>goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00321}00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ordered\_goals\ =\ vehicle-\/>goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00323}00323\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00324}00324\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&goal\ :\ ordered\_goals)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00325}00325\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00326}00326\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>command\_queue.push(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00327}00327\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ VehicleData::Command(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{VehicleData::Command::Type::FLYING}},\ goal));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00328}00328\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00329}00329\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00330}00330\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Added\ \%zu\ new\ goals\ to\ command\ queue"{}},\ ordered\_goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00331}00331\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00332}00332\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00333}00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ mission\ progress\ for\ new\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00334}00334\ \ \ \ \ \ \ \ \ vehicle-\/>current\_goal\_index\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00335}00335\ \ \ \ \ \ \ \ \ vehicle-\/>mission\_progress\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00336}00336\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00337}00337\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Notify\ controller\ thread}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00338}00338\ \ \ \ \ \ \ \ \ vehicle-\/>queue\_cv.notify\_one();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00339}00339\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00340}00340\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}New\ goals\ queued\ for\ immediate\ execution"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00341}00341\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00342}00342\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (vehicle-\/>mission\_active\ \&\&\ !vehicle-\/>takeoff\_complete)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00343}00343\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00344}00344\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mission\ active\ but\ not\ taken\ off\ yet\ -\/\ goals\ will\ be\ used\ when\ takeoff\ completes}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00345}00345\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Mission\ active\ but\ not\ airborne\ -\/\ goals\ will\ be\ used\ after\ takeoff"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00346}00346\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00347}00347\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00348}00348\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00349}00349\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mission\ not\ active\ -\/\ just\ store\ the\ goals\ for\ future\ use}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00350}00350\ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Goals\ stored.\ Start\ mission\ with\ service\ call\ to\ begin\ navigation."{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00351}00351\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00352}00352\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00353}00353\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00354}00354\ \textcolor{keywordtype}{bool}\ DroneNode::validateAllGoals(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00355}00355\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00356}00356\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00357}00357\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00358}00358\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00359}00359\ \ \ \ \ \ \ \ \ goals\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00360}00360\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00361}00361\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00362}00362\ \ \ \ \ \textcolor{keywordflow}{if}\ (goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00363}00363\ \ \ \ \ \ \ \ \ RCLCPP\_WARN(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}No\ goals\ available\ to\ validate"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00364}00364\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00365}00365\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00366}00366\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00367}00367\ \ \ \ \ \textcolor{comment}{//\ Check\ if\ goals\ are\ within\ terrain\ map\ boundaries\ (40x40x20m\ centered\ at\ origin)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00368}00368\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ MAX\_X\ =\ 20.0;\ \ \textcolor{comment}{//\ -\/20\ to\ +20}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00369}00369\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ MAX\_Y\ =\ 20.0;\ \ \textcolor{comment}{//\ -\/20\ to\ +20}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00370}00370\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{double}\ MAX\_Z\ =\ 20.0;\ \ \textcolor{comment}{//\ 0\ to\ +20}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00371}00371\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00372}00372\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ goals.size();\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00373}00373\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ goal\ =\ goals[i];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00374}00374\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00375}00375\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(goal.position.x)\ >\ MAX\_X\ ||\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00376}00376\ \ \ \ \ \ \ \ \ \ \ \ \ std::abs(goal.position.y)\ >\ MAX\_Y\ ||\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00377}00377\ \ \ \ \ \ \ \ \ \ \ \ \ goal.position.z\ <\ 0\ ||\ goal.position.z\ >\ MAX\_Z)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00378}00378\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00379}00379\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00380}00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Goal\ \%zu\ at\ (\%.2f,\ \%.2f,\ \%.2f)\ is\ outside\ terrain\ map\ boundaries\ (±10m\ x,y;\ 0-\/20m\ z)"{}},}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00381}00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i,\ goal.position.x,\ goal.position.y,\ goal.position.z);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00382}00382\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00383}00383\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00384}00384\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00385}00385\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00386}00386\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}All\ \%zu\ goals\ are\ within\ terrain\ map\ boundaries"{}},\ goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00387}00387\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00388}00388\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00389}00389\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00390}00390\ \textcolor{keywordtype}{void}\ DroneNode::returnToOriginAndLand(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00391}00391\ \ \ \ \ RCLCPP\_WARN(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Returning\ to\ origin\ (0,0)\ and\ landing\ due\ to\ untraversable\ goals"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00392}00392\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00393}00393\ \ \ \ \ \textcolor{comment}{//\ Clear\ existing\ command\ queue}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00394}00394\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00395}00395\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}{queue\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00396}00396\ \ \ \ \ \ \ \ \ std::queue<VehicleData::Command>\ empty;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00397}00397\ \ \ \ \ \ \ \ \ std::swap(vehicle.\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}},\ empty);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00398}00398\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00399}00399\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ return-\/to-\/origin\ goal}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00400}00400\ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Pose\ origin\_pose;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00401}00401\ \ \ \ \ \ \ \ \ origin\_pose.position.x\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00402}00402\ \ \ \ \ \ \ \ \ origin\_pose.position.y\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00403}00403\ \ \ \ \ \ \ \ \ origin\_pose.position.z\ =\ 2.0;\ \ \textcolor{comment}{//\ 2m\ altitude\ for\ safe\ flight}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00404}00404\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00405}00405\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ orientation\ to\ face\ forward\ (0\ degrees)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00406}00406\ \ \ \ \ \ \ \ \ tf2::Quaternion\ q;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00407}00407\ \ \ \ \ \ \ \ \ q.setRPY(0,\ 0,\ 0);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00408}00408\ \ \ \ \ \ \ \ \ origin\_pose.orientation\ =\ tf2::toMsg(q);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00409}00409\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00410}00410\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ command\ to\ return\ to\ origin}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00411}00411\ \ \ \ \ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.push(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00412}00412\ \ \ \ \ \ \ \ \ \ \ \ \ VehicleData::Command(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{VehicleData::Command::Type::FLYING}},\ origin\_pose));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00413}00413\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00414}00414\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ landing\ command}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00415}00415\ \ \ \ \ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.push(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00416}00416\ \ \ \ \ \ \ \ \ \ \ \ \ VehicleData::Command(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a7ab0a1cfd85cc3da16cd3e3ad7448524}{VehicleData::Command::Type::LANDING}}));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00417}00417\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00418}00418\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ stop\ command}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00419}00419\ \ \ \ \ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.push(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00420}00420\ \ \ \ \ \ \ \ \ \ \ \ \ VehicleData::Command(\mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a615a46af313786fc4e349f34118be111}{VehicleData::Command::Type::STOP}}));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00421}00421\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00422}00422\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mark\ mission\ as\ failed}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00423}00423\ \ \ \ \ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\_active}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00424}00424\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00425}00425\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00426}00426\ \ \ \ \ \textcolor{comment}{//\ Notify\ controller\ thread}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00427}00427\ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1}{queue\_cv}}.notify\_one();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00428}00428\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00429}00429\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00430}00430\ \textcolor{keywordtype}{void}\ DroneNode::timerCallback()\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00431}00431\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicles\_.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00432}00432\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00433}00433\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00434}00434\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00435}00435\ \ \ \ \ \textcolor{keyword}{auto}\ \&vehicle\ =\ vehicles\_[0];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00436}00436\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00437}00437\ \ \ \ \ \textcolor{comment}{//\ Always\ publish\ waypoints\ and\ markers\ if\ we\ have\ goals,\ regardless\ of\ mission\ state}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00438}00438\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ current\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00439}00439\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00440}00440\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00441}00441\ \ \ \ \ \ \ \ \ current\_goals\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00442}00442\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00443}00443\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00444}00444\ \ \ \ \ \textcolor{keywordflow}{if}\ (!current\_goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00445}00445\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Always\ publish\ waypoints\ and\ markers\ when\ we\ have\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00446}00446\ \ \ \ \ \ \ \ \ waypoint\_manager\_-\/>publishWaypoints(*vehicle,\ this-\/>now());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00447}00447\ \ \ \ \ \ \ \ \ waypoint\_manager\_-\/>publishMarkers(*vehicle,\ this-\/>now());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00448}00448\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00449}00449\ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Published\ waypoints\ and\ markers\ for\ \%zu\ goals"{}},\ current\_goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00450}00450\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00451}00451\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00452}00452\ \ \ \ \ \textcolor{comment}{//\ Update\ mission\ progress\ if\ active}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00453}00453\ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\_active}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00454}00454\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ progress\ based\ on\ completed\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00455}00455\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00456}00456\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ progress\ =\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}})\ /\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}.size())\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00458}00458\ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}{mission\_progress}}\ =\ std::min(progress,\ 100.0);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00459}00459\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00460}00460\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00461}00461\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ status\ periodically}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00462}00462\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ status\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00463}00463\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (++status\_counter\ \%\ 10\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ Every\ 5\ seconds}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00464}00464\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00465}00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Mission\ Status:\ ACTIVE,\ Progress:\ \%.1f\%\%,\ Goal:\ \%zu/\%zu"{}},}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00466}00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}{mission\_progress}}.load(),}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00467}00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{size\_t}\textcolor{keyword}{>}(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}.load()),}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00468}00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00469}00469\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00470}00470\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00471}00471\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00472}00472\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00473}00473\ \textcolor{keywordtype}{void}\ DroneNode::controllerThread()}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00474}00474\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00475}00475\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Controller\ thread\ started"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00476}00476\ \ \ \ \ rclcpp::Rate\ rate(10);\ \textcolor{comment}{//\ 10Hz\ for\ responsive\ control}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00477}00477\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00478}00478\ \ \ \ \ \textcolor{keywordflow}{while}\ (!should\_terminate\_)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00479}00479\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00480}00480\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \&vehicle\ :\ vehicles\_)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00481}00481\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00482}00482\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ sensor\ data}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00483}00483\ \ \ \ \ \ \ \ \ \ \ \ \ sensor\_msgs::msg::LaserScan::SharedPtr\ laser;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00484}00484\ \ \ \ \ \ \ \ \ \ \ \ \ sensor\_msgs::msg::Range::SharedPtr\ sonar;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00485}00485\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00486}00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(laser\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00487}00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ laser\ =\ latest\_laser\_;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00488}00488\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00489}00489\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00490}00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(sonar\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00491}00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sonar\ =\ latest\_sonar\_;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00492}00492\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00493}00493\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00494}00494\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Continuous\ obstacle\ detection}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00495}00495\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (laser\ \&\&\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\_active}}\ \&\&\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{takeoff\_complete}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00496}00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Point\ current\_pos;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00497}00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00498}00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00499}00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_pos\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.position;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00500}00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00501}00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00502}00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Point\ target\_pos\ =\ current\_pos;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00503}00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_target\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00504}00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00505}00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00506}00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00507}00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ current\_goal\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}.load();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00508}00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (current\_goal\ <\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}.size()))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00509}00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ target\_pos\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}[current\_goal].position;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00510}00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ has\_target\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00511}00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00512}00512\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00513}00513\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00514}00514\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (has\_target)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00515}00515\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ obstacle\_in\_path\ =\ controller\_-\/>checkObstaclesInDirection(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00516}00516\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ laser,\ current\_pos,\ target\_pos);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00517}00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00518}00518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Obstacle\ avoidance\ state\ machine}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00519}00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (obstacle\_in\_path\ \&\&\ !vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00520}00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00521}00521\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}{obstacle\_avoidance\_start\_altitude}}\ =\ current\_pos.z;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00522}00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00523}00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00524}00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}STARTING\ OBSTACLE\ AVOIDANCE\ -\/\ ascending\ from\ \%.2fm!"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00525}00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_pos.z);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00526}00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00527}00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00528}00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00529}00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ obstacle\_cleared\ =\ controller\_-\/>isObstacleClearanceAchieved(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00530}00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ laser,\ current\_pos,\ target\_pos,\ 4.0);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00531}00531\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00532}00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ altitude\_sufficient\ =\ (current\_pos.z\ >\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}{obstacle\_avoidance\_start\_altitude}}\ +\ 3.0);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00533}00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00534}00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (obstacle\_cleared\ \&\&\ altitude\_sufficient)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00535}00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00536}00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00537}00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}OBSTACLE\ CLEARED\ -\/\ resuming\ normal\ flight\ at\ \%.2fm"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00538}00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_pos.z);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00539}00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00540}00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Twist\ ascent\_cmd;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00541}00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ascent\_cmd.linear.x\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00542}00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ascent\_cmd.linear.y\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00543}00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ascent\_cmd.linear.z\ =\ 2.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00544}00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd\_vel\_pub\_-\/>publish(ascent\_cmd);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00545}00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00546}00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>setAltitudeAdjustment(2.0);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00547}00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00548}00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00549}00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00550}00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00551}00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00552}00552\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00553}00553\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00554}00554\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Normal\ altitude\ adjustment}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00555}00555\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sonar\ \&\&\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{takeoff\_complete}}\ \&\&\ !vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00556}00556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ current\_altitude;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00557}00557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00558}00558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00559}00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.position.z;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00560}00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00561}00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00562}00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ altitude\_adjustment\ =\ controller\_-\/>calculateAltitudeAdjustment(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00563}00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude,\ sonar-\/>range);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00564}00564\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00565}00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>setAltitudeAdjustment(altitude\_adjustment);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00566}00566\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00567}00567\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00568}00568\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Command\ processing}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00569}00569\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\_obstacle}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00570}00570\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ VehicleData::Command\ cmd;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00571}00571\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_cmd\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00572}00572\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00573}00573\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00574}00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::unique\_lock<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}{queue\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00575}00575\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.empty())}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00576}00576\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00577}00577\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.front();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00578}00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\_queue}}.pop();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00579}00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ has\_cmd\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00580}00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00581}00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00582}00582\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00583}00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (has\_cmd)}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00584}00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00585}00585\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ success\ =\ controller\_-\/>processCommand(*vehicle,\ cmd);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00586}00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00587}00587\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (success\ \&\&\ cmd.\mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}\ ==\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{VehicleData::Command::Type::FLYING}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00588}00588\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Successfully\ completed\ a\ flying\ command\ -\/\ increment\ goal\ index}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00589}00589\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}++;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00590}00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00591}00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00592}00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Goal\ \%d\ completed.\ Moving\ to\ next\ goal."{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00593}00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}.load()\ -\/\ 1);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00594}00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00595}00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ we\ have\ more\ goals\ to\ process}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00596}00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00597}00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ goals\_lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00598}00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ current\_goal\_idx\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\_goal\_index}}.load();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00599}00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00600}00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (current\_goal\_idx\ >=\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}.size()))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00601}00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00602}00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}All\ goals\ completed!\ Drone\ will\ hover\ and\ wait\ for\ new\ goals."{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00603}00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mission\ remains\ active,\ drone\ hovers\ waiting\ for\ new\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00604}00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00605}00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00606}00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00607}00607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00608}00608\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!success\ \&\&\ cmd.\mbox{\hyperlink{struct_vehicle_data_1_1_command_a852410ad54024f67d6fe779575e930a7}{type}}\ ==\ \mbox{\hyperlink{struct_vehicle_data_1_1_command_ad4da8b67775a3eb99887a5c052775581a0d19465986ce26eceefd63e055ccdeaa}{VehicleData::Command::Type::FLYING}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00609}00609\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00610}00610\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Failed\ to\ reach\ goal.\ Aborting\ mission."{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00611}00611\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ controller\_-\/>abortMission(*vehicle);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00612}00612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00613}00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00614}00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ No\ commands\ in\ queue\ -\/\ check\ if\ mission\ is\ active\ and\ we're\ waiting\ for\ new\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00615}00615\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\_active}}\ \&\&\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{takeoff\_complete}})\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00616}00616\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Hover\ in\ place\ while\ waiting\ for\ new\ goals\ with\ real-\/time\ altitude\ control}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00617}00617\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Twist\ hover\_cmd;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00618}00618\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hover\_cmd.linear.x\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00619}00619\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hover\_cmd.linear.y\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00620}00620\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00621}00621\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ real-\/time\ altitude\ adjustment\ using\ sonar}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00622}00622\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sonar)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00623}00623\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ current\_altitude;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00624}00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00625}00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00626}00626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude\ =\ vehicle-\/>\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.position.z;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00627}00627\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00628}00628\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00629}00629\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ real-\/time\ altitude\ adjustment\ based\ on\ current\ sonar\ reading}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00630}00630\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ altitude\_adjustment\ =\ controller\_-\/>calculateAltitudeAdjustment(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00631}00631\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude,\ sonar-\/>range);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00632}00632\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hover\_cmd.linear.z\ =\ altitude\_adjustment;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00633}00633\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00634}00634\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug\ every\ 2\ seconds\ during\ hover}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00635}00635\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ hover\_debug\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00636}00636\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (++hover\_debug\_counter\ \%\ 20\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00637}00637\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00638}00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Hovering:\ altitude=\%.2fm,\ sonar=\%.2fm,\ adjustment=\%.2fm/s"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00639}00639\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\_altitude,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(sonar-\/>range),\ altitude\_adjustment);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00640}00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00641}00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00642}00642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ No\ sonar\ available\ -\/\ maintain\ current\ altitude}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00643}00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ hover\_cmd.linear.z\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00644}00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00645}00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ no\_sonar\_warning\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00646}00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (++no\_sonar\_warning\_counter\ \%\ 100\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ Every\ 10\ seconds}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00647}00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_WARN(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Hovering\ without\ sonar\ -\/\ maintaining\ current\ altitude"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00648}00648\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00649}00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00650}00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00651}00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cmd\_vel\_pub\_-\/>publish(hover\_cmd);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00652}00652\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00653}00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00654}00654\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00655}00655\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00656}00656\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00657}00657\ \ \ \ \ \ \ \ \ rate.sleep();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00658}00658\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00659}00659\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00660}00660\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Controller\ thread\ stopped"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00661}00661\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00662}00662\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00663}00663\ \textcolor{keywordtype}{double}\ DroneNode::getElevationAtPoint(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ point)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00664}00664\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(grid\_map\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00665}00665\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00666}00666\ \ \ \ \ \textcolor{keywordflow}{if}\ (!has\_grid\_map\_)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00667}00667\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0;\ \ \textcolor{comment}{//\ Default\ elevation\ if\ no\ grid\ map\ is\ available}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00668}00668\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00669}00669\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00670}00670\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00671}00671\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ the\ grid\ map\ message\ to\ grid\_map::GridMap}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00672}00672\ \ \ \ \ \ \ \ \ grid\_map::GridMap\ map;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00673}00673\ \ \ \ \ \ \ \ \ grid\_map::GridMapRosConverter::fromMessage(latest\_grid\_map\_,\ map);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00674}00674\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00675}00675\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ elevation\ at\ specified\ point}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00676}00676\ \ \ \ \ \ \ \ \ grid\_map::Position\ position(point.x,\ point.y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00677}00677\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (map.isInside(position))\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00678}00678\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ map.atPosition(\textcolor{stringliteral}{"{}elevation"{}},\ position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00679}00679\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00680}00680\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\&\ e)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00681}00681\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Error\ getting\ elevation:\ \%s"{}},\ e.what());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00682}00682\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00683}00683\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00684}00684\ \ \ \ \ \textcolor{keywordflow}{return}\ 0.0;\ \ \textcolor{comment}{//\ Default\ elevation\ if\ point\ not\ in\ map}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00685}00685\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00686}00686\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00687}00687\ std::unique\_ptr<Graph>\ DroneNode::buildTraversabilityGraph(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00688}00688\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00689}00689\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00690}00690\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(\textcolor{keyword}{const\_cast<}VehicleData\&\textcolor{keyword}{>}(vehicle).goals\_mutex);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00691}00691\ \ \ \ \ \ \ \ \ goals\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00692}00692\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00693}00693\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00694}00694\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ num\_goals\ =\ goals.size();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00695}00695\ \ \ \ \ \textcolor{keyword}{auto}\ graph\ =\ std::make\_unique<Graph>(num\_goals);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00696}00696\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00697}00697\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Building\ traversability\ graph\ for\ \%zu\ goals"{}},\ num\_goals);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00698}00698\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00699}00699\ \ \ \ \ \textcolor{comment}{//\ Build\ edges\ between\ all\ pairs\ of\ goals}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00700}00700\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ num\_goals;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00701}00701\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ j\ =\ i\ +\ 1;\ j\ <\ num\_goals;\ j++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00702}00702\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ drone\ operations,\ all\ goals\ within\ terrain\ bounds\ are\ traversable\ (unless\ below\ ground)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00703}00703\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (unlike\ ground\ vehicles\ which\ need\ to\ check\ gradients)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00704}00704\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ distance\ =\ controller\_-\/>calculateDistance(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00705}00705\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ goals[i].position,\ goals[j].position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00706}00706\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00707}00707\ \ \ \ \ \ \ \ \ \ \ \ \ graph-\/>addEdge(i,\ j,\ distance);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00708}00708\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00709}00709\ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00710}00710\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Added\ edge\ from\ goal\ \%zu\ to\ goal\ \%zu\ with\ distance\ \%.2fm"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00711}00711\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ i,\ j,\ distance);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00712}00712\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00713}00713\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00714}00714\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00715}00715\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Graph\ construction\ complete\ -\/\ all\ goals\ are\ traversable\ for\ drone"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00716}00716\ \ \ \ \ \textcolor{keywordflow}{return}\ graph;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00717}00717\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00718}00718\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00719}\mbox{\hyperlink{class_drone_node_aa500d3ccd7a1b50601d29eb1e8b84fe7}{00719}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_drone_node_aa500d3ccd7a1b50601d29eb1e8b84fe7}{DroneNode::setSensorNode}}(std::shared\_ptr<SensorNode>\ sensor\_node)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00720}00720\ \ \ \ \ sensor\_node\_\ =\ sensor\_node;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00721}00721\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Sensor\ node\ connected\ to\ drone\ node"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00722}00722\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00723}00723\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00724}00724\ \textcolor{keywordtype}{void}\ DroneNode::storeMissionGoals(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle,\ \textcolor{keyword}{const}\ std::vector<geometry\_msgs::msg::Pose>\&\ new\_goals)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00725}00725\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00726}00726\ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}.clear();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00727}00727\ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}\ =\ new\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00728}00728\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00729}00729\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Stored\ \%zu\ mission\ goals\ in\ vehicle\ data\ structure"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00730}00730\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ new\_goals.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00731}00731\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00732}00732\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00733}00733\ \textcolor{keywordtype}{bool}\ DroneNode::solveTSPAndReorderGoals(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00734}00734\ \ \ \ \ \textcolor{comment}{//\ Get\ current\ goals\ and\ drone\ position}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00735}00735\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ original\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00736}00736\ \ \ \ \ geometry\_msgs::msg::Point\ start\_position;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00737}00737\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00738}00738\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00739}00739\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00740}00740\ \ \ \ \ \ \ \ \ original\_goals\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00741}00741\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00742}00742\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00743}00743\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00744}00744\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00745}00745\ \ \ \ \ \ \ \ \ start\_position\ =\ vehicle.\mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\_odom}}.pose.pose.position;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00746}00746\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00747}00747\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00748}00748\ \ \ \ \ \textcolor{keywordflow}{if}\ (original\_goals.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00749}00749\ \ \ \ \ \ \ \ \ RCLCPP\_WARN(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ No\ goals\ to\ optimize"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00750}00750\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00751}00751\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00752}00752\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00753}00753\ \ \ \ \ \textcolor{comment}{//\ Cost\ function\ (3D\ Euclidean\ distance)}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00754}00754\ \ \ \ \ \textcolor{keyword}{auto}\ cost\_function\ =\ [\textcolor{keyword}{this}](\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ from,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ to)\ -\/>\ \textcolor{keywordtype}{double}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00755}00755\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ controller\_-\/>calculateDistance(from,\ to);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00756}00756\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00757}00757\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00758}00758\ \ \ \ \ \textcolor{comment}{//\ Traversability\ function\ }}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00759}00759\ \ \ \ \ \textcolor{keyword}{auto}\ traversability\_function\ =\ [\textcolor{keyword}{this}](\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ from,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ to)\ -\/>\ \textcolor{keywordtype}{bool}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00760}00760\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ drone\ missions,\ check\ basic\ bounds\ and\ reasonable\ altitude\ changes}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00761}00761\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (std::abs(from.x)\ >\ 20.0\ ||\ std::abs(from.y)\ >\ 20.0\ ||\ from.z\ <\ 0\ ||\ from.z\ >\ 20.0\ ||}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00762}00762\ \ \ \ \ \ \ \ \ \ \ \ \ std::abs(to.x)\ >\ 20.0\ ||\ std::abs(to.y)\ >\ 20.0\ ||\ to.z\ <\ 0\ ||\ to.z\ >\ 20.0)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00763}00763\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00764}00764\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00765}00765\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00766}00766\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ for\ reasonable\ altitude\ changes}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00767}00767\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ altitude\_diff\ =\ std::abs(to.z\ -\/\ from.z);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00768}00768\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ horizontal\_distance\ =\ std::sqrt(std::pow(to.x\ -\/\ from.x,\ 2)\ +\ std::pow(to.y\ -\/\ from.y,\ 2));}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00769}00769\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00770}00770\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (horizontal\_distance\ >\ 0.1)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00771}00771\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ climb\_angle\ =\ std::atan(altitude\_diff\ /\ horizontal\_distance)\ *\ 180.0\ /\ M\_PI;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00772}00772\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (climb\_angle\ >\ 45.0)\ \{\ \ \textcolor{comment}{//\ Very\ steep\ climb/descent}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00773}00773\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00774}00774\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00775}00775\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00776}00776\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00777}00777\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \ \textcolor{comment}{//\ Path\ is\ traversable\ for\ drone}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00778}00778\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00779}00779\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00780}00780\ \ \ \ \ \textcolor{comment}{//\ Calculate\ baseline\ cost\ (sequential\ order)\ manually}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00781}00781\ \ \ \ \ \textcolor{keywordtype}{double}\ baseline\_cost\ =\ cost\_function(start\_position,\ original\_goals[0].position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00782}00782\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ original\_goals.size()\ -\/\ 1;\ ++i)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00783}00783\ \ \ \ \ \ \ \ \ baseline\_cost\ +=\ cost\_function(original\_goals[i].position,\ original\_goals[i+1].position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00784}00784\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00785}00785\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00786}00786\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Starting\ optimization\ for\ \%zu\ goals,\ baseline\ cost:\ \%.2fm"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00787}00787\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ original\_goals.size(),\ baseline\_cost);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00788}00788\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00789}00789\ \ \ \ \ \textcolor{comment}{//\ Solve\ TSP}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00790}00790\ \ \ \ \ \textcolor{keyword}{auto}\ solution\ =\ tsp\_solver\_-\/>solveTSP(original\_goals,\ start\_position,\ cost\_function,\ traversability\_function);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00791}00791\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00792}00792\ \ \ \ \ \textcolor{keywordflow}{if}\ (!solution.solution\_found)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00793}00793\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ No\ valid\ solution\ found!"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00794}00794\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00795}00795\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00796}00796\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00797}00797\ \ \ \ \ \textcolor{comment}{//\ Reorder\ goals\ based\ on\ TSP\ solution}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00798}00798\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ optimized\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00799}00799\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ idx\ :\ solution.path)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00800}00800\ \ \ \ \ \ \ \ \ optimized\_goals.push\_back(original\_goals[idx]);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00801}00801\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00802}00802\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00803}00803\ \ \ \ \ \textcolor{comment}{//\ Update\ vehicle\ goals\ with\ optimized\ order}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00804}00804\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00805}00805\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(vehicle.\mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\_mutex}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00806}00806\ \ \ \ \ \ \ \ \ vehicle.\mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}\ =\ optimized\_goals;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00807}00807\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00808}00808\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00809}00809\ \ \ \ \ \textcolor{comment}{//\ Publish\ visualisation\ of\ all\ valid\ TSP\ paths}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00810}00810\ \ \ \ \ publishTSPPathVisualisation(solution,\ original\_goals,\ start\_position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00811}00811\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00812}00812\ \ \ \ \ \textcolor{comment}{//\ Calculate\ optimisation\ benefit}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00813}00813\ \ \ \ \ \textcolor{keywordtype}{double}\ optimization\_percentage\ =\ ((baseline\_cost\ -\/\ solution.total\_cost)\ /\ baseline\_cost)\ *\ 100.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00814}00814\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00815}00815\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Goals\ reordered\ successfully!"{}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00816}00816\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Baseline\ cost:\ \%.2fm,\ Optimized\ cost:\ \%.2fm"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00817}00817\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ baseline\_cost,\ solution.total\_cost);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00818}00818\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Optimization\ benefit:\ \%.1f\%\%\ (saved\ \%.2fm)"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00819}00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ optimization\_percentage,\ baseline\_cost\ -\/\ solution.total\_cost);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00820}00820\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00821}00821\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00822}00822\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00823}00823\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00824}00824\ \textcolor{keywordtype}{bool}\ DroneNode::isPathTraversable(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ from,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ to)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00825}00825\ \ \ \ \ \textcolor{comment}{//\ For\ drone\ operations,\ most\ paths\ are\ traversable\ unless\ terrain\ is\ too\ steep}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00826}00826\ \ \ \ \ \textcolor{comment}{//\ Check\ terrain\ gradients\ along\ the\ path\ using\ the\ waypoint\ manager's\ gradient\ function}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00827}00827\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00828}00828\ \ \ \ \ \textcolor{comment}{//\ Sample\ points\ along\ the\ path}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00829}00829\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ num\_samples\ =\ 10;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00830}00830\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <=\ num\_samples;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00831}00831\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(i)\ /\ num\_samples;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00832}00832\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ x\ =\ from.x\ +\ t\ *\ (to.x\ -\/\ from.x);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00833}00833\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ y\ =\ from.y\ +\ t\ *\ (to.y\ -\/\ from.y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00834}00834\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00835}00835\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ gradient\ at\ this\ point}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00836}00836\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sensor\_node\_)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00837}00837\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ gradient\ =\ sensor\_node\_-\/>getGradientMagnitudeAtPoint(x,\ y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00838}00838\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gradient\ >\ max\_gradient\_\ /\ 100.0)\ \{\ \ \textcolor{comment}{//\ Convert\ percentage\ to\ decimal}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00839}00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Path\ untraversable\ due\ to\ steep\ gradient\ \%.1f\%\%\ at\ (\%.2f,\ \%.2f)"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00840}00840\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gradient\ *\ 100.0,\ x,\ y);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00841}00841\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00842}00842\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00843}00843\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00844}00844\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00845}00845\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00846}00846\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};\ \ \textcolor{comment}{//\ Path\ is\ traversable}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00847}00847\ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00848}00848\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00849}00849\ \textcolor{keywordtype}{void}\ DroneNode::publishTSPPathVisualisation(}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00850}00850\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution}{TSPSolver::TSPSolution}}\&\ solution,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00851}00851\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<geometry\_msgs::msg::Pose>\&\ goals,}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00852}00852\ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ start\_position)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00853}00853\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00854}00854\ \ \ \ \ visualization\_msgs::msg::MarkerArray\ marker\_array;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00855}00855\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00856}00856\ \ \ \ \ \textcolor{comment}{//\ Publish\ all\ valid\ paths\ with\ different\ colors}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00857}00857\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ path\_idx\ =\ 0;\ path\_idx\ <\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\_valid\_paths}}.size();\ path\_idx++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00858}00858\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ path\ =\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\_valid\_paths}}[path\_idx];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00859}00859\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ path\_cost\ =\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a373c0db0d20e7dbc9068e256718c268e}{path\_costs}}[path\_idx];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00860}00860\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_optimal\ =\ (path\ ==\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_ae1f5a83ccdc05d523c864d92c43746a9}{path}});}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00861}00861\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00862}00862\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Generate\ waypoints\ for\ this\ path}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00863}00863\ \ \ \ \ \ \ \ \ std::vector<geometry\_msgs::msg::Point>\ path\_waypoints;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00864}00864\ \ \ \ \ \ \ \ \ path\_waypoints.push\_back(start\_position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00865}00865\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00866}00866\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ goal\_idx\ :\ path)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00867}00867\ \ \ \ \ \ \ \ \ \ \ \ \ path\_waypoints.push\_back(goals[goal\_idx].position);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00868}00868\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00869}00869\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00870}00870\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ intermediate\ waypoints\ every\ 1m\ along\ the\ path}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00871}00871\ \ \ \ \ \ \ \ \ std::vector<geometry\_msgs::msg::Point>\ intermediate\_waypoints;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00872}00872\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ path\_waypoints.size()\ -\/\ 1;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00873}00873\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ from\ =\ path\_waypoints[i];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00874}00874\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ to\ =\ path\_waypoints[i\ +\ 1];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00875}00875\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00876}00876\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dx\ =\ to.x\ -\/\ from.x;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00877}00877\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dy\ =\ to.y\ -\/\ from.y;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00878}00878\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ dz\ =\ to.z\ -\/\ from.z;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00879}00879\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ distance\ =\ std::sqrt(dx*dx\ +\ dy*dy\ +\ dz*dz);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00880}00880\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00881}00881\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ num\_segments\ =\ std::max(1,\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(std::ceil(distance\ /\ 1.0)));\ \ \textcolor{comment}{//\ 1m\ spacing}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00882}00882\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00883}00883\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ j\ =\ 0;\ j\ <=\ num\_segments;\ j++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00884}00884\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ t\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{double}\textcolor{keyword}{>}(j)\ /\ num\_segments;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00885}00885\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ geometry\_msgs::msg::Point\ waypoint;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00886}00886\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.x\ =\ from.x\ +\ t\ *\ dx;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00887}00887\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.y\ =\ from.y\ +\ t\ *\ dy;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00888}00888\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.z\ =\ from.z\ +\ t\ *\ dz;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00889}00889\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00890}00890\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ minimum\ 2m\ altitude\ for\ visualization}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00891}00891\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (waypoint.z\ <\ 2.0)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00892}00892\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ waypoint.z\ =\ 2.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00893}00893\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00894}00894\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00895}00895\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ intermediate\_waypoints.push\_back(waypoint);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00896}00896\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00897}00897\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00898}00898\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00899}00899\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ markers\ for\ intermediate\ waypoints}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00900}00900\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ wp\_idx\ =\ 0;\ wp\_idx\ <\ intermediate\_waypoints.size();\ wp\_idx++)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00901}00901\ \ \ \ \ \ \ \ \ \ \ \ \ visualization\_msgs::msg::Marker\ marker;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00902}00902\ \ \ \ \ \ \ \ \ \ \ \ \ marker.header.frame\_id\ =\ \textcolor{stringliteral}{"{}world"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00903}00903\ \ \ \ \ \ \ \ \ \ \ \ \ marker.header.stamp\ =\ this-\/>now();}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00904}00904\ \ \ \ \ \ \ \ \ \ \ \ \ marker.ns\ =\ is\_optimal\ ?\ \textcolor{stringliteral}{"{}tsp\_optimal\_path"{}}\ :\ \textcolor{stringliteral}{"{}tsp\_alternative\_path"{}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00905}00905\ \ \ \ \ \ \ \ \ \ \ \ \ marker.id\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(path\_idx\ *\ 1000\ +\ wp\_idx);\ \ \textcolor{comment}{//\ Unique\ ID}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00906}00906\ \ \ \ \ \ \ \ \ \ \ \ \ marker.type\ =\ visualization\_msgs::msg::Marker::SPHERE;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00907}00907\ \ \ \ \ \ \ \ \ \ \ \ \ marker.action\ =\ visualization\_msgs::msg::Marker::ADD;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00908}00908\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00909}00909\ \ \ \ \ \ \ \ \ \ \ \ \ marker.pose.position\ =\ intermediate\_waypoints[wp\_idx];}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00910}00910\ \ \ \ \ \ \ \ \ \ \ \ \ marker.pose.orientation.w\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00911}00911\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00912}00912\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Size}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00913}00913\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.x\ =\ 0.3;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00914}00914\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.y\ =\ 0.3;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00915}00915\ \ \ \ \ \ \ \ \ \ \ \ \ marker.scale.z\ =\ 0.3;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00916}00916\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00917}00917\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Color\ based\ on\ path\ type}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00918}00918\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_optimal)\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00919}00919\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Optimal\ path:\ bright\ green}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00920}00920\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.r\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00921}00921\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.g\ =\ 1.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00922}00922\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.b\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00923}00923\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.a\ =\ 0.9;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00924}00924\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00925}00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Alternative\ paths:\ different\ colors\ based\ on\ relative\ cost}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00926}00926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ cost\_ratio\ =\ path\_cost\ /\ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a40b6e4b469b820a6f7927c1d30920b47}{total\_cost}};}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00927}00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.r\ =\ std::min(1.0,\ cost\_ratio);\ \ \textcolor{comment}{//\ More\ red\ for\ expensive\ paths}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00928}00928\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.g\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00929}00929\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.b\ =\ std::max(0.0,\ 2.0\ -\/\ cost\_ratio);\ \ \textcolor{comment}{//\ More\ blue\ for\ cheaper\ paths}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00930}00930\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ marker.color.a\ =\ 0.5;\ \ \textcolor{comment}{//\ Semi-\/transparent}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00931}00931\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00932}00932\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00933}00933\ \ \ \ \ \ \ \ \ \ \ \ \ marker.lifetime\ =\ rclcpp::Duration(0,\ 0);\ \ \textcolor{comment}{//\ Persistent}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00934}00934\ \ \ \ \ \ \ \ \ \ \ \ \ marker\_array.markers.push\_back(marker);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00935}00935\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00936}00936\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00937}00937\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00938}00938\ \ \ \ \ \textcolor{comment}{//\ Publish\ the\ marker\ array}}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00939}00939\ \ \ \ \ markers\_pub\_-\/>publish(marker\_array);}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00940}00940\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00941}00941\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}TSP:\ Published\ visualization\ of\ \%zu\ valid\ paths\ (\%zu\ total\ waypoints)"{}},\ }
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00942}00942\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ solution.\mbox{\hyperlink{struct_t_s_p_solver_1_1_t_s_p_solution_a54cb0a332ea5da885e86ddc5042ae296}{all\_valid\_paths}}.size(),\ marker\_array.markers.size());}
+\DoxyCodeLine{\Hypertarget{drone__node_8cpp_source_l00943}00943\ \}}
+
+\end{DoxyCode}

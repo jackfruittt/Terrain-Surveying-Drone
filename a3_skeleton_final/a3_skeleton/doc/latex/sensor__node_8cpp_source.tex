@@ -1,0 +1,202 @@
+\doxysection{sensor\+\_\+node.\+cpp}
+\hypertarget{sensor__node_8cpp_source}{}\label{sensor__node_8cpp_source}\index{src/sensor\_node.cpp@{src/sensor\_node.cpp}}
+\mbox{\hyperlink{sensor__node_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{sensor__node_8h}{sensor\_node.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00003}00003\ \textcolor{keyword}{using\ namespace\ }std::chrono\_literals;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00005}\mbox{\hyperlink{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}{00005}}\ \mbox{\hyperlink{class_sensor_node_a95a6344f724de6bf5decb1409afc232f}{SensorNode::SensorNode}}()}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00006}00006\ \ \ \ \ :\ Node(\textcolor{stringliteral}{"{}sensor\_processor"{}}),}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00007}00007\ \ \ \ \ \ \ obstacle\_detected\_(false)}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00008}00008\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00009}00009\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Initializing\ SensorNode\ with\ TerrainMap..."{}});}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00011}00011\ \ \ \ \ \textcolor{comment}{//\ Create\ the\ terrain\ map\ with\ configuration}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00012}00012\ \ \ \ \ terrain\_map\_\ =\ std::make\_unique<TerrainMap>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00013}00013\ \ \ \ \ \ \ \ \ this-\/>get\_logger(),}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00014}00014\ \ \ \ \ \ \ \ \ 0.1,\ \ \ \ \textcolor{comment}{//\ 10cm\ resolution}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00015}00015\ \ \ \ \ \ \ \ \ 1.0\ \ \ \ \textcolor{comment}{//\ Start\ with\ 10m\ x\ 10m\ map}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00016}00016\ \ \ \ \ );}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00017}00017\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00018}00018\ \ \ \ \ \textcolor{comment}{//\ Set\ up\ ROS\ communication,\ alternative\ and\ cleaner\ approach\ to\ drone\ node.\ Intentionally\ done\ to\ show\ both\ ways.\ This\ is\ my\ preferred.\ }}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00019}00019\ \ \ \ \ setupSubscribers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00020}00020\ \ \ \ \ setupPublishers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00021}00021\ \ \ \ \ setupTimers();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00022}00022\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00023}00023\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}SensorNode\ initialized\ successfully\ with\ TerrainMap"{}});}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00024}00024\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00026}\mbox{\hyperlink{class_sensor_node_abb48184568647a2bea118ba367068917}{00026}}\ \mbox{\hyperlink{class_sensor_node_abb48184568647a2bea118ba367068917}{SensorNode::\string~SensorNode}}()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00027}00027\ \ \ \ \ RCLCPP\_INFO(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}SensorNode\ shutting\ down"{}});}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00028}00028\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00030}00030\ \textcolor{keywordtype}{void}\ SensorNode::setupSubscribers()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00031}00031\ \ \ \ \ laser\_sub\_\ =\ this-\/>create\_subscription<sensor\_msgs::msg::LaserScan>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/laserscan"{}},\ 10,}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00033}00033\ \ \ \ \ \ \ \ \ std::bind(\&SensorNode::laserCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00034}00034\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00035}00035\ \ \ \ \ sonar\_sub\_\ =\ this-\/>create\_subscription<sensor\_msgs::msg::Range>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00036}00036\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/sonar"{}},\ 10,}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00037}00037\ \ \ \ \ \ \ \ \ std::bind(\&SensorNode::sonarCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00038}00038\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00039}00039\ \ \ \ \ odom\_sub\_\ =\ this-\/>create\_subscription<nav\_msgs::msg::Odometry>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/drone/gt\_odom"{}},\ 10,}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00041}00041\ \ \ \ \ \ \ \ \ std::bind(\&SensorNode::odomCallback,\ \textcolor{keyword}{this},\ std::placeholders::\_1));}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00042}00042\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00044}00044\ \textcolor{keywordtype}{void}\ SensorNode::setupPublishers()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00045}00045\ \ \ \ \ grid\_map\_pub\_\ =\ this-\/>create\_publisher<grid\_map\_msgs::msg::GridMap>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00046}00046\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/grid\_map"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00048}00048\ \ \ \ \ obstacle\_detected\_pub\_\ =\ this-\/>create\_publisher<std\_msgs::msg::Bool>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/obstacle\_detected"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00050}00050\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00051}00051\ \ \ \ \ gradient\_arrows\_pub\_\ =\ this-\/>create\_publisher<visualization\_msgs::msg::MarkerArray>(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00052}00052\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/terrain\_gradients"{}},\ 10);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00053}00053\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00055}00055\ \textcolor{keywordtype}{void}\ SensorNode::setupTimers()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00056}00056\ \ \ \ \ \textcolor{comment}{//\ Publish\ grid\ map\ every\ 500ms}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00057}00057\ \ \ \ \ publish\_timer\_\ =\ this-\/>create\_wall\_timer(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00058}00058\ \ \ \ \ \ \ \ \ 500ms,\ std::bind(\&SensorNode::publishMapCallback,\ \textcolor{keyword}{this}));}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00059}00059\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00060}00060\ \ \ \ \ \textcolor{comment}{//\ Publish\ gradient\ visualization\ every\ 1\ second}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00061}00061\ \ \ \ \ gradient\_timer\_\ =\ this-\/>create\_wall\_timer(}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00062}00062\ \ \ \ \ \ \ \ \ 1000ms,\ std::bind(\&SensorNode::publishGradientVisualizationCallback,\ \textcolor{keyword}{this}));}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00063}00063\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00065}00065\ \textcolor{comment}{//\ ROS\ Callbacks\ -\/\ Focus\ on\ communication,\ delegate\ processing\ to\ TerrainMap}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00066}00066\ \textcolor{keywordtype}{void}\ SensorNode::laserCallback(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::LaserScan>\ msg)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00067}00067\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00068}00068\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(laser\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00069}00069\ \ \ \ \ \ \ \ \ latest\_laser\_\ =\ msg;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00070}00070\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00071}00071\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00072}00072\ \ \ \ \ \textcolor{comment}{//\ Process\ laser\ data\ for\ obstacle\ detection}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00073}00073\ \ \ \ \ processLaserData();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00074}00074\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00075}00075\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00076}00076\ \textcolor{keywordtype}{void}\ SensorNode::sonarCallback(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::Range>\ msg)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00077}00077\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(sonar\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00079}00079\ \ \ \ \ \ \ \ \ latest\_sonar\_\ =\ msg;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00080}00080\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00081}00081\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00082}00082\ \ \ \ \ \textcolor{comment}{//\ Validate\ sonar\ reading}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00083}00083\ \ \ \ \ \textcolor{keywordflow}{if}\ (!isValidSonarReading(msg))\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00084}00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00085}00085\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00086}00086\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00087}00087\ \ \ \ \ \textcolor{comment}{//\ Get\ current\ drone\ position}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00088}00088\ \ \ \ \ \textcolor{keyword}{auto}\ odom\ =\ getLatestOdom();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00089}00089\ \ \ \ \ \textcolor{keywordflow}{if}\ (!odom)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00090}00090\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00091}00091\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00092}00092\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ Calculate\ ground\ elevation}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00094}00094\ \ \ \ \ \textcolor{keywordtype}{double}\ drone\_x\ =\ odom-\/>pose.pose.position.x;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00095}00095\ \ \ \ \ \textcolor{keywordtype}{double}\ drone\_y\ =\ odom-\/>pose.pose.position.y;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00096}00096\ \ \ \ \ \textcolor{keywordtype}{double}\ drone\_altitude\ =\ odom-\/>pose.pose.position.z;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00097}00097\ \ \ \ \ \textcolor{keywordtype}{double}\ ground\_elevation\ =\ drone\_altitude\ -\/\ msg-\/>range;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00098}00098\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00099}00099\ \ \ \ \ \textcolor{comment}{//\ DELEGATE:\ Let\ TerrainMap\ handle\ all\ mapping\ operations}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00100}00100\ \ \ \ \ \textcolor{keywordtype}{bool}\ updated\ =\ terrain\_map\_-\/>updateElevation(drone\_x,\ drone\_y,\ ground\_elevation);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00101}00101\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00102}00102\ \ \ \ \ \textcolor{keywordflow}{if}\ (updated)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00103}00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ gradients\ around\ the\ updated\ area}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00104}00104\ \ \ \ \ \ \ \ \ terrain\_map\_-\/>calculateGradientsAroundPoint(drone\_x,\ drone\_y,\ 2.0);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00105}00105\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00106}00106\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00108}00108\ \textcolor{keywordtype}{void}\ SensorNode::odomCallback(\textcolor{keyword}{const}\ std::shared\_ptr<nav\_msgs::msg::Odometry>\ msg)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00109}00109\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(odom\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00110}00110\ \ \ \ \ latest\_odom\_\ =\ msg;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00111}00111\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00112}00112\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00113}00113\ \textcolor{comment}{//\ Timer\ Callbacks}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00114}00114\ \textcolor{keywordtype}{void}\ SensorNode::publishMapCallback()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00115}00115\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00116}00116\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ grid\ map\ from\ TerrainMap\ and\ publish\ it}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ grid\_map\_msg\ =\ terrain\_map\_-\/>getGridMapMessage();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00118}00118\ \ \ \ \ \ \ \ \ grid\_map\_pub\_-\/>publish(grid\_map\_msg);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00119}00119\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00120}00120\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Log\ statistics\ periodically}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ publish\_count\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (++publish\_count\ \%\ 20\ ==\ 0)\ \{\ \ \textcolor{comment}{//\ Every\ 10\ seconds}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ terrain\_map\_-\/>logStatistics();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00125}00125\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\&\ e)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Error\ in\ publishMapCallback:\ \%s"{}},\ e.what());}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00127}00127\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00128}00128\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00129}00129\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00130}00130\ \textcolor{keywordtype}{void}\ SensorNode::publishGradientVisualizationCallback()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00131}00131\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ gradient\ arrows\ from\ TerrainMap\ and\ publish\ them}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ gradient\_arrows\ =\ terrain\_map\_-\/>getGradientArrows();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00134}00134\ \ \ \ \ \ \ \ \ gradient\_arrows\_pub\_-\/>publish(gradient\_arrows);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00135}00135\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (\textcolor{keyword}{const}\ std::exception\&\ e)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00136}00136\ \ \ \ \ \ \ \ \ RCLCPP\_ERROR(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Error\ publishing\ gradient\ visualization:\ \%s"{}},\ e.what());}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00137}00137\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00138}00138\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00140}00140\ \textcolor{comment}{//\ Sensor\ Data\ Processing}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00141}00141\ \textcolor{keywordtype}{void}\ SensorNode::processLaserData()\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00142}00142\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(laser\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00143}00143\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00144}00144\ \ \ \ \ \textcolor{keywordflow}{if}\ (!latest\_laser\_)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00145}00145\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00146}00146\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00147}00147\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00148}00148\ \ \ \ \ \textcolor{comment}{//\ Create\ or\ update\ laser\ processor}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00149}00149\ \ \ \ \ \textcolor{keywordflow}{if}\ (!laser\_processor\_)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00150}00150\ \ \ \ \ \ \ \ \ laser\_processor\_\ =\ std::make\_unique<LaserProcessing>(*latest\_laser\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00151}00151\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ laser\_processor\_-\/>newScan(*latest\_laser\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00153}00153\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00154}00154\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00155}00155\ \ \ \ \ \textcolor{comment}{//\ Count\ object\ readings\ for\ obstacle\ detection}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00156}00156\ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ object\_readings\ =\ laser\_processor\_-\/>countObjectReadings();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00157}00157\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00158}00158\ \ \ \ \ \textcolor{comment}{//\ Simple\ obstacle\ detection\ threshold}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00159}00159\ \ \ \ \ obstacle\_detected\_\ =\ (object\_readings\ >\ 10);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00160}00160\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00161}00161\ \ \ \ \ \textcolor{keywordflow}{if}\ (obstacle\_detected\_)\ \{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ RCLCPP\_DEBUG(this-\/>get\_logger(),\ \textcolor{stringliteral}{"{}Obstacle\ detected\ with\ \%u\ laser\ readings"{}},\ object\_readings);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00163}00163\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00165}00165\ \ \ \ \ \textcolor{comment}{//\ Publish\ obstacle\ status}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00166}00166\ \ \ \ \ std\_msgs::msg::Bool\ obstacle\_msg;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00167}00167\ \ \ \ \ obstacle\_msg.data\ =\ obstacle\_detected\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00168}00168\ \ \ \ \ obstacle\_detected\_pub\_-\/>publish(obstacle\_msg);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00169}00169\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00171}00171\ \textcolor{keywordtype}{bool}\ SensorNode::isValidSonarReading(\textcolor{keyword}{const}\ std::shared\_ptr<sensor\_msgs::msg::Range>\ msg)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00172}00172\ \ \ \ \ \textcolor{keywordflow}{return}\ !(std::isnan(msg-\/>range)\ ||\ std::isinf(msg-\/>range)\ ||\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ \ msg-\/>range\ <=\ 0.0\ ||\ msg-\/>range\ >\ msg-\/>max\_range);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00174}00174\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00175}00175\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00176}00176\ nav\_msgs::msg::Odometry::SharedPtr\ SensorNode::getLatestOdom()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00177}00177\ \ \ \ \ std::lock\_guard<std::mutex>\ lock(odom\_mutex\_);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00178}00178\ \ \ \ \ \textcolor{keywordflow}{return}\ latest\_odom\_;}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00179}00179\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00180}00180\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00181}00181\ \textcolor{comment}{//\ Public\ Interface\ Methods\ -\/\ Delegate\ to\ TerrainMap}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00182}\mbox{\hyperlink{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193}{00182}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_sensor_node_a2e75ca4e5ec39b26f0c2be05892cd193}{SensorNode::isObstacleDetected}}()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00183}00183\ \ \ \ \ \textcolor{keywordflow}{return}\ obstacle\_detected\_.load();}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00184}00184\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00185}00185\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00186}\mbox{\hyperlink{class_sensor_node_aa26d418a88a854d9099445e699984085}{00186}}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_sensor_node_aa26d418a88a854d9099445e699984085}{SensorNode::getElevationAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00187}00187\ \ \ \ \ \textcolor{keywordflow}{return}\ terrain\_map\_-\/>getElevationAtPoint(x,\ y);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00188}00188\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00189}00189\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00190}\mbox{\hyperlink{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0}{00190}}\ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_sensor_node_a0aed629797aae4cfcaf0dfbe01ea1ec0}{SensorNode::getGradientMagnitudeAtPoint}}(\textcolor{keywordtype}{double}\ x,\ \textcolor{keywordtype}{double}\ y)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00191}00191\ \ \ \ \ \textcolor{keywordflow}{return}\ terrain\_map\_-\/>getGradientMagnitudeAtPoint(x,\ y);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00192}00192\ \}}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00193}00193\ }
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00194}\mbox{\hyperlink{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54}{00194}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_sensor_node_aa3f40578fde28a2642175bd5548d0f54}{SensorNode::getGridMap}}(grid\_map::GridMap\&\ map)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00195}00195\ \ \ \ \ terrain\_map\_-\/>getGridMap(map);}
+\DoxyCodeLine{\Hypertarget{sensor__node_8cpp_source_l00196}00196\ \}}
+
+\end{DoxyCode}

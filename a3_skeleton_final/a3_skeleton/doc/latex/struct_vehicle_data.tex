@@ -1,0 +1,330 @@
+\doxysection{Vehicle\+Data Struct Reference}
+\hypertarget{struct_vehicle_data}{}\label{struct_vehicle_data}\index{VehicleData@{VehicleData}}
+
+
+Vehicle data structure to store state of each drone.  
+
+
+
+
+{\ttfamily \#include $<$common.\+h$>$}
+
+
+
+Collaboration diagram for Vehicle\+Data\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=196pt]{struct_vehicle_data__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_vehicle_data_1_1_command}{Command}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d}{Vehicle\+Data}} (const std\+::string \&id\+\_\+)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2}{id}}
+\item 
+nav\+\_\+msgs\+::msg\+::\+Odometry \mbox{\hyperlink{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}{current\+\_\+odom}}
+\item 
+std\+::vector$<$ geometry\+\_\+msgs\+::msg\+::\+Pose $>$ \mbox{\hyperlink{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}{goals}}
+\item 
+std\+::vector$<$ geometry\+\_\+msgs\+::msg\+::\+Pose $>$ \mbox{\hyperlink{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634}{traversable\+\_\+waypoints}}
+\item 
+geometry\+\_\+msgs\+::msg\+::\+Pose \mbox{\hyperlink{struct_vehicle_data_ae28b0d91773c74cea4eda56c32a67470}{start\+\_\+position}}
+\item 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{class_laser_processing}{Laser\+Processing}} $>$ \mbox{\hyperlink{struct_vehicle_data_a10ff89e2deca1da02c42d8d176a126f5}{laser\+\_\+processor}}
+\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}{mission\+\_\+active}} \{false\}
+\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}{takeoff\+\_\+complete}} \{false\}
+\item 
+std\+::atomic$<$ int $>$ \mbox{\hyperlink{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}{current\+\_\+goal\+\_\+index}} \{0\}
+\item 
+std\+::atomic$<$ double $>$ \mbox{\hyperlink{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}{mission\+\_\+progress}} \{0.\+0\}
+\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}{avoiding\+\_\+obstacle}} \{false\}
+\item 
+std\+::atomic$<$ double $>$ \mbox{\hyperlink{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}{obstacle\+\_\+avoidance\+\_\+start\+\_\+altitude}} \{0.\+0\}
+\item 
+std\+::mutex \mbox{\hyperlink{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}{odom\+\_\+mutex}}
+\item 
+std\+::mutex \mbox{\hyperlink{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}{goals\+\_\+mutex}}
+\item 
+std\+::queue$<$ \mbox{\hyperlink{struct_vehicle_data_1_1_command}{Command}} $>$ \mbox{\hyperlink{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}{command\+\_\+queue}}
+\item 
+std\+::mutex \mbox{\hyperlink{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}{queue\+\_\+mutex}}
+\item 
+std\+::condition\+\_\+variable \mbox{\hyperlink{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1}{queue\+\_\+cv}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Vehicle data structure to store state of each drone. 
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00058}{58}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{struct_vehicle_data_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d}\index{VehicleData@{VehicleData}!VehicleData@{VehicleData}}
+\index{VehicleData@{VehicleData}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{VehicleData()}{VehicleData()}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a40f9a5ed219e3e8d1f9cc4d9c275388d} 
+Vehicle\+Data\+::\+Vehicle\+Data (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{id\+\_\+}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00101}{101}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+References \mbox{\hyperlink{common_8h_source_l00059}{id}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_vehicle_data_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5}\index{VehicleData@{VehicleData}!avoiding\_obstacle@{avoiding\_obstacle}}
+\index{avoiding\_obstacle@{avoiding\_obstacle}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{avoiding\_obstacle}{avoiding\_obstacle}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_afe796385632932b397b50b8c657cdfc5} 
+std\+::atomic$<$bool$>$ Vehicle\+Data\+::avoiding\+\_\+obstacle \{false\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00069}{69}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+\Hypertarget{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde}\index{VehicleData@{VehicleData}!command\_queue@{command\_queue}}
+\index{command\_queue@{command\_queue}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{command\_queue}{command\_queue}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a8be7a65752b867e1af2cfc63994e6cde} 
+std\+::queue$<$\mbox{\hyperlink{struct_vehicle_data_1_1_command}{Command}}$>$ Vehicle\+Data\+::command\+\_\+queue}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00097}{97}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}, and \mbox{\hyperlink{controller_8cpp_source_l00086}{Controller\+::stop\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7}\index{VehicleData@{VehicleData}!current\_goal\_index@{current\_goal\_index}}
+\index{current\_goal\_index@{current\_goal\_index}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{current\_goal\_index}{current\_goal\_index}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a290e8d8716e7a01eee91d0c2eca7e5a7} 
+std\+::atomic$<$int$>$ Vehicle\+Data\+::current\+\_\+goal\+\_\+index \{0\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00067}{67}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091}\index{VehicleData@{VehicleData}!current\_odom@{current\_odom}}
+\index{current\_odom@{current\_odom}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{current\_odom}{current\_odom}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a9e46de27b5c8605d0ae27321237b1091} 
+nav\+\_\+msgs\+::msg\+::\+Odometry Vehicle\+Data\+::current\+\_\+odom}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00060}{60}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00192}{Controller\+::fly\+To\+Goal()}}, \mbox{\hyperlink{waypoint__manager_8cpp_source_l00211}{Waypoint\+Manager\+::publish\+Waypoints()}}, and \mbox{\hyperlink{controller_8cpp_source_l00105}{Controller\+::takeoff()}}.
+
+\Hypertarget{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42}\index{VehicleData@{VehicleData}!goals@{goals}}
+\index{goals@{goals}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{goals}{goals}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_abd7e6d447227a89756f624b3c3097c42} 
+std\+::vector$<$geometry\+\_\+msgs\+::msg\+::\+Pose$>$ Vehicle\+Data\+::goals}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00061}{61}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{waypoint__manager_8cpp_source_l00312}{Waypoint\+Manager\+::publish\+Markers()}}, \mbox{\hyperlink{waypoint__manager_8cpp_source_l00211}{Waypoint\+Manager\+::publish\+Waypoints()}}, and \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8}\index{VehicleData@{VehicleData}!goals\_mutex@{goals\_mutex}}
+\index{goals\_mutex@{goals\_mutex}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{goals\_mutex}{goals\_mutex}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a61a2a2efc45e41880f389165fc9b0db8} 
+std\+::mutex Vehicle\+Data\+::goals\+\_\+mutex}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00073}{73}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2}\index{VehicleData@{VehicleData}!id@{id}}
+\index{id@{id}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a5ecdf99bc0b878875df1289ad92d32f2} 
+std\+::string Vehicle\+Data\+::id}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00059}{59}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00192}{Controller\+::fly\+To\+Goal()}}, \mbox{\hyperlink{controller_8cpp_source_l00180}{Controller\+::land()}}, \mbox{\hyperlink{controller_8cpp_source_l00017}{Controller\+::process\+Command()}}, \mbox{\hyperlink{controller_8cpp_source_l00105}{Controller\+::takeoff()}}, and \mbox{\hyperlink{common_8h_source_l00101}{Vehicle\+Data()}}.
+
+\Hypertarget{struct_vehicle_data_a10ff89e2deca1da02c42d8d176a126f5}\index{VehicleData@{VehicleData}!laser\_processor@{laser\_processor}}
+\index{laser\_processor@{laser\_processor}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{laser\_processor}{laser\_processor}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a10ff89e2deca1da02c42d8d176a126f5} 
+std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{class_laser_processing}{Laser\+Processing}}$>$ Vehicle\+Data\+::laser\+\_\+processor}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00064}{64}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+\Hypertarget{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d}\index{VehicleData@{VehicleData}!mission\_active@{mission\_active}}
+\index{mission\_active@{mission\_active}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{mission\_active}{mission\_active}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a5382e405bd93a7fd66cf458a6a13530d} 
+std\+::atomic$<$bool$>$ Vehicle\+Data\+::mission\+\_\+active \{false\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00065}{65}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00192}{Controller\+::fly\+To\+Goal()}}, \mbox{\hyperlink{controller_8cpp_source_l00017}{Controller\+::process\+Command()}}, and \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0}\index{VehicleData@{VehicleData}!mission\_progress@{mission\_progress}}
+\index{mission\_progress@{mission\_progress}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{mission\_progress}{mission\_progress}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a93fe475471ff72b787605ee9e6cc5ed0} 
+std\+::atomic$<$double$>$ Vehicle\+Data\+::mission\+\_\+progress \{0.\+0\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00068}{68}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6}\index{VehicleData@{VehicleData}!obstacle\_avoidance\_start\_altitude@{obstacle\_avoidance\_start\_altitude}}
+\index{obstacle\_avoidance\_start\_altitude@{obstacle\_avoidance\_start\_altitude}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{obstacle\_avoidance\_start\_altitude}{obstacle\_avoidance\_start\_altitude}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a5606b56b6e57c7820a2a724ac3b768e6} 
+std\+::atomic$<$double$>$ Vehicle\+Data\+::obstacle\+\_\+avoidance\+\_\+start\+\_\+altitude \{0.\+0\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00070}{70}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+\Hypertarget{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10}\index{VehicleData@{VehicleData}!odom\_mutex@{odom\_mutex}}
+\index{odom\_mutex@{odom\_mutex}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{odom\_mutex}{odom\_mutex}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a6a22a546984258477a8abd6b92806d10} 
+std\+::mutex Vehicle\+Data\+::odom\+\_\+mutex}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00072}{72}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00192}{Controller\+::fly\+To\+Goal()}}, and \mbox{\hyperlink{controller_8cpp_source_l00105}{Controller\+::takeoff()}}.
+
+\Hypertarget{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1}\index{VehicleData@{VehicleData}!queue\_cv@{queue\_cv}}
+\index{queue\_cv@{queue\_cv}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{queue\_cv}{queue\_cv}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_af248cbb07c20205baae79114be44a7a1} 
+std\+::condition\+\_\+variable Vehicle\+Data\+::queue\+\_\+cv}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00099}{99}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}, and \mbox{\hyperlink{controller_8cpp_source_l00086}{Controller\+::stop\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf}\index{VehicleData@{VehicleData}!queue\_mutex@{queue\_mutex}}
+\index{queue\_mutex@{queue\_mutex}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{queue\_mutex}{queue\_mutex}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_af6b3e23ada19b9f03778c0b7d3903cbf} 
+std\+::mutex Vehicle\+Data\+::queue\+\_\+mutex}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00098}{98}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}, \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}, and \mbox{\hyperlink{controller_8cpp_source_l00086}{Controller\+::stop\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_ae28b0d91773c74cea4eda56c32a67470}\index{VehicleData@{VehicleData}!start\_position@{start\_position}}
+\index{start\_position@{start\_position}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{start\_position}{start\_position}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_ae28b0d91773c74cea4eda56c32a67470} 
+geometry\+\_\+msgs\+::msg\+::\+Pose Vehicle\+Data\+::start\+\_\+position}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00063}{63}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00322}{Controller\+::abort\+Mission()}}.
+
+\Hypertarget{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959}\index{VehicleData@{VehicleData}!takeoff\_complete@{takeoff\_complete}}
+\index{takeoff\_complete@{takeoff\_complete}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{takeoff\_complete}{takeoff\_complete}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a5848e81010b8e903f25fd51cc6c5b959} 
+std\+::atomic$<$bool$>$ Vehicle\+Data\+::takeoff\+\_\+complete \{false\}}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00066}{66}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{controller_8cpp_source_l00180}{Controller\+::land()}}, \mbox{\hyperlink{controller_8cpp_source_l00045}{Controller\+::start\+Mission()}}, and \mbox{\hyperlink{controller_8cpp_source_l00105}{Controller\+::takeoff()}}.
+
+\Hypertarget{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634}\index{VehicleData@{VehicleData}!traversable\_waypoints@{traversable\_waypoints}}
+\index{traversable\_waypoints@{traversable\_waypoints}!VehicleData@{VehicleData}}
+\doxysubsubsection{\texorpdfstring{traversable\_waypoints}{traversable\_waypoints}}
+{\footnotesize\ttfamily \label{struct_vehicle_data_a0954cb16bb9cad4260fc5d7d7c548634} 
+std\+::vector$<$geometry\+\_\+msgs\+::msg\+::\+Pose$>$ Vehicle\+Data\+::traversable\+\_\+waypoints}
+
+
+
+Definition at line \mbox{\hyperlink{common_8h_source_l00062}{62}} of file \mbox{\hyperlink{common_8h_source}{common.\+h}}.
+
+
+
+Referenced by \mbox{\hyperlink{waypoint__manager_8cpp_source_l00312}{Waypoint\+Manager\+::publish\+Markers()}}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/\mbox{\hyperlink{common_8h}{common.\+h}}\end{DoxyCompactItemize}

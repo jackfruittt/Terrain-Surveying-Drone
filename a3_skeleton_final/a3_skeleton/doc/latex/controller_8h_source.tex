@@ -1,0 +1,70 @@
+\doxysection{controller.\+h}
+\hypertarget{controller_8h_source}{}\label{controller_8h_source}\index{include/controller.h@{include/controller.h}}
+\mbox{\hyperlink{controller_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00001}00001\ \textcolor{preprocessor}{\#ifndef\ CONTROLLER\_H}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00002}00002\ \textcolor{preprocessor}{\#define\ CONTROLLER\_H}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{common_8h}{common.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00006}\mbox{\hyperlink{class_controller}{00006}}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_controller_a3ee84c4beb2734e1e90382f2f9c1047b}{Controller}}\ \{}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00007}00007\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00016}00016\ \ \ \ \ \mbox{\hyperlink{class_controller_a3ee84c4beb2734e1e90382f2f9c1047b}{Controller}}(}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00017}00017\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Publisher<geometry\_msgs::msg::Twist>::SharedPtr\&\ cmd\_vel\_pub,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Publisher<std\_msgs::msg::Empty>::SharedPtr\&\ takeoff\_pub,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Publisher<std\_msgs::msg::Empty>::SharedPtr\&\ land\_pub,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ rclcpp::Logger\&\ logger);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00021}00021\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00030}00030\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_a6ba57da8b9aef7e4e894e903414e6383}{processCommand}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_vehicle_data_1_1_command}{VehicleData::Command}}\&\ command);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00031}00031\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00038}00038\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_controller_a80ae4d8c4f5f5d8691949ac6bc72a2bc}{startMission}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00039}00039\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_controller_a820ca479686e960d1379f82dad460441}{stopMission}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00047}00047\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00055}00055\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_a68cafe80a04b33fb2a6abd3ada2c6e47}{takeoff}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00056}00056\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00064}00064\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_ad88269eeca9c75ba490895d693a08260}{land}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00065}00065\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00074}00074\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_a7db93fa14ecab45aff1cd799ac922411}{flyToGoal}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Pose\&\ goal);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00075}00075\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00084}00084\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_controller_a98a5028b8184631ddd6aab9b2dea12ca}{calculateDistance}}(\textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ p1,\ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ p2);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00085}00085\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00092}00092\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_controller_ac12e40ab614fa55783149718a22ce68e}{abortMission}}(\mbox{\hyperlink{struct_vehicle_data}{VehicleData}}\&\ vehicle);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00093}00093\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00103}00103\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_aa02ddd33030d8be14cb453655c08cba0}{checkForObstacles}}(\textcolor{keyword}{const}\ sensor\_msgs::msg::LaserScan::SharedPtr\&\ laser\_scan);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00104}00104\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00112}00112\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_controller_a4ab193fb724ed8e6228b8628cc377ba7}{calculateAltitudeAdjustment}}(\textcolor{keywordtype}{double}\ current\_altitude,\ \textcolor{keywordtype}{double}\ sonar\_range);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00113}00113\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00118}\mbox{\hyperlink{class_controller_aa76d7b14d14ab907980345054bf25064}{00118}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_controller_aa76d7b14d14ab907980345054bf25064}{setAltitudeAdjustment}}(\textcolor{keywordtype}{double}\ adjustment)\ \{\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00119}00119\ \ \ \ \ \ \ \ \ current\_altitude\_adjustment\_\ =\ adjustment;\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00120}00120\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00121}00121\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00130}00130\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_a7e099c78a6a80248e4b7b61635c8d037}{checkObstaclesInDirection}}(\textcolor{keyword}{const}\ sensor\_msgs::msg::LaserScan::SharedPtr\&\ laser\_scan,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ current\_pos,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ target\_pos);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00133}00133\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00143}00143\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_controller_ad9caf514c18493600e2d3efbf5fa7818}{isObstacleClearanceAchieved}}(\textcolor{keyword}{const}\ sensor\_msgs::msg::LaserScan::SharedPtr\&\ laser\_scan,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ current\_pos,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ geometry\_msgs::msg::Point\&\ target\_pos,}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ clearance\_distance\ =\ 4.0);}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00148}00148\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00149}00149\ \ \ \ \ rclcpp::Publisher<geometry\_msgs::msg::Twist>::SharedPtr\ cmd\_vel\_pub\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00150}00150\ \ \ \ \ rclcpp::Publisher<std\_msgs::msg::Empty>::SharedPtr\ takeoff\_pub\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00151}00151\ \ \ \ \ rclcpp::Publisher<std\_msgs::msg::Empty>::SharedPtr\ land\_pub\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00152}00152\ \ \ \ \ rclcpp::Logger\ logger\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00153}00153\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00154}00154\ \ \ \ \ geometry\_msgs::msg::Point\ last\_waypoint\_position\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00155}00155\ \ \ \ \ std::vector<geometry\_msgs::msg::Pose>\ generated\_waypoints\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00156}00156\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00157}00157\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_last\_waypoint\_;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00158}00158\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00159}00159\ \ \ \ \ \textcolor{comment}{//\ Target\ is\ exactly\ 2m\ above\ ground}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00160}00160\ \ \ \ \ \textcolor{keywordtype}{double}\ desired\_ground\_clearance\_\ =\ 2.0;\ \ \textcolor{comment}{//\ 2m}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00161}00161\ \ \ \ \ \textcolor{keywordtype}{double}\ min\_obstacle\_distance\_\ =\ 3.0;\ \ \ \ \textcolor{comment}{//\ 3m}}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00162}00162\ \ \ \ \ \textcolor{keywordtype}{double}\ current\_altitude\_adjustment\_\ =\ 0.0;}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00163}00163\ \};}
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{controller_8h_source_l00165}00165\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONTROLLER\_H}}
+
+\end{DoxyCode}
