@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="2">
+  <name>a3_skeleton</name>
+  <version>0.0.1</version>
+  <description>A3 skeleton for students to augument</description>
+
+  <maintainer email="Name.Surname@studnet.uts.edu.au">Name Surname</maintainer>
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>LGPLv3</license>
+
+  <author email="Name.Surname@uts.edu.au">Name Surname</author>
+
+  <!-- The *_depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <!-- Use depend for packages you need at compile time -->
+
+  <!-- Use exec_depend for packages you need at runtime -->
+  <!-- Use test_depend for packages you need only for testing -->
+
+  <!-- Remove the packages not needed here, and in th CMakeLists.txt (under find and ament_target_dependencies) -->
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>rosbag2_cpp</depend>
+  <depend>std_srvs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>grid_map_msgs</depend>
+  <depend>grid_map_ros</depend>
+  <depend>ament_index_cpp</depend>
+
+  <!-- Additional dependencies for ROSbag testing -->
+  <depend>rosbag2_storage</depend>
+  <depend>rosbag2_transport</depend>
+
+  <!-- Test dependencies for unit testing -->
+  <test_depend>ament_cmake_ros</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>launch_testing</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>launch_testing_ros</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,313 @@
+/*!
+@mainpage Project 1: Terrain Drone Surveying - ROS2 Autonomous Quadcopter System
+ 
+@section overview Overview
+ 
+This project implements an autonomous quadcopter system for terrain surveying and path planning.
+The system utilises a quadcopter equipped with sonar and laser sensors to map rough terrain, determine
+traversable paths, and validate goal reachability for ground vehicle operations.
+ 
+The quadcopter autonomously flies through provided goals, builds an elevation map using sonar data,
+detects obstacles with laser scanning, and determines if paths between goals are traversable based
+on terrain gradients.
+ 
+@section features Key Features
+ 
+- **Autonomous Flight Control**: Complete takeoff, flight, and landing control
+- **Terrain Mapping**: Real-time elevation mapping using sonar sensor data
+- **Obstacle Detection**: 360-degree laser scanning for obstacle avoidance
+- **Path Planning**: Traversability analysis based on terrain gradients
+- **TSP Optimisation**: Advanced mode with Travelling Salesman Problem solving
+- **Multi-threaded Architecture**: Separate threads for control and sensor processing
+- **ROS2 Integration**: Full ROS2 component-based software engineering framework
+ 
+@section architecture System Architecture
+ 
+The system consists of two main ROS2 nodes:
+ 
+### DroneNode
+- Main control node managing ROS related drone operations
+- Handles mission planning and execution
+- Processes goals and generates flight paths
+- Implements obstacle avoidance algorithms
+ 
+### SensorNode  
+- Dedicated sensor data processing for ROS end
+- Real-time terrain mapping using TerrainMap class
+- Laser scan processing for obstacle detection
+- Grid map generation and publishing
+ 
+@section components Core Components
+ 
+### Controller Class
+- Handles all drone movement commands (takeoff, landing, flight)
+- Implements PID-style control for goal reaching
+- Emergency obstacle avoidance with altitude adjustment
+- Mission state management and progress tracking
+ 
+### TerrainMap Class
+- Incremental 1×1m cell-by-cell terrain mapping
+- Drone-centric grid expansion during flight
+- Gradient calculation for traversability analysis
+- High-resolution elevation data storage
+ 
+### WaypointManager Class
+- Traversability analysis between goals
+- Waypoint generation with configurable spacing
+- Gradient-based path validation
+- Visualisation marker management
+ 
+### Graph & TSPSolver Classes (Advanced Mode)
+- Constructs traversability graphs between waypoints
+- Implements Travelling Salesman Problem solving
+- Optimises mission paths for efficiency
+- Supports complex multi-goal scenarios
+ 
+@section modes Operating Modes
+ 
+### Standard Mode (Pass/Credit Level)
+- Sequential goal processing
+- Direct path traversability checking
+- Basic terrain mapping and analysis
+- Gradient-based goal validation
+ 
+### Advanced Mode (Distinction/High Distinction Level)
+- TSP-optimised path planning
+- Complex traversability graph construction
+- Multiple valid path analysis
+- Advanced visualisation of all possible routes
+ 
+@section topics ROS2 Topics Interface
+ 
+### Subscribed Topics
+- `/drone/gt_odom` - Robot odometry data
+- `/drone/laserscan` - 360-degree laser scan data
+- `/drone/sonar` - Ground distance measurements
+- `/mission/goals` - Goal positions for surveying
+ 
+### Published Topics
+- `/drone/cmd_vel` - Velocity commands for drone control
+- `/drone/takeoff` - Takeoff command
+- `/drone/landing` - Landing command
+- `/grid_map` - Real-time elevation map
+- `/mission/path` - Traversable waypoints between goals
+- `/visualisation_marker` - RViz visualisation markers
+ 
+### Services
+- `/mission/control` - Start/stop mission control service
+ 
+@section algorithms Key Algorithms
+ 
+### Terrain Mapping Algorithm
+1. Process sonar readings at current drone position
+2. Update elevation map with new height data
+3. Calculate gradients around updated regions
+4. Expand map boundaries as drone moves
+5. Maintain high-resolution terrain representation
+ 
+### Obstacle Avoidance Algorithm
+1. Continuously monitor 360-degree laser scans
+2. Detect obstacles within minimum safe distance (3m)
+3. Execute emergency altitude increase when needed
+4. Resume normal flight when obstacles cleared
+5. Maintain altitude control using sonar feedback
+ 
+### Traversability Analysis Algorithm
+1. Calculate terrain gradients between waypoints
+2. Compare gradients against maximum threshold (3% default)
+3. Generate intermediate waypoints at 1m intervals
+4. Validate entire path for ground vehicle access
+5. Abort mission if any segment non-traversable
+ 
+### TSP Optimisation Algorithm (Advanced Mode)
+1. Build complete traversability graph between all goals
+2. Calculate costs for all valid path segments
+3. Apply TSP solver to find optimal visiting order
+4. Generate optimised mission sequence
+5. Visualise all valid paths and highlight optimal route
+ 
+@section parameters Configuration Parameters
+ 
+- `road_gradient` - Maximum traversable gradient (default: 3%)
+- `advanced` - Enable advanced TSP mode (default: false)
+- Various control parameters for PID tuning and safety margins
+ 
+@section threading Thread Safety
+ 
+The system implements comprehensive thread safety using:
+- Mutex protection for shared sensor data
+- Atomic variables for mission state tracking
+- Condition variables for thread coordination
+- Lock-free communication where possible
+ 
+@section testing Unit Testing
+ 
+Comprehensive unit tests cover:
+- Grid map creation and elevation mapping
+- Goal traversability detection algorithms
+- TSP solving with known optimal solutions
+- Sensor data processing accuracy
+- Controller response validation
+ 
+@section usage Usage Instructions
+
+**README**
+On my local setup I have aliases setup as shown below which some images may show. However, the instructions provided onwards are non-alias based commands 
+which can be run in substitution to my aliases. I also have shell scripts for publishing. 
+
+<div style="margin-bottom: 30px;">
+     @image html alias.png "Alias setup"
+</div>
+
+ 
+1. **Launch the RVIZ gui:**
+@code
+ros2 launch pfms a3_terrain.launch.py
+@endcode
+
+<div style="margin-bottom: 30px;">
+     @image html drone_gui.png "Drone GUI"
+</div>
+
+2. **Launch drone node:**
+@code
+cd ~/ros2_ws/
+ros2 run a3_skeleton drone_node
+@endcode
+This will start both the controller and drone node
+
+<div style="margin-bottom: 30px;">
+     @image html start_node.png "Nodes Started"
+</div>
+
+3. **For advanced mode:**
+@code
+ros2 run a3_skeleton drone_node advanced:=true
+@endcode
+ 
+4. **Send goals in a separate terminal:**
+@code
+ros2 topic pub /mission/goals geometry_msgs/msg/PoseArray '{poses: [...]}'
+@endcode
+
+<div style="margin-bottom: 30px;">
+     @image html send_goals.png "Goals Published"
+</div>
+
+These goals can be in JSON or YAML format. Goals also do not need a Z-coordinate because of altitude control.
+If you publish a goal with Z > 2 altitude control will be overridden.
+ 
+5. **Start mission in separate terminal:**
+@code
+ros2 service call /mission/control std_srvs/srv/SetBool '{data: true}'
+@endcode
+
+<div style="margin-bottom: 30px;">
+     @image html Service_true.png "Service True"
+</div>
+ 
+6. **To pause/stop mission**
+@code
+ros2 service call /mission/control std_srvs/srv/SetBool 'data: false}'
+@endcode
+
+For stop mission the drone will traverse to its current goal then stop. It will not stop straight away. 
+@section testing_process Testing Process
+Various scripts have been developed to assist in testing drone code and functionality. These scripts can be found in the scripts directory of the package. 
+In the test directory is drone_survey_tests.cpp which covers all tests. A custom rosbag recorder to record topics specific to task 1. Test bags I used 
+have been deleted to reduce package size however, these can be recreated by running the data collector and the test can be executed as follows:
+
+1. **Launch drone terrain and start drone node:**  
+@code
+ros2 launch pfms a3_terrain.launch.py
+@endcode
+In another terminal:
+@code
+cd ~/ros2_ws/
+ros2 run a3_skeleton drone_node
+@endcode
+
+2. **Run Data collector script (from ros2_ws):**
+@code
+./src/a3_skeleton/scripts/collect_test_data.sh collect
+@endcode
+
+<div style="margin-bottom: 30px;">
+     @image html data_collect.png "Data Collector Running (Bottom Right Terminal)"
+</div>
+
+<div style="margin-bottom: 30px;">
+     @image html bag_data.png "Directory Created after data collection with bags stored"
+</div>
+
+Internally this script will publish goals and start the service for drone navigation. It is a 3 part process in which 
+the ros record will record and stop three times to record three different bags. One for the gridmap test, traversability and TSP. 
+The script will keep running and stop once all bags have been recorded. Note: that goals for each bag is different or similar. The bags will be 
+stored in a directory called test_data (removed from my submission) but the collector script will make it. If you ever wish to make new bags it 
+will delete the old bags and replace with the new if the script is run again. 
+
+3. **Run test script:**
+For whatever reason @code colcon test --packages-select a3_skeleton @endcode doesn't work.
+To run the test file @code cd ~/ros2_ws/build/a3_skeleton @endcode (if package isn't built, build it first)
+And then:
+@code
+./drone_survey_tests
+@endcode
+
+If the test successfully runs you will see the following output:
+<div style="margin-bottom: 30px;">
+     @image html test_pass.png "tests run and passed"
+</div>
+
+ **Note:**
+The test script has hard coded paths due to universal pathing options causing issues, resulting in tests being skipped. 
+To overcome this make sure to adjust the paths on lines 124, 214 and 308 of the drone_survey_tests.cpp
+ 
+@section visualisation Visualisation
+The system provides rich visualisation through RViz:
+ - Real-time elevation map display
+ - Traversable waypoint markers (green cylinders)
+ - Non-traversable path indicators (red markers)
+ - Drone position and orientation tracking
+ 
+@section safety Safety Features
+ 
+ - Emergency obstacle avoidance with immediate altitude increase (not functional)
+ - Mission abort capability for non-traversable terrain
+ - Safe return-to-origin functionality
+ - Altitude control with sonar-based ground clearance 
+ - Comprehensive error handling and recovery
+ 
+@section implementation Implementation Details
+ 
+### Controller Threaded Design
+The system employs a threaded architecture for the controller:
+- **Main Controller Thread**: Handles drone control functionality. In theory multiple drones can be controlled and have independent missions. 
+ 
+### Data Structures
+- STL containers for efficient waypoint storage and manipulation
+- Thread-safe queues for inter-thread communication
+- Grid-based elevation maps with dynamic expansion
+- Graph structures for TSP path optimisation
+ 
+### Error Handling
+- Graceful degradation when goals are unreachable
+- Automatic return-to-home on mission failure
+- Comprehensive logging for debugging and analysis
+ 
+@section performance Performance Considerations
+ 
+- Real-time constraint compliance for safety-critical operations
+- Efficient memory management for large terrain maps
+- Optimised algorithms for rapid obstacle detection
+- Scalable TSP solving for varying numbers of goals
+ 
+@section authors Authors
+ 
+Jackson Russell
+ 
+@date June 2025
+@version 1.0
+*/
+
+

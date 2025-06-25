@@ -1,0 +1,2 @@
+builder: doxygen
+output_dir: ../docs_build/a3_skeleton
